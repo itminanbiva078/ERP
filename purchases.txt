@@ -1,0 +1,30 @@
+TRUNCATE TABLE `purchases`;
+TRUNCATE TABLE `purchases_details`;
+TRUNCATE TABLE `purchases_mrrs`;
+TRUNCATE TABLE `purchases_mrr_details`;
+TRUNCATE TABLE `purchases_payments`;
+TRUNCATE TABLE `purchases_order_details`;
+TRUNCATE TABLE `purchases_pending_cheques`;
+TRUNCATE TABLE `purchase_requisitions`;
+TRUNCATE TABLE `purchase_requisition_details`;
+TRUNCATE TABLE `stocks`;
+TRUNCATE TABLE `stock_summaries`;
+
+TRUNCATE TABLE `generals`;
+TRUNCATE TABLE `general_ledgers`;
+
+TRUNCATE `sales`;
+TRUNCATE `sales_details`;
+TRUNCATE `sales_loan_returns`;
+TRUNCATE `sales_loan_return_details`;
+TRUNCATE `sales_lons`;
+TRUNCATE `sales_lon_details`;
+TRUNCATE `sales_quatations`;
+TRUNCATE `sales_quatation_details`;
+
+TRUNCATE `purchases_returns`;
+TRUNCATE `purchases_return_details`;
+TRUNCATE `sales_loan_returns`;
+TRUNCATE `sales_loan_return_details`;
+TRUNCATE `sale_returns`;
+TRUNCATE `sale_return_details`;
