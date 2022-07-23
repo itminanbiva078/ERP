@@ -126,21 +126,21 @@ use Illuminate\Support\Facades\Route;
         //sales return Details crud operation end
         
         //sales loan return operation start
-        Route::get('/sales-transaction-sales-loan-return-list', 'SalesReturnController@index')->name('salesTransaction.salesLoanReturn.index');
-        Route::get('/dataProcessingSalesLoanReturn', 'SalesReturnController@dataProcessingSalesLoanReturn')->name('salesTransaction.salesLoanReturn.dataProcessingSalesLoanReturn');
-        Route::get('/sales-transaction-sales-loan-return-create', 'SalesReturnController@create')->name('salesTransaction.salesLoanReturn.create');
-        Route::post('/sales-transaction-sales-loan-return-store', 'SalesReturnController@store')->name('salesTransaction.salesLoanReturn.store');
-        Route::get('/sales-transaction-sales-loan-return-edit/{id}', 'SalesReturnController@edit')->name('salesTransaction.salesLoanReturn.edit');
-        Route::get('/sales-transaction-sales-loan-list-autocomplete', 'SalesReturnController@salesListAutocomplete')->name('salesTransaction.salesLoanReturn.autocomplete');
-        Route::get('/sales-transaction-sales-loan-details', 'SalesReturnController@salesDetails')->name('salesTransaction.sales.details');
-        Route::get('/sales-transaction-sales-loan-return-show/{id}', 'SalesReturnController@show')->name('salesTransaction.salesLoanReturn.show');
-        Route::post('/sales-transaction-sales-loan-return-update/{id}', 'SalesReturnController@update')->name('salesTransaction.salesLoanReturn.update');
-        Route::get('/sales-transaction-sales-loan-return-delete/{id}', 'SalesReturnController@destroy')->name('salesTransaction.salesLoanReturn.destroy');
-        Route::get('/sales-transaction-sales-loan-return-status/{id}/{status}', 'SalesReturnController@statusUpdate')->name('salesTransaction.salesLoanReturn.status');
-        Route::get('/sales-transaction-sales-loan-return-detailsInfo', 'SalesReturnController@detailsInfo')->name('salesTransaction.salesLoanReturn.detailsInfo');
+        Route::get('/sales-transaction-sales-loan-return-list', 'SalesLoanReturnController@index')->name('salesTransaction.salesLoanReturn.index');
+        Route::get('/dataProcessingSalesLoanReturn', 'SalesLoanReturnController@dataProcessingSalesLoanReturn')->name('salesTransaction.salesLoanReturn.dataProcessingSalesLoanReturn');
+        Route::get('/sales-transaction-sales-loan-return-create', 'SalesLoanReturnController@create')->name('salesTransaction.salesLoanReturn.create');
+        Route::post('/sales-transaction-sales-loan-return-store', 'SalesLoanReturnController@store')->name('salesTransaction.salesLoanReturn.store');
+        Route::get('/sales-transaction-sales-loan-return-edit/{id}', 'SalesLoanReturnController@edit')->name('salesTransaction.salesLoanReturn.edit');
+        Route::get('/sales-transaction-sales-loan-list-autocomplete', 'SalesLoanReturnController@salesLoanListAutocomplete')->name('salesTransaction.salesLoanReturn.autocomplete');
+        Route::get('/sales-transaction-sales-loan-details', 'SalesLoanReturnController@salesLoanDetails')->name('salesTransaction.salesLoan.details');
+        Route::get('/sales-transaction-sales-loan-return-show/{id}', 'SalesLoanReturnController@show')->name('salesTransaction.salesLoanReturn.show');
+        Route::post('/sales-transaction-sales-loan-return-update/{id}', 'SalesLoanReturnController@update')->name('salesTransaction.salesLoanReturn.update');
+        Route::get('/sales-transaction-sales-loan-return-delete/{id}', 'SalesLoanReturnController@destroy')->name('salesTransaction.salesLoanReturn.destroy');
+        Route::get('/sales-transaction-sales-loan-return-status/{id}/{status}', 'SalesLoanReturnController@statusUpdate')->name('salesTransaction.salesLoanReturn.status');
+        Route::get('/sales-transaction-sales-loan-return-detailsInfo', 'SalesLoanReturnController@detailsInfo')->name('salesTransaction.salesLoanReturn.detailsInfo');
 
         //sales loan return Details crud operation 
-        Route::get('/sales-transaction-sales-loan-return-details-create', 'SalesReturnController@create')->name('salesTransaction.salesLoanReturn.details.create');
+        Route::get('/sales-transaction-sales-loan-return-details-create', 'SalesLoanReturnController@create')->name('salesTransaction.salesLoanReturn.details.create');
         //sales loan return Details crud operation end
 
 
@@ -203,6 +203,7 @@ use Illuminate\Support\Facades\Route;
 
     });
 
+    
     Route::group(['middleware' => ['web', 'auth'], 'namespace' => 'SalesReport'], function () {
         //sales report crud operation start
         Route::any('/sales-report-customer-ledger', 'SalesReport@customerLedger')->name('salesReport.salesLedger');

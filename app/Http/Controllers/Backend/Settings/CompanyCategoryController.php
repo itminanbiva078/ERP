@@ -42,6 +42,7 @@ class CompanyCategoryController extends Controller
     public function index(Request $request)
     {
         $title = 'Company Category List';
+        $companyInfo =   helper::companyInfo();
         $datatableRoute = 'settings.companyCategory.dataProcessingCompanyCategory';
      return view('backend.pages.settings.company_category.index', get_defined_vars());
     }
@@ -61,6 +62,7 @@ class CompanyCategoryController extends Controller
     public function create()
     {
         $title = 'Add New Company Category';
+        $companyInfo =   helper::companyInfo();
         $formInput =  helper::getFormInputByRoute();
         $companyCategory = $this->systemService->getNavigation();
         return view('backend.pages.settings.company_category.create', get_defined_vars());
@@ -98,7 +100,7 @@ class CompanyCategoryController extends Controller
         }
         $title = 'Add New Company Category';
         $formInput =  helper::getFormInputByRoute();
-
+        $companyInfo =   helper::companyInfo();
         $companyCategory = $this->systemService->getNavigation();
         $navigation_info = explode(",", $editInfo->module_details);
 

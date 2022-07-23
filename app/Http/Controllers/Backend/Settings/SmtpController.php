@@ -40,6 +40,7 @@ class SmtpController extends Controller
     {
         $title = 'Settings | SMPT - List';
         $explodeRoute = "";
+        $companyInfo =   helper::companyInfo();
         $createRoute = "settings.smpt.create";
         $datatableRoute = 'settings.smpt.dataProcessingSmpt';
         $columns = helper::getTableProperty();
@@ -67,6 +68,7 @@ class SmtpController extends Controller
         $explodeRoute = "";
         $implodeModal ="";
         $storeRoute = "settings.smpt.store";
+        $companyInfo =   helper::companyInfo();
         $formInput =  helper::getFormInputByRoute();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
@@ -107,6 +109,7 @@ class SmtpController extends Controller
         $implodeModal ="";
         $storeRoute = "settings.smpt.update";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
 

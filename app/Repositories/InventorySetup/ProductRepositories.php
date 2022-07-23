@@ -96,7 +96,8 @@ class ProductRepositories
             $value->category_id = $value->category->name ?? '';
         endforeach;
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
+       
         $data = array();
         if ($products) {
             foreach ($products as $key => $product) {
@@ -192,7 +193,7 @@ class ProductRepositories
                    $product->puprice=$product->product->purchases_price;
                 endif;
 
-                if($product->batch->name):
+                if(!empty($product->batch->name)):
                   $product->bname=$product->batch->name . ' - Stock - ' .$product->quantity;
                 endif;
                 return  $product;
@@ -309,9 +310,6 @@ class ProductRepositories
     public function store($request)
     {
 
-      
-
-
         DB::beginTransaction();
         try
         {
@@ -323,7 +321,7 @@ class ProductRepositories
             $product->brand_id = $request->brand_id;
             $product->description = $request->description;
             $product->unit_id = $request->unit_id;
-            $product->type_id = $request->type_id;
+            $product->type_id = "Pos Product";
             $product->floor_id = $request->floor_id ?? 0;
             $product->purchases_price = $request->purchases_price;
             $product->sale_price = $request->sale_price;
@@ -365,14 +363,9 @@ class ProductRepositories
     // Product Details
     public function masterDetails($masterId, $request)
     {
-
-       
-
         $productDetails = ProductDetails::where('product_id', $masterId)->first();
 
         if(empty($productDetails)){
-
-
             $productDetails = new ProductDetails;
         }
 
@@ -386,6 +379,7 @@ class ProductRepositories
         $productDetails->save();
         return $productDetails;
     }
+
     // Product Attributes
     public function productAttributes($masterId, $request)
     {
@@ -402,6 +396,8 @@ class ProductRepositories
             return $productAttribute;
         }
     }
+
+
     public function productImage($masterId, $request)
     {
         $deatils = ProductDetails::where('product_id', $masterId)->get();
@@ -422,8 +418,6 @@ class ProductRepositories
     }
     public function update($request, $id)
     {
-
-       
         DB::beginTransaction();
         
         try
@@ -436,7 +430,7 @@ class ProductRepositories
             $product->brand_id = $request->brand_id;
             $product->description = $request->description;
             $product->unit_id = $request->unit_id;
-            $product->type_id = $request->type_id;
+            $product->type_id = "Pos Product";
             $product->floor_id = $request->floor_id ?? 0;
             $product->purchases_price = $request->purchases_price;
             $product->sale_price = $request->sale_price;
@@ -451,8 +445,6 @@ class ProductRepositories
             if ($product->type_id=="Rooms") {
                 $this->productAttributes($product->id, $request);
             }
-
-           
             if(!empty($request->attached_files) && count($request->attached_files) > 0){
                 
                 $allAttached = array_unique($request->attached_files);
@@ -489,6 +481,7 @@ class ProductRepositories
             return $e->getMessage();
         }
     }
+    
     private function productImageUpload($image, $width,$height,$folder,$id=null)
     {
         if ($image && !empty($image)) {
@@ -511,6 +504,7 @@ class ProductRepositories
             return $upload_path;
         }
     }
+
     public function statusUpdate($id, $status)
     {
         $product = $this->product::find($id);
@@ -518,7 +512,6 @@ class ProductRepositories
         $product->save();
         return $product;
     }
-
 
     public function destroy($id)
     {

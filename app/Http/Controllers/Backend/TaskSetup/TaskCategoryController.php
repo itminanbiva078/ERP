@@ -42,6 +42,7 @@ class TaskCategoryController extends Controller
         $createRoute = "taskSetup.taskCategory.create";
         $columns = helper::getTableProperty();
         $datatableRoute = 'taskSetup.taskCategory.dataProcessingTaskCategory';
+        $companyInfo =   helper::companyInfo();
         return view('backend.layouts.common.datatable.datatable', get_defined_vars());
 
     }
@@ -66,6 +67,7 @@ class TaskCategoryController extends Controller
         $implodeModal ="'inventory-setup-load-import-form','taskSetup.taskCategory.import','Import Task Category List','/backend/assets/excelFormat/taskSetup/taskCategory/taskCategory.csv','2'";
         $storeRoute = "taskSetup.taskCategory.store";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());   
     }
     /**
@@ -106,6 +108,7 @@ class TaskCategoryController extends Controller
         $implodeModal ="'inventory-setup-load-import-form','taskSetup.taskCategory.import','Import Task Category List','/backend/assets/excelFormat/taskSetup/taskCategory/taskCategory.csv','2'";
         $storeRoute = "taskSetup.taskCategory.update";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars()); 
     }
 

@@ -49,7 +49,7 @@ class SmptRepositories
         $dir = $request->input('order.0.dir');
 
         if (empty($request->input('search.value'))) {
-            $smpts = $this->smpt::offset($start)
+            $smpts = $this->smpt::offset($start)->company()
                 ->limit($limit)
                 ->orderBy($order, $dir)
                 //->orderBy('status', 'desc')
@@ -57,7 +57,7 @@ class SmptRepositories
             $totalFiltered = $this->smpt::count();
         } else {
             $search = $request->input('search.value');
-            $smpts = $this->smpt::where('protocol', 'like', "%{$search}%")
+            $smpts = $this->smpt::where('protocol', 'like', "%{$search}%")->company()
                 ->orWhere('smtp_host', 'like', "%{$search}%")
                 ->orWhere('sender_mail', 'like', "%{$search}%")
                 ->orWhere('smtp_port', 'like', "%{$search}%")
@@ -66,7 +66,7 @@ class SmptRepositories
                 ->orderBy($order, $dir)
                 // ->orderBy('status', 'desc')
                 ->get();
-            $totalFiltered = $this->smpt::where('protocol', 'like', "%{$search}%")
+            $totalFiltered = $this->smpt::where('protocol', 'like', "%{$search}%")->company()
                 ->orWhere('smtp_host', 'like', "%{$search}%")
                 ->orWhere('sender_mail', 'like', "%{$search}%")
                 ->orWhere('smtp_port', 'like', "%{$search}%")->count();
@@ -134,6 +134,7 @@ class SmptRepositories
         $smpt->sender_mail = $request->sender_mail;
         $smpt->password = $request->password;
         $smpt->status = 'Approved';
+        $smpt->company_id = helper::companyId();
         $smpt->created_by = Auth::user()->id;
         $smpt->save();
         return $smpt;
@@ -148,6 +149,7 @@ class SmptRepositories
         $smpt->sender_mail = $request->sender_mail;
         $smpt->password = $request->password;
         $smpt->status = 'Approved';
+        $smpt->company_id = helper::companyId();
         $smpt->updated_by = Auth::user()->id;
         $smpt->save();
         return $smpt;

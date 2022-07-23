@@ -43,6 +43,7 @@ class TaskStatusController extends Controller
         $createRoute = "taskSetup.taskStatus.create";
         $columns = helper::getTableProperty();
         $datatableRoute = 'taskSetup.taskStatus.dataProcessingTaskStatus';
+        $companyInfo =   helper::companyInfo();
         return view('backend.layouts.common.datatable.datatable', get_defined_vars());
 
         }
@@ -67,6 +68,7 @@ class TaskStatusController extends Controller
         $implodeModal ="'inventory-setup-load-import-form','taskSetup.taskStatus.import','Import Task Category List','/backend/assets/excelFormat/taskSetup/taskStatus/taskStatus.csv','2'";
         $storeRoute = "taskSetup.taskStatus.store";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars()); 
     }
     /**
@@ -130,6 +132,7 @@ class TaskStatusController extends Controller
         $implodeModal ="'inventory-setup-load-import-form','taskSetup.taskStatus.import','Import Task Category List','/backend/assets/excelFormat/taskSetup/taskStatus/taskStatus.csv','2'";
         $storeRoute = "taskSetup.taskStatus.update";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars()); 
     }
 

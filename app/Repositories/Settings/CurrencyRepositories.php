@@ -72,7 +72,7 @@ class CurrencyRepositories
         }
 
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($currencys) {
             foreach ($currencys as $key => $currency) {

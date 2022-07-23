@@ -79,7 +79,8 @@ class FloorRepositories
         }
 
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
+   
         $data = array();
         if ($floors) {
             foreach ($floors as $key => $floor) {

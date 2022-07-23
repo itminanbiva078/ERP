@@ -78,7 +78,7 @@ class UnitRepositories
             })->count();
         }
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($productUnits) {
             foreach ($productUnits as $key => $productUnit) {

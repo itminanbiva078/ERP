@@ -33,7 +33,7 @@
                     </td>
                 @endif
                 @if(in_array('debit',$activeColumn))
-                 <td><input type="number" name="debit[]"  class="form-control debit decimal border-success border" id="" placeholder="0.00" value="{{ $value->debit}}"></td>
+                 <td><input type="number" name="debit[]"  class="form-control debit debitAmount decimal border-success border" id="debitAmount" placeholder="0.00" value="{{ $value->debit}}"></td>
                 @endif
                 @if(in_array('credit',$activeColumn))
                  <td><input type="number" name="credit[]"  class="form-control credit decimal border-success border" id="" placeholder="0.00" value="{{ $value->credit}}"></td>
@@ -72,7 +72,7 @@
 @section('scripts')
 <script>
     $(document).ready(function() {
-        setTimeout(function() { 
+        setTimeout(function() {
              calculation();
             $('.select2').select2();
           }, 1000);
@@ -90,7 +90,7 @@
             );
             j++;
             $('.select2').select2();
-           
+
             $(".decimal").on("click", function() {
                 $(this).select();
             });
@@ -103,7 +103,7 @@
                         selectedValue.push($(el).attr('value'));
                     });
                     // loop all the options
-                    $selects.find('option').each(function(idx, option) { 
+                    $selects.find('option').each(function(idx, option) {
                         // if the array contains the current option value otherwise we re-enable it.
                         if (selectedValue.indexOf($(option).attr('value')) > -1) {
                             // if the current option is the selected option, we skip it otherwise we disable it.
@@ -119,7 +119,7 @@
                 });
 
 
-                    $(document).on('change', '.debit_id', function() {      
+                    $(document).on('change', '.debit_id', function() {
                 const $selects2 = $(".debit_id");
                     const selectedValue = [];
                     // get all selected options and filter them to get only options with value attr (to skip the default options). After that push the values to the array.
@@ -129,7 +129,7 @@
                         selectedValue.push($(el).attr('value'));
                     });
                     // loop all the options
-                    $selects2.find('option').each(function(idx, option) { 
+                    $selects2.find('option').each(function(idx, option) {
                         // if the array contains the current option value otherwise we re-enable it.
                         if (selectedValue.indexOf($(option).attr('value')) > -1) {
                             // if the current option is the selected option, we skip it otherwise we disable it.
@@ -147,24 +147,20 @@
                     });
 
         $('tbody,tfoot').delegate( 'input.debit_id,input.debit,input.credit', 'keyup',  function() {
+
                 var tr = $(this).closest('tr');
-             
                 var debit_id = tr.find('input.debit_id').val();
                 var debit = tr.find('input.debit').val();
                 var credit = Number(tr.find('input.credit').val());
-          
-
                 $(this).removeClass("border border-danger");
                 $(this).addClass("border border-success");
-
                 calculation();
+
             });
 
         function calculation() {
-           
             var total_total_price = 0;
-
-
+            
             $('.amount').each(function(i, e) {
                 var total_price = parseFloat($(this).val() - 0);
                 total_total_price += total_price;
@@ -200,34 +196,133 @@
             })
         });
 
+        $('.account_val_id').on('change', function() {
+          
+            let account_id = $(this).find(":selected").attr('value');
+            $.ajax({
+                "url": "{{ route('accountSetup.chartOfAccount.getAccountBalance') }}",//new route
+                "dataType": "json",
+                "type": "GET",
+                "data": {
+                    "_token": "<?= csrf_token() ?>",
+                    "account_id": account_id,
+                }
+            }).done(function(data) {
+
+               $('.accountBalance').val(data);
+
+            })
+        });
+
+        $('#account_type_id').on('change', function() {
+     
+            let type_id = $(this).find(":selected").attr('value');
+            let payment_type = $(this).val();
+
+            if (payment_type == 4) {
+                $('.div_customer_id').removeClass("hide");
+                $('.div_supplier_id').addClass('hide');
+                $('.div_miscellaneous').addClass('hide');
+            } else if (payment_type == 5) {
+                $('.div_customer_id').addClass("hide");
+                $('.div_supplier_id').removeClass('hide');
+                $('.div_miscellaneous').addClass('hide');
+            } else {
+                $('.div_customer_id').addClass("hide");
+                $('.div_supplier_id').addClass('hide');
+                $('.div_miscellaneous').addClass('hide');
+            }
+
+           // alert(type_id);
+            $.ajax({
+                "url": "{{ route('accountSetup.chartOfAccount.getAccountHeadTypeWise') }}",//new route
+                "dataType": "json",
+                "type": "GET",
+                "data": {
+                    "_token": "<?= csrf_token() ?>",
+                    "type_id": type_id,
+                }
+            }).done(function(data) {
+            //    alert(data);
+               console.log(data.data);
+               $('.debit_id').html(data.data);
+
+            })
+        });
+
     });
 
 
-  
-    $(document).on('change', '.payment_type', function() {
+
+    $(document).on('change', '.payment_type,#account_type_id4', function() {
         let payment_type = $(this).val();
-  
-        alert(payment_type);
-        if (payment_type == 1) {
+
+        if (payment_type == 4) {
+          
             $('.div_customer_id').removeClass("hide");
             $('.div_supplier_id').addClass('hide');
             $('.div_miscellaneous').addClass('hide');
-        } else if (payment_type == 2) {
+        } else if (payment_type == 5) {
             $('.div_customer_id').addClass("hide");
             $('.div_supplier_id').removeClass('hide');
             $('.div_miscellaneous').addClass('hide');
         } else {
             $('.div_customer_id').addClass("hide");
             $('.div_supplier_id').addClass('hide');
-            //$('.div_miscellaneous').removeClass('hide');
+            $('.div_miscellaneous').addClass('hide');
         }
 
+            $.ajax({
+
+                "url":"{{ route('accountSetup.chartOfAccount.typeWiseList') }}",
+                "dataType": "json",
+                "type": "GET",
+                "data": {
+                    "_token": "<?= csrf_token() ?>",
+                    "payment_type": payment_type,
+                }
+            }).done(function(data) {
+               // console.log(data.data);
+                let select = $('.debit_id');
+                select.empty();
+                select.append(data.data);
+
+
+            })
 
     });
 
     $('.credit_id').change(function() {
     var credit_id  = $(this).val();
     $('.debit_id  option[value="'+credit_id  +'"]').prop('disabled', true);
+});
+
+
+
+
+$(document).on('keyup', '.debitAmount', function() {
+
+var thisPayment = 0;
+$('.debitAmount').each(function(i, e) {
+    var total_price = parseFloat($(this).val() - 0);
+    thisPayment += total_price;
+});
+
+var accountBalance = parseFloat($(".accountBalance").val()-0);
+if(accountBalance < thisPayment){
+      Swal.fire('Warning!', 'Payment should be less than account balance.', 'warning' );
+      $(this).val(accountBalance);
+      $("#debitAmount").val(0);
+      $(this).removeClass("bg-danger border-success");
+      $(this).removeClass("border border-success");
+      $(this).addClass("border border-danger");
+  }else{
+      $(this).removeClass("bg-danger border-success");
+      $(this).addClass("bg-primary border-success text-black");
+  }
+
+
+
 });
 
 </script>

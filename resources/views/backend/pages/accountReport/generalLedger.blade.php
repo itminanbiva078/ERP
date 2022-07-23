@@ -11,6 +11,7 @@ table#show_item tr td {
 </style>
 @endsection
 
+
 @section('navbar-content')
 <div class="content-header">
     <div class="container-fluid">
@@ -107,13 +108,13 @@ table#show_item tr td {
                                         <td class="text-right">@php echo helper::pricePrint($opening); @endphp</td>
                                     </tr>
                                     @endif
-                                    @php 
+                                    @php
                                     $balance=0;
                                     $debit=0;
                                     $credit=0;
                                     @endphp
                                     @foreach($reportResult as $key => $eachResult)
-                                        @php 
+                                        @php
                                         $balance+=($eachResult->debit-$eachResult->credit);
                                         $debit+=$eachResult->debit;
                                         $credit+=$eachResult->credit;
@@ -127,7 +128,7 @@ table#show_item tr td {
                                             <td>{{$eachResult->memo}}</td>
                                             <td class="text-right">{{helper::pricePrint($eachResult->debit)}}</td>
                                             <td class="text-right">{{helper::pricePrint($eachResult->credit)}}</td>
-                                            <td class="text-right">{{helper::pricePrint($balance+$opening)}}</td>
+                                            <td class="text-right">{{helper::pricePrint(abs($balance+$opening))}}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -136,11 +137,11 @@ table#show_item tr td {
                                         <td colspan="6" class="text-right">Grand-Total: </td>
                                         <td class="text-right">{{helper::pricePrint($debit)}}</td>
                                         <td class="text-right">{{helper::pricePrint($credit)}}</td>
-                                        <td class="text-right">{{helper::pricePrint($balance+$opening)}}</td>
+                                        <td class="text-right">{{helper::pricePrint(abs($balance+$opening))}}</td>
                                     </tr>
                                 </tfoot>
                             </table>
-                            @else 
+                            @else
                               <div class="alert alert-default" role="alert">
                                 Sorry Result not found!!
                               </div>

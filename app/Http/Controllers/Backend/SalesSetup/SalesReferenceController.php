@@ -42,6 +42,7 @@ class SalesReferenceController extends Controller
         $createRoute = "salesSetup.salesReference.create";
         $datatableRoute = 'salesSetup.salesReference.dataProcessingSalesReference';
         $columns = helper::getTableProperty();
+        $companyInfo =   helper::companyInfo();
         return view('backend.layouts.common.datatable.datatable', get_defined_vars());
     }
 
@@ -64,6 +65,7 @@ class SalesReferenceController extends Controller
         $implodeModal ="'inventory-setup-load-import-form','salesSetup.salesReference.import','Import Customer Media List','/backend/assets/excelFormat/salesSetup/salesReference/salesReference.csv','2'";
         $storeRoute = "salesSetup.salesReference.store";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
     /**
@@ -103,6 +105,7 @@ class SalesReferenceController extends Controller
         $implodeModal ="";
         $storeRoute = "salesSetup.salesReference.update";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
 

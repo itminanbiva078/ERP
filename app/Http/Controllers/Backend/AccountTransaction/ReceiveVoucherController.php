@@ -43,6 +43,7 @@ class ReceiveVoucherController extends Controller
     public function index(Request $request)
     {
        $title = 'Receive Voucher List';
+       $companyInfo =   helper::companyInfo();
        $datatableRoute = 'accountTransaction.receiveVoucher.dataProcessingReceiveVoucher';
        return view('backend.pages.accountTransaction.receiveVoucher.index', get_defined_vars());
     }
@@ -59,6 +60,7 @@ class ReceiveVoucherController extends Controller
      */
     public function create()
     {
+        $companyInfo =   helper::companyInfo();
         $accountLedger = helper::getLedgerHead();
         $title = 'Add New Receive Voucher';
         $formInput =  helper::getFormInputByRoute();
@@ -102,6 +104,7 @@ class ReceiveVoucherController extends Controller
             return redirect()->back();
         }
         $title = 'Receive Voucher Edit';
+        $companyInfo =   helper::companyInfo();
         $invoiceDetails = $editInfo->receiveVoucherLedger;
         $activeColumn = Helper::getQueryProperty('accountTransaction.receiveVoucher.details.create');
         $formInput =  helper::getFormInputByRoute();
@@ -120,8 +123,8 @@ class ReceiveVoucherController extends Controller
             session()->flash('error', 'Edit id must be numeric!!');
             return redirect()->back();
         }
-        $showInfo =   $this->systemService->details($id);
-        if (!$showInfo) {
+        $details  =   $this->systemService->details($id);
+        if (!$details) {
             session()->flash('error', 'Edit info is invalid!!');
             return redirect()->back();
         }
@@ -181,6 +184,22 @@ class ReceiveVoucherController extends Controller
     }
 
 
+    public function accountApproved(Request $request,$id, $status)
+    {
+        if (!is_numeric($id)) {
+            return response()->json($this->systemTransformer->invalidId($id), 200);
+        }
+        $detailsInfo =   $this->systemService->details($id);
+        if (!$detailsInfo) {
+            return response()->json($this->systemTransformer->notFound($detailsInfo), 200);
+        }
+        $statusInfo =  $this->systemService->accountApproved($id, $request);
+        if ($statusInfo) {
+           
+            return response()->json($this->systemTransformer->statusUpdate($statusInfo), 200);
+        }
+    }
+    
     /**
      * @param $slug
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View

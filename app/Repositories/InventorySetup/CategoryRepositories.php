@@ -79,7 +79,7 @@ class CategoryRepositories
         }
 
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($categorys) {
             foreach ($categorys as $key => $category) {

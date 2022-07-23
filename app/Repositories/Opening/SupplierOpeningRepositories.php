@@ -77,7 +77,7 @@ class SupplierOpeningRepositories
             })->count();
         }
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
 
         if ($supplierOpenings) {

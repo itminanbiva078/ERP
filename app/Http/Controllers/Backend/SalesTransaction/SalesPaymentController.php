@@ -45,6 +45,7 @@ class SalesPaymentController extends Controller
     public function index(Request $request)
     {
        $title = 'Sales Payment List';
+       $companyInfo =   helper::companyInfo();
        $datatableRoute = 'salesTransaction.salePayment.dataProcessingSalePayment';
        return view('backend.pages.salesTransaction.salesPayment.index', get_defined_vars());
     }
@@ -65,6 +66,7 @@ class SalesPaymentController extends Controller
     public function create()
     {
         $accountLedger = helper::getLedgerHead();
+        $companyInfo =   helper::companyInfo();
         $title = 'Add New Payment';
         $formInput =  helper::getFormInputByRoute();
         return view('backend.pages.salesTransaction.salesPayment.create', get_defined_vars());
@@ -73,9 +75,6 @@ class SalesPaymentController extends Controller
 
     public function customerDueVoucherList(Request $request)
     {
-
-      
-
         $collectionType = $request->collection_type;
         if($collectionType == 'Pos Sale'): 
             $dueVoucherList = $this->systemService->dueVoucherList($request->customer_id,17);
@@ -103,9 +102,11 @@ class SalesPaymentController extends Controller
         } catch (ValidationException $e) {
             session()->flash('error', 'Validation error !!');
             return redirect()->back()->withErrors($e->errors())->withInput();
+           
         }
-
+      
         $result = $this->systemService->store($request);
+      
         if (is_integer($result)) {
             session()->flash('success', 'Data successfully save!!');
         } else {
@@ -137,6 +138,8 @@ class SalesPaymentController extends Controller
             return redirect()->back();
         }
         $title = 'Sales Payment Details';
+        $companyInfo =   helper::companyInfo();
+
         return view('backend.pages.salesTransaction.salesPayment.show', get_defined_vars());
     }
 

@@ -1,6 +1,6 @@
 @extends('backend.layouts.master')
 @section('title')
-General Ledger Report
+Sales Ledger
 @endsection
 
 @section('styles')
@@ -93,12 +93,15 @@ table#show_item tr td {
                         @elseif($report_type == "Top Product Sales")
                            @include('backend.pages.salesReport.salesReportPartials.topProductSales',['opening' => $opening,'reports' =>$reports,'supplier_id' => $product_id])
                         @elseif($report_type == "Top Customer Sales")
-
                            @include('backend.pages.salesReport.salesReportPartials.topCustomerSales',['opening' => $opening,'reports' =>$reports,'supplier_id' => $product_id])
+                        @elseif($report_type == "Sales Loan Ledger")
+                           @include('backend.pages.salesReport.salesReportPartials.salesLoanLedger',['opening' => $opening,'reports' =>$reports,'supplier_id' => $product_id])
+                        @elseif($report_type == "Net Sales Ledger")
+                           @include('backend.pages.salesReport.salesReportPartials.salesLedgerWithReturn',['opening' => $opening,'reports' =>$reports,'supplier_id' => $product_id])
                         @else 
                         <div class="alert alert-default" role="alert">
                             Sorry Result not found!!
-                          </div>
+                        </div>
                         @endif
                            
                         </div>

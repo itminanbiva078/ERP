@@ -42,6 +42,7 @@ class VehicleController extends Controller
         $createRoute = "settings.vehicle.create";
         $datatableRoute = 'settings.vehicle.dataProcessingVehicles';
         $columns = helper::getTableProperty();
+        $companyInfo =   helper::companyInfo();
         return view('backend.layouts.common.datatable.datatable', get_defined_vars());
 
     }
@@ -66,6 +67,7 @@ class VehicleController extends Controller
         $implodeModal ="";
         $storeRoute = "settings.vehicle.store";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
     /**
@@ -105,6 +107,7 @@ class VehicleController extends Controller
         $implodeModal ="";
         $storeRoute = "settings.vehicle.update";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
 

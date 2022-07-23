@@ -21,7 +21,7 @@ E<table class="table table-striped table-bordered">
         $tbalance=0;
         @endphp
         @foreach($reports as $key => $report)
-           
+        
             <tr>
                 <td>{{$key+1}}</td>
                 <td>{{$report->date ?? ''}}</td>
@@ -37,27 +37,16 @@ E<table class="table table-striped table-bordered">
                 <td >{{$report->storeName ?? ''}}</td>
                 <td  class="text-right">{{helper::pricePrint($report->unit_price ?? '')}}</td>
                 <td  class="text-right">{{helper::pricePrint($report->total_price ?? '')}}</td>
-
-
-                
-                    <td class="color3 text-right">
-                        
-                      
-                        
-                                {{$report->quantity ?? ''}}
-                                
-                                @php 
-                                $sin+=$report->quantity;
-                                @endphp
+                <td class="color3 text-right">
                        
-                    </td>
-                   
-              
-                 
+                        {{$report->quantity ?? ''}}
+                        
+                        @php 
+                        $sin+=$report->quantity;
+                        @endphp
                        
-                
-              
-              <td class="text-right color1">{{helper::pricePrint($sin)}}</td>
+                </td>
+                  <td class="text-right color1">{{helper::pricePrint($sin)}}</td>
             </tr>
         @endforeach
     </tbody>

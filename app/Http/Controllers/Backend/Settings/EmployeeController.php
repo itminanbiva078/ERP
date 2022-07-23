@@ -41,6 +41,7 @@ class EmployeeController extends Controller
         $createRoute = "settings.employee.create";
         $datatableRoute = 'settings.employee.dataProcessingEmployee';
         $columns = helper::getTableProperty();
+        $companyInfo =   helper::companyInfo();
         return view('backend.layouts.common.datatable.datatable', get_defined_vars());
 
     }
@@ -65,6 +66,7 @@ class EmployeeController extends Controller
         $implodeModal ="'inventory-setup-load-import-form','settings.employee.import','Import Employee List','/backend/assets/excelFormat/settings/employee/employee.csv','2'";
         $storeRoute = "settings.employee.store";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
     /**
@@ -129,6 +131,7 @@ class EmployeeController extends Controller
         $implodeModal ="'inventory-setup-load-import-form','settings.employee.import','Import Employee List','/backend/assets/excelFormat/settings/employee/employee.csv','2'";
         $storeRoute = "settings.employee.update";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
 

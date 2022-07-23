@@ -43,6 +43,7 @@ class ServiceInvoiceController extends Controller
     public function index(Request $request)
     {
        $title = 'Service Invoice List';
+       $companyInfo =   helper::companyInfo();
        $datatableRoute = 'serviceTransaction.serviceInvoice.dataProcessingServiceInvoice';
        return view('backend.pages.serviceTransaction.serviceInvoice.index', get_defined_vars());
     }
@@ -60,6 +61,7 @@ class ServiceInvoiceController extends Controller
     public function create()
     {
         $title = 'Add New Service Invoice';
+        $companyInfo =   helper::companyInfo();
         $formInput =  helper::getFormInputByRoute();
         $formInputDetails =  helper::getFormInputByRoute('serviceTransaction.serviceInvoice.details.create');
         return view('backend.pages.serviceTransaction.serviceInvoice.create', get_defined_vars());
@@ -111,7 +113,7 @@ class ServiceInvoiceController extends Controller
             return redirect()->back();
         }
         $title = 'Service Invoice Edit';
-
+        $companyInfo =   helper::companyInfo();
         $invoiceDetails = $editInfo->serviceInvoiceDetails;
         $services = $this->serviceService->getActiveService();
         $activeColumn = Helper::getQueryProperty('serviceTransaction.serviceInvoice.details.create');

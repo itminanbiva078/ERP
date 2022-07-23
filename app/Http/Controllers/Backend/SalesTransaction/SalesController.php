@@ -43,6 +43,7 @@ class SalesController extends Controller
     public function index(Request $request)
     {
        $title = 'Sales List';
+       $companyInfo =   helper::companyInfo();
        $datatableRoute = 'salesTransaction.sales.dataProcessingSales';
        return view('backend.pages.salesTransaction.sales.index', get_defined_vars());
     }
@@ -64,9 +65,8 @@ class SalesController extends Controller
         $title = 'Add New Sales';
         $formInput =  helper::getFormInputByRoute();
         $activeColumn = Helper::getQueryProperty('salesTransaction.sales.details.create');
-      
+        $companyInfo =   helper::companyInfo();
         $formInputDetails =  helper::getFormInputByRoute('salesTransaction.sales.details.create');
-     
         $batchList = $this->systemService->getActiveBatch();
         return view('backend.pages.salesTransaction.sales.create', get_defined_vars());
     }
@@ -130,7 +130,7 @@ class SalesController extends Controller
             return redirect()->back();
         }
         $title = 'Sales Edit';
-
+        $companyInfo =   helper::companyInfo();
         $invoiceDetails = $editInfo->salesDetails;
         $products = $this->productService->getActiveProduct();
         $activeColumn = Helper::getQueryProperty('salesTransaction.sales.details.create');

@@ -1,5 +1,6 @@
 @php
-$columns = Helper::getTableProperty();
+$columns = Helper::getQueryPropertyForDataTable();
+
 @endphp
 <script type="text/javascript">
 let table = $('#systemDatatable').DataTable({

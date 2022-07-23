@@ -30,6 +30,7 @@ use App\Models\ServiceCategory;
 use App\Models\Stock;
 use App\Models\StockSummary;
 use App\Models\Store;
+use App\Models\Supplier;
 use Illuminate\Support\Facades\Route;
 use App\Rules\PhoneNumberValidationRules;
 use DB;
@@ -59,7 +60,7 @@ class Helper
      */
     public static function getRoleAccessNavigation()
     {
-        
+
         $roleInfo =  User::select('user_roles.navigation_id')
             ->join('role_accesses', 'users.id', 'role_accesses.user_id')
             ->join('user_roles', 'user_roles.id', 'role_accesses.role_id')
@@ -102,9 +103,9 @@ class Helper
         $tableProperty = DB::table("company_resources")->select("form_input")->where('table',$table)->first();
         $tableArray = json_decode($tableProperty->form_input);
         $input=array();
-        foreach($tableArray as $key => $eachArray): 
+        foreach($tableArray as $key => $eachArray):
                 if(in_array($eachArray->name,$columns)){
-                    
+
                     array_push($input,$eachArray);
                 }
         endforeach;
@@ -137,41 +138,33 @@ class Helper
     public static function getFormInput_old($navigation_id)
     {
         $formInput = CompanyResource::where('navigation_id', $navigation_id)->where('company_category_id',self::companyId())->first();
-        if(!empty($formInput)): 
+        if(!empty($formInput)):
             return json_decode($formInput->form_input);
-        else: 
+        else:
             return false;
         endif;
-        
-       
+
+
     }
 
     public static function getFormInput($navigation_id)
     {
-
-
        $formInput = CompanyResource::where('navigation_id', $navigation_id)->where('company_category_id',self::companyId())->first();
-    
 
         $filterFrom = array();
         if(!empty($formInput->form_input)){
-         
+
             $formStructures = json_decode($formInput->form_input);
         }else{
             $formStructures = array();
         }
-
-       
-
         if(!empty($formStructures)):
-            foreach($formStructures as $key => $eachStructure): 
+            foreach($formStructures as $key => $eachStructure):
                 if($eachStructure->inputShow == true):
                     if($eachStructure->name == 'branch_id' || $eachStructure->name == 'from_branch_id' || $eachStructure->name == 'to_branch_id'):
-                            
-                           
+
                         if(self::isBranchEnable() && self::branchIsActive()):
 
-                           
                             array_push($filterFrom, $eachStructure);
                             endif;
                     elseif($eachStructure->name == 'store_id' || $eachStructure->name == 'from_store_id' || $eachStructure->name == 'to_store_id'):
@@ -185,15 +178,13 @@ class Helper
 
             endforeach;
         endif;
-
-
        return $filterFrom ?? true;
     }
 
     public static function getFormInputForQuery($navigation_id)
     {
        $formInput = CompanyResource::where('navigation_id', $navigation_id)->where('company_category_id',self::companyId())->first();
-       
+
         $filterFrom = array();
         if(!empty($formInput->form_input)){
             $formStructures = json_decode($formInput->form_input);
@@ -201,8 +192,8 @@ class Helper
             $formStructures = array();
         }
         if(!empty($formStructures)):
-            foreach($formStructures as $key => $eachStructure): 
-             
+            foreach($formStructures as $key => $eachStructure):
+
                     if($eachStructure->name == 'branch_id' || $eachStructure->name == 'from_branch_id' || $eachStructure->name == 'to_branch_id'):
                             if(self::isBranchEnable() && self::branchIsActive()):
                             array_push($filterFrom, $eachStructure);
@@ -236,15 +227,35 @@ class Helper
 
 
 
-
-    public static function getQueryProperty($customeRoute = null)
+    public static function getQueryPropertyForDataTable($customeRoute = null)
     {
-
         $formInput = self::getFormInputForQuery(self::getCurrentNavigationId($customeRoute));
       
         $property = array();
         foreach ($formInput as $key => $eachInput) :
-         
+            if ($eachInput->tableshow == true) :
+                if($eachInput->name == 'branch_id'):
+                    if(self::isBranchEnable() && self::branchIsActive()):
+                        array_push($property, $eachInput->name);
+                    endif;
+                elseif($eachInput->name == 'store_id'):
+                    if(self::isStoreEnable() && self::storeIsActive()):
+                        array_push($property, $eachInput->name);
+                    endif;
+                else:
+                    array_push($property, $eachInput->name);
+                endif;
+            endif;
+        endforeach;
+        return $property;
+    }
+
+    public static function getQueryProperty($customeRoute = null)
+    {
+        $formInput = self::getFormInputForQuery(self::getCurrentNavigationId($customeRoute));
+        $property = array();
+        foreach ($formInput as $key => $eachInput) :
+
             if($eachInput->name == 'branch_id'):
                 if(self::isBranchEnable() && self::branchIsActive()):
                 array_push($property, $eachInput->name);
@@ -269,14 +280,14 @@ class Helper
             if ($eachInput->tableshow == true) :
                 if($eachInput->name == 'branch_id'):
                     if(self::isBranchEnable() && self::branchIsActive()):
-                        array_push($property, $eachInput->name);
+                        array_push($property, $eachInput->label);
                     endif;
                 elseif($eachInput->name == 'store_id'):
                     if(self::isStoreEnable() && self::storeIsActive()):
-                        array_push($property, $eachInput->name);
+                        array_push($property, $eachInput->label);
                     endif;
                 else:
-                    array_push($property, $eachInput->name);
+                    array_push($property, $eachInput->label);
                 endif;
             endif;
         endforeach;
@@ -286,19 +297,27 @@ class Helper
 
     public static function getVoucher($relationShip){
 
-
         if(!empty($relationShip->purchase)):
-            $voucherInfo = '<a href="' . route('inventoryTransaction.purchases.show', $relationShip->purchase->id) . '" show_id="' . $relationShip->purchase->id . '" title="Details" class="btn btn-xs btn-default"><i class="fa fa-search-plus"></i> '.$relationShip->purchase->voucher_no.'</a>';
+            $voucherInfo = '<a href="' . route('inventoryTransaction.purchases.show', $relationShip->purchase->id) . '" show_id="' . $relationShip->purchase->id . '" title="Purchases Voucher Details" class="btn btn-xs btn-default"><i class="fa fa-search-plus"></i> '.$relationShip->purchase->voucher_no.'</a>';
         elseif($relationShip->sale):
-        $voucherInfo = '<a href="' . route('salesTransaction.sales.show', $relationShip->sale->id) . '" show_id="' . $relationShip->sale->id . '" title="Details" class="btn btn-xs btn-default "><i class="fa fa-search-plus"></i> '.$relationShip->sale->voucher_no.'</a>';
+        $voucherInfo = '<a href="' . route('salesTransaction.sales.show', $relationShip->sale->id) . '" show_id="' . $relationShip->sale->id . '" title="Sale Voucher Details" class="btn btn-xs btn-default "><i class="fa fa-search-plus"></i> '.$relationShip->sale->voucher_no.'</a>';
        elseif($relationShip->paymentVoucher):
-        $voucherInfo = '<a href="' . route('accountTransaction.paymentVoucher.show', $relationShip->paymentVoucher->id) . '" show_id="' . $relationShip->paymentVoucher->id . '" title="Details" class="btn btn-xs btn-default  "><i class="fa fa-search-plus"></i> '.$relationShip->paymentVoucher->voucher_no.'</a>';
+        $voucherInfo = '<a href="' . route('accountTransaction.paymentVoucher.show', $relationShip->paymentVoucher->id) . '" show_id="' . $relationShip->paymentVoucher->id . '" title="Payment Voucher Details" class="btn btn-xs btn-default  "><i class="fa fa-search-plus"></i> '.$relationShip->paymentVoucher->voucher_no.'</a>';
         
        elseif($relationShip->receiveVoucher):
-        $voucherInfo = '<a href="' . route('accountTransaction.receiveVoucher.show', $relationShip->receiveVoucher->id) . '" show_id="' . $relationShip->receiveVoucher->id . '" title="Details" class="btn btn-xs btn-default  "><i class="fa fa-search-plus"></i> '.$relationShip->receiveVoucher->voucher_no.'</a>';
+        $voucherInfo = '<a href="' . route('accountTransaction.receiveVoucher.show', $relationShip->receiveVoucher->id) . '" show_id="' . $relationShip->receiveVoucher->id . '" title="Receive Voucher Details" class="btn btn-xs btn-default  "><i class="fa fa-search-plus"></i> '.$relationShip->receiveVoucher->voucher_no.'</a>';
         
        elseif($relationShip->journalVoucher):
-        $voucherInfo = '<a href="' . route('accountTransaction.journalVoucher.show', $relationShip->journalVoucher->id) . '" show_id="' . $relationShip->journalVoucher->id . '" title="Details" class="btn btn-xs btn-default  "><i class="fa fa-search-plus"></i> '.$relationShip->journalVoucher->voucher_no.'</a>';
+        $voucherInfo = '<a href="' . route('accountTransaction.journalVoucher.show', $relationShip->journalVoucher->id) . '" show_id="' . $relationShip->journalVoucher->id . '" title="Journal Voucher Details" class="btn btn-xs btn-default  "><i class="fa fa-search-plus"></i> '.$relationShip->journalVoucher->voucher_no.'</a>';
+       elseif($relationShip->flatSale):
+        $voucherInfo = '<a href="' . route('projectTransaction.flatSale.show', $relationShip->flatSale->id) . '" show_id="' . $relationShip->flatSale->id . '" title="Flat Sale Voucher Details" class="btn btn-xs btn-default  "><i class="fa fa-search-plus"></i> '.$relationShip->flatSale->voucher_no.'</a>';
+        
+       elseif($relationShip->materialIssue):
+        $voucherInfo = '<a href="' . route('salesTransaction.materialIssue.show', $relationShip->materialIssue->id) . '" show_id="' . $relationShip->materialIssue->id . '" title="Flat Sale Voucher Details" class="btn btn-xs btn-default  "><i class="fa fa-search-plus"></i> '.$relationShip->materialIssue->voucher_no.'</a>';
+        
+       elseif($relationShip->inventoryAdjust):
+        $voucherInfo = '<a href="' . route('inventoryTransaction.inventoryAdjustment.show', $relationShip->inventoryAdjust->id) . '" show_id="' . $relationShip->inventoryAdjust->id . '" title="Flat Sale Voucher Details" class="btn btn-xs btn-default  "><i class="fa fa-search-plus"></i> '.$relationShip->inventoryAdjust->voucher_no.'</a>';
+        
        else: 
         $voucherInfo='N/A';
        endif;
@@ -307,13 +326,8 @@ class Helper
 
     }
 
-
-
     public static function getAvailableRoom($request)
     {
-
-
-
         $dateRange = explode("-",$request->daterange);
         $from_date = date('Y-m-d',strtotime($dateRange[0]));
         $to_date = date('Y-m-d',strtotime($dateRange[1]));
@@ -322,48 +336,51 @@ class Helper
         $totalPerson = $adult+$child;
         $totalPerson = $totalPerson ?? 1;
 
-
-
         $sql = "select
         p.id
         from
             products p
             LEFT JOIN product_images as pi on pi.product_id = p.id
             LEFT JOIN product_details as pd on pd.product_id = p.id
-            LEFT JOIN 
-            ( select 
+            LEFT JOIN
+            ( select
                     b.room_id
-                    from 
+                    from
                     booking_details b,
                     ( select @parmStartDate := '$from_date',
-                        @parmEndDate := '$to_date'  ) sqlvars 
-                    where 
+                        @parmEndDate := '$to_date'  ) sqlvars
+                    where
                         b.exit_date >= @parmStartDate
                     AND b.entry_date <= @parmEndDate
-                    AND (  timestampdiff( day, b.entry_date, @parmEndDate ) 
+                    AND (  timestampdiff( day, b.entry_date, @parmEndDate )
                         * timestampdiff( day, @parmStartDate, b.exit_date  )) > 0 ) Occupied
             ON p.id = Occupied.room_id
         where pd.number_of_room >= '$totalPerson' and
         Occupied.room_id IS NULL AND p.type_id='Rooms';";
         $result =  DB::SELECT($sql);
         $allRoomId=array();
-        foreach($result as $key => $value): 
+        foreach($result as $key => $value):
             array_push($allRoomId,$value->id);
         endforeach;
         $result = Product::with('productDetails','productImages')->whereIn('id', $allRoomId)->get();
          return $result;
-       
-        
+
+
     }
 
 
     public static function getVoucherBy($relationShip){
 
-        if(!empty($relationShip->purchase->supplier)):
+
+
+      //  dd($relationShip);
+
+
+        if(!empty($relationShip->purchase->supplier) && $relationShip->form_id == 4):
             $voucherBy = $relationShip->purchase->supplier->name ?? '';
-        elseif($relationShip->sale):
+        elseif($relationShip->sale  && $relationShip->form_id == 5):
             $voucherBy = $relationShip->sale->customer->name ?? '';
-        elseif($relationShip->paymentVoucher):
+        elseif($relationShip->paymentVoucher  && $relationShip->form_id == 2):
               /*inside nested condition start*/
                     if($relationShip->paymentVoucher->customer){
                         $voucherBy = $relationShip->paymentVoucher->name ?? '';
@@ -371,7 +388,7 @@ class Helper
                         $voucherBy = $relationShip->paymentVoucher->supplier->name ?? '';
                     }
               /*inside nested condition start*/
-        elseif($relationShip->receiveVoucher):
+        elseif($relationShip->receiveVoucher  && $relationShip->form_id == 3):
             /*inside nested condition start*/
                 if($relationShip->receiveVoucher->customer){
                     $voucherBy = $relationShip->receiveVoucher->name ?? '';
@@ -379,13 +396,13 @@ class Helper
                     $voucherBy = $relationShip->receiveVoucher->supplier->name ?? '';
                 }
           /*inside nested condition start*/
-       elseif($relationShip->journalVoucher):
+       elseif($relationShip->journalVoucher  && $relationShip->form_id == 1):
         $voucherBy='N/A';
-        else: 
+        else:
         $voucherBy='N/A';
        endif;
         return $voucherBy;
-        
+
 
     }
 
@@ -416,7 +433,7 @@ class Helper
     public static function isErrorUpdate($request, $id)
     {
         $formInput = self::getFormInput(self::getCurrentNavigationId());
-       
+
         foreach ($formInput as $key => $value) :
             if (!empty($value->validation)) :
                 if ($value->name == 'phone' && $value->unique == true) :
@@ -439,11 +456,9 @@ class Helper
      */
     public static function getCurrentNavigationId($customRoute = null)
     {
-
-       
         if (is_null($customRoute)) {
             $routeChildInfo =  Navigation::where('route', Route::currentRouteName())->first();
-         
+
         } else {
             $routeChildInfo =  Navigation::where('route', $customRoute)->first();
         }
@@ -575,7 +590,7 @@ class Helper
 
     public static function checkDateType($userDate){
 
-        if(preg_match("/^[0-9]{1,2}\\/[0-9]{2}\\/[0-9]{4}$/", $userDate) 
+        if(preg_match("/^[0-9]{1,2}\\/[0-9]{2}\\/[0-9]{4}$/", $userDate)
         OR preg_match("/^[0-9]{1,2}\\/[0-9]{2}\\/[0-9]{4} [0-9]{2}\\:[0-9]{2}\\:[0-9]{2}$/", $userDate)) {
             return true;
         }else {
@@ -599,17 +614,17 @@ class Helper
             return date('Y-m-d');
         }
 
-       
+
     }
 
     public static function mysql_date($userDate=null){
 
-            if(!empty($userDate)): 
+            if(!empty($userDate)):
                 return date('Y-m-d',strtotime($userDate));
-            else: 
+            else:
                 return date('Y-m-d');
             endif;
-           
+
     }
 
 
@@ -646,15 +661,15 @@ class Helper
                 $dateFormat = 'Y,m,d';
             elseif($dateSetupFormat == 'MmmDDYYYY'):
                 $dateFormat = 'F j, Y';
-            else: 
+            else:
                 $dateFormat = 'Y-m-d';
-            endif;  
+            endif;
 
             return $dateFormat;
-        else: 
+        else:
             return 'Y-m-d';
         endif;
-       
+
     }
     public static function get_js_date_format(){
             //get date format
@@ -675,15 +690,15 @@ class Helper
                 $dateFormat = 'YYYY,MM,DD';
             elseif($dateSetupFormat == 'MmmDDYYYY'):
                 $dateFormat = 'MMMM D, YYYY';
-            else: 
+            else:
                 $dateFormat = 'YYYY-MM-DD';
-            endif;  
+            endif;
 
             return $dateFormat;
-        else: 
+        else:
             return 'YYYY-MM-DD';
         endif;
-       
+
     }
     public static function isPurchasesApprovalAuto(){
       $approbalValue =   self::geSetupValue("inventory_approval");
@@ -735,7 +750,7 @@ class Helper
       return $defaultBranch->id ?? 0;
     }
 
-    
+
     public static function getDefaultStore(){
        $defaultStore =  Store::where('company_id',self::companyId())->where('is_default',"Yes")->first();
       return $defaultStore->id ?? 0;
@@ -761,9 +776,7 @@ class Helper
     }
 
 
-    public function getSalesReturnAmount($sale_id){
-
-      
+    public static function getSalesReturnAmount($sale_id){
 
        $totalAmount =   SaleReturn::where('sale_id',$sale_id)->company()->groupBy('sale_id')->selectRaw('*, sum(grand_total) as totalAmount')->first();
        return $totalAmount->totalAmount ?? 0;
@@ -798,8 +811,8 @@ class Helper
 
     }
 
-    
-  
+
+
 
     public static function geSetupValue($columnName = null)
     {
@@ -808,7 +821,7 @@ class Helper
         else:
             $generalInfo = GeneralSetup::where('company_id',self::companyId())->first();
         endif;
-       
+
         return $generalInfo->$columnName ?? '';
     }
 
@@ -835,9 +848,9 @@ class Helper
       $result = DB::table($table)->where($column,$value)->where('company_id',self::companyId())->first();
       if($result):
         return $result->$pickValue;
-      else: 
+      else:
         return true;
-      endif; 
+      endif;
     }
 
     public static function getActiveBatch($productId=null){
@@ -849,7 +862,7 @@ class Helper
         ->groupBy("batch_no")
         ->havingRaw('quantity > 0')->get();
         return $batch;
-  
+
     }
 
     public static function getActiveBatchStock($productId=null,$batchNo=null){
@@ -863,15 +876,15 @@ class Helper
         ->company()
         ->havingRaw('quantity > 0')->first();
         return $batch->quantity ?? 0;
-  
+
     }
 
     public static function getProductStock($productId=null,$batchNo=null){
 
        $mrrIsActive =   self::getGeneralData("purchases_mrr");
-        if($mrrIsActive == "Yes"): 
+        if($mrrIsActive == "Yes"):
             $batchNo = $batchNo;
-        else: 
+        else:
             $batchNo = null;
         endif;
        $quantity = StockSummary::select("quantity")
@@ -888,43 +901,82 @@ class Helper
     }
 
  public static function getLedgerType($type){
-    if($type == 'in'): 
+    if($type == 'in'):
         $ltype = 'Purchases';
-    elseif($type == 'tin'): 
+    elseif($type == 'tin'):
         $ltype = 'Transfer Received';
-    elseif($type == 'rin'): 
+    elseif($type == 'rin'):
         $ltype = 'Sale Return';
-    elseif($type == 'out'): 
+    elseif($type == 'out'):
         $ltype = 'Sales';
-    elseif($type == 'tout'): 
+    elseif($type == 'tout'):
         $ltype = 'Transfer Out';
-    elseif($type == 'rout'): 
+    elseif($type == 'rout'):
         $ltype = 'Purchases Return';
-    else: 
+    elseif($type == 'lout'):
+        $ltype = 'Sales Loan';
+    elseif($type == 'lin'):
+        $ltype = 'Sales Loan Return';
+    else:
         $ltype = 'N/A';
     endif;
     return $ltype;
  }
 
-    public static function productAvg($product_id,$batch_id){
+    public static function productAvg($product_id,$batch_id=null){
 
-       $productAvgPrice =  Stock::selectRaw('sum(total_price)/sum(quantity) as avgPrice')->company()->where('product_id',$product_id)->where('batch_no',$batch_id)->first();
+        if(!empty($batch_id)):
+            $productAvgPrice =  Stock::selectRaw('sum(total_price)/sum(quantity) as avgPrice')->company()->where('type','in')->where('product_id',$product_id)->where('batch_no',$batch_id)->first();
+        else:
+            $productAvgPrice =  Stock::selectRaw('sum(total_price)/sum(quantity) as avgPrice')->company()->where('type','in')->where('product_id',$product_id)->first();
+        endif;
         return $productAvgPrice->avgPrice ?? 0;
     }
 
     public static function getLedgerHead()
     {
         $ledgerParent = ChartOfAccount::select('parent_id')->where('is_posted', 1)->distinct()->get();
+      
         $ledgerAccount = array();
         foreach ($ledgerParent as $key => $value) {
             $index['parent'] = ChartOfAccount::select('name', 'id')->where('id', $value->parent_id)->first();
             $index['parentChild'] = ChartOfAccount::select('name', 'id')->where('parent_id', $value->parent_id)->where('is_posted', 1)->get();
+           
             $ledgerAccount[] = $index;
         }
         return $ledgerAccount;
     }
 
-   
+    public static function getLedgerHeadTypWise($type)
+    {
+        $ledgerParent = ChartOfAccount::select('parent_id')->where('is_posted', 1)->distinct()->get();
+        $ledgerAccount = array();
+        foreach ($ledgerParent as $key => $value) {
+            $index['parent'] = ChartOfAccount::select('name', 'id')->where('id', $value->parent_id)->first();
+            $index['parentChild'] = ChartOfAccount::select('name', 'id')->where('parent_id', $value->parent_id)->where('account_type_id',$type)->where('is_posted', 1)->get();
+           
+            $ledgerAccount[] = $index;
+        }
+        return $ledgerAccount;
+    }
+
+
+    public static function getPaymentLedgerHead()
+    {
+        
+        $parentId=array(2,8);
+        $ledgerParent = ChartOfAccount::select('parent_id')->whereIn('parent_id',$parentId)->where('is_posted', 1)->distinct()->get();
+        $notInValue=array(12,13,14,15,16,3);
+        $ledgerAccount = array();
+        foreach ($ledgerParent as $key => $value) {
+            $index['parent'] = ChartOfAccount::select('name', 'id')->where('id', $value->parent_id)->first();
+            $index['parentChild'] = ChartOfAccount::select('name', 'id')->whereNotIn('id',$notInValue)->where('parent_id', $value->parent_id)->where('is_posted', 1)->get();
+            $ledgerAccount[] = $index;
+        }
+        return $ledgerAccount;
+    }
+
+
     public static function priceCalType($price){
        $calculateType = self::geSetupValue('price_calculate_type');
        $afterTypeCal = 0;
@@ -942,21 +994,21 @@ class Helper
       return number_format(helper::priceCalType($price), 2, '.', $separateType);  // Outputs -> 105.00
 
     }
- 
+
     public static function getColspan($activeColumn,$extraParam=null)
     {
-        
+
         if(count($activeColumn) == 7){
             echo 5+$extraParam;
         }else if(count($activeColumn) == 6){
             echo 4+$extraParam;
-        
+
         }else if(count($activeColumn) == 5){
             echo 3+$extraParam;
-        
+
         }else if(count($activeColumn) == 4){
             echo 2+$extraParam;
-        
+
         }else if(count($activeColumn) == 3){
             echo 1+$extraParam;
         }else{
@@ -987,7 +1039,7 @@ class Helper
         }else{
             return false;
         }
-  
+
       }
       public static function isStoreEnable(){
         $companyCategory =   CompanyCategory::where('id',self::companyId())->first();
@@ -996,7 +1048,7 @@ class Helper
         }else{
             return false;
         }
-  
+
       }
       public static function isInventoryAdjustAuto(){
         $approbalValue =   self::geSetupValue("inventory_adjust_approval");
@@ -1005,9 +1057,36 @@ class Helper
         }else{
             return false;
         }
-  
       }
-   
+
+      public static function isPaymentVoucherAuto(){
+        $approbalValue =   self::geSetupValue("payment_voucher_approval");
+        if($approbalValue == "Auto Approval"){
+          return true;
+        }else{
+            return false;
+        }
+      }
+
+      public static function isReceiveVoucherAuto(){
+        $approbalValue =   self::geSetupValue("receive_voucher_approval");
+        if($approbalValue == "Auto Approval"){
+          return true;
+        }else{
+            return false;
+        }
+      }
+
+      public static function isJournalVoucherAuto(){
+        $approbalValue =   self::geSetupValue("journal_voucher_approval");
+        if($approbalValue == "Auto Approval"){
+          return true;
+        }else{
+            return false;
+        }
+      }
+
+
     public static function branchIsActive(){
         $approbalValue =   self::geSetupValue("is_branch");
         if($approbalValue == 'No'){
@@ -1015,7 +1094,7 @@ class Helper
         }else{
             return true;
         }
-  
+
       }
 
 
@@ -1026,7 +1105,7 @@ class Helper
         }else{
             return false;
         }
-  
+
       }
 
     public static function statusBar($status)
@@ -1050,7 +1129,7 @@ class Helper
         return $statusBar;
     }
 
-    
+
     public static function getOrderList(){
        $pendingRequsitionList =  PurchasesOrder::select('id','voucher_no as name')->where('purchases_status','Pending')->where('order_status','Approved')->get();
        return $pendingRequsitionList;
@@ -1063,45 +1142,45 @@ class Helper
 
 
  public static function getRequisitionList($editInfo=null,$updateValue=null){
-        if(!empty($updateValue) && isset($updateValue->id)): 
+        if(!empty($updateValue) && isset($updateValue->id)):
             $pendingRequsitionList =  PurchaseRequisition::select('id','voucher_no as name')->where('id',$updateValue->requisition_id)->get();
-        else: 
+        else:
             $pendingRequsitionList =  PurchaseRequisition::select('id','voucher_no as name')->where('purchases_order_status','Pending')->where('requisition_status','Approved')->get();
         endif;
        return $pendingRequsitionList;
     }
-    
+
     public static function getSalesQuatationList($editInfo=null,$updateValue=null){
-        if(!empty($updateValue) && isset($updateValue->id)): 
+        if(!empty($updateValue) && isset($updateValue->id)):
             $pendingSalesQuatation =  SalesQuatation::select('id','voucher_no as name')->where('id',$updateValue->sales_quatation_id)->get();
-        else: 
+        else:
             $pendingSalesQuatation =  SalesQuatation::select('id','voucher_no as name')->where('sales_status','Pending')->where('quatation_status','Approved')->get();
         endif;
        return $pendingSalesQuatation;
     }
 
     public static function getServiceQuatationList($editInfo=null,$updateValue=null){
-        if(!empty($updateValue) && isset($updateValue->id)): 
+        if(!empty($updateValue) && isset($updateValue->id)):
             $pendingServiceQuatation =  ServiceQuatation::select('id','voucher_no as name')->where('id',$updateValue->service_quatation_id)->get();
-        else: 
+        else:
             $pendingServiceQuatation =  ServiceQuatation::select('id','voucher_no as name')->where('service_status','Pending')->where('quatation_status','Approved')->get();
         endif;
        return $pendingServiceQuatation;
     }
 
     public static function getPurchasesList($editInfo=null,$updateValue=null){
-        if(!empty($updateValue) && isset($updateValue->id)): 
+        if(!empty($updateValue) && isset($updateValue->id)):
             $pendingPurchases =  Purchases::select('id','voucher_no as name')->where('id',$updateValue->purchases_id)->get();
-        else: 
+        else:
             $pendingPurchases =  Purchases::select('id','voucher_no as name')->whereIn('mrr_status',['Pending',"Partial Received"])->where('purchases_status','Approved')->get();
         endif;
        return $pendingPurchases;
     }
 
     public static function getSalesList($editInfo=null,$updateValue=null){
-        if(!empty($updateValue) && isset($updateValue->id)): 
+        if(!empty($updateValue) && isset($updateValue->id)):
             $pendingSales =  Sales::select('id','voucher_no as name')->where('id',$updateValue->sales_id)->get();
-        else: 
+        else:
             $pendingSales =  Sales::select('id','voucher_no as name')->whereIn('challan_status',['Pending',"Partial Received"])->where('sales_status','Approved')->get();
 
         endif;
@@ -1114,7 +1193,7 @@ class Helper
         return $setupData;
     }
 
-    
+
 
 
     public static function getBankInfo(){
@@ -1122,19 +1201,18 @@ class Helper
     //    $bankList =  Bank::select(DB::raw("CONCAT(banks.bank_name,' [ ',banks.account_number,' ]') as name,CONCAT(banks.bank_name,' [ ',banks.account_number,' ]') as id"))->get();
         return $bankList;
     }
-
+    
+    
 
     public static function getStockExitsProductList(){
         $result = StockSummary::select('id','product_id','quantity','batch_no','branch_id','store_id','pack_size')->with('product','batch')->havingRaw('quantity > 1')->company()->get();
-          return $result; 
+          return $result;
     }
-
 
     public static function getProductBatchById($productId){
         $result = StockSummary::select('id','product_id','quantity','batch_no','branch_id','store_id','pack_size')->with('product','batch')->where('product_id',$productId)->havingRaw('quantity > 1')->company()->first();
-          return $result->batch_no; 
+          return $result->batch_no ?? 0;
     }
-
 
     public static function isAccountApprovalAuto(){
         $approbalValue =   self::geSetupValue("account_approval");
@@ -1143,7 +1221,7 @@ class Helper
         }else{
             return false;
         }
-  
+
       }
 
     public static function isSalesReturnApprovalAuto(){
@@ -1153,7 +1231,7 @@ class Helper
         }else{
             return false;
         }
-  
+
       }
 
     public static function isPurchasesReturnApprovalAuto(){
@@ -1163,12 +1241,12 @@ class Helper
         }else{
             return false;
         }
-  
+
       }
-    
+
     public static function getPaymentType(){
        $paymentTypeList =  PaymentType::select(DB::raw("CONCAT(payment_types.name) as name,CONCAT(payment_types.name) as id"))->get();
-       foreach($paymentTypeList as $key => $value):              
+       foreach($paymentTypeList as $key => $value):
          (string) $value->id = $value->name;
           $value->name = $value->name;
        endforeach;
@@ -1177,7 +1255,7 @@ class Helper
 
     public static function getCashAndBankPaymentType(){
        $paymentTypeList =  PaymentType::select(DB::raw("CONCAT(payment_types.name) as name,CONCAT(payment_types.name) as id"))->whereNotIn('name',['credit'])->get();
-       foreach($paymentTypeList as $key => $value): 
+       foreach($paymentTypeList as $key => $value):
         if($value->name !="Credit"){
             (string) $value->id = $value->name;
             $value->name = $value->name;
@@ -1194,7 +1272,7 @@ class Helper
             $fileName = rand(100,1000).time() . "." . $ext;
             $img = Image::make($image)->resize($width, $height);
             $img = Image::make($image)->resize($width, $height, function ($constraint) {
-                $constraint->aspectRatio();                 
+                $constraint->aspectRatio();
             });
             $img->stream();
             if(is_null($id)){
@@ -1202,7 +1280,7 @@ class Helper
             }else{
                 $upload_path = 'public/uploads/'.$folder .'/'.$id.'/';
             }
-             
+
              if (!Storage::exists($upload_path)) {
                 Storage::makeDirectory($upload_path, 0775, true, true);
             }
@@ -1212,31 +1290,35 @@ class Helper
         }
     }
 
+    
     public static function imageUrl($image){
-        try 
+        try
         {
            $valid_image = str_replace("public","storage",$image);
+           if(!empty($valid_image)):
             getimagesize($valid_image);
             $imageUrl='/'.$valid_image;
-        } catch (\Exception $e) 
+            endif;
+        } catch (\Exception $e)
         {
             $imageUrl =   'assets/images/image-not-found.png';
-            
+
         }
         return $imageUrl ?? '';
 
     }
 
+
     public static function pImageUrl($image){
-        try 
+        try
         {
            $valid_image = str_replace("public","storage",$image);
             getimagesize($valid_image);
             $imageUrl=$valid_image;
-        } catch (\Exception $e) 
+        } catch (\Exception $e)
         {
             $imageUrl =   'assets/images/image-not-found.png';
-            
+
         }
         return $imageUrl ?? '';
 
@@ -1244,15 +1326,15 @@ class Helper
 
     public static function getProductListCategoryWise(){
         $companyId = helper::companyId();
-        
+
        $productListCategoryWise =  Category::whereHas('products',function($q) use ($companyId){
         $q->where('company_id',$companyId)->where('type_id','POS Product');
        })->get();
        return $productListCategoryWise;
     }
 
-   
-    
+
+
     public static function getServiceListCategoryWise(){
         $companyId = helper::companyId();
        $serviceListCategoryWise =  ServiceCategory::whereHas('sevices',function($q) use ($companyId){
@@ -1297,7 +1379,7 @@ class Helper
     }
 
 
-   
+
 
     public static function translate_to_words($number) {
         /*         * ***

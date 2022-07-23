@@ -39,7 +39,7 @@ class SalesRepositories
     public function __construct(Sales $sales)
     {
         $this->sales = $sales;
-      
+
     }
 
     /**
@@ -101,12 +101,12 @@ class SalesRepositories
                 $value->store_id  = $value->store->name ?? '';
         endforeach;
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($saless) {
             foreach ($saless as $key => $sales) {
                 $nestedData['id'] = $key + 1;
-               
+
                 if ($ced != 0) :
                     if ($edit != 0)
                         if ($sales->sales_status == 'Pending' && $sales->challan_status == "Pending") :
@@ -204,7 +204,6 @@ class SalesRepositories
 
     public function store($request)
     {
-
         DB::beginTransaction();
         try {
             $poMaster =  new $this->sales();
@@ -219,9 +218,7 @@ class SalesRepositories
                 $poMaster->account_id  = $request->account_id[0];
             endif;
             $poMaster->due_amount  = $request->grand_total;
-
-            
-            $poMaster->voucher_no  = $request->voucher_no;
+            $poMaster->voucher_no  = helper::generateInvoiceId("sales_prefix","sales");// $request->voucher_no;
             $poMaster->subtotal  = $request->sub_total;
             $poMaster->discount  = $request->discount;
             $poMaster->grand_total  = $request->grand_total;
@@ -237,10 +234,10 @@ class SalesRepositories
                 $poMaster->documents = helper::upload($request->documents,500,500,'sales',$poMaster->id);
                 $poMaster->save();
                $costOfGoodSold = $this->masterDetails($poMaster->id, $request);
-               
+
                 //set logic  for purchases if auto approval
-                if(helper::isSaleApprovalAuto()){  
-                   
+                if(helper::isSaleApprovalAuto()){
+
                     $this->salesDebitPayment($poMaster->id, $request->grand_total,5);
                     //general table data save
                     $general_id = $this->generalSave($poMaster->id,5);
@@ -253,38 +250,30 @@ class SalesRepositories
                         Journal::salePaymentJournal($general_id,$request->paid_amount,$request->account_id[0],$request->date,5);
                         $poMaster->sales_status =  'Approved';
                     endif;
-    
                     //if payment type bank
                     if($request->payment_type == "Bank"):
                         $this->saleBankPayment($poMaster->id,$request);
                     endif;
-
                     //if  delivery chalan active and chalan auto approval
                     if(helper::isDeliveryChallanActive() && helper::isDeliveryChallanApprovalAuto()){
                         //1.master challan
                         //2.details challan
-                        $challan_id =  $this->deliveryChallan($poMaster->id);
+                        $challan_id =  $this->deliveryChallan($poMaster->id,$request->date);
                         //main stock table data save
                         $this->stockSave($general_id, $poMaster->id);
                         //stock cashing table data save
                         $this->stockSummarySave($poMaster->id);
                         //sales order
-                       
                         $poMaster->challan_status =  'Approved';
-                    }else if(helper::isDeliveryChallanActive() && helper::isDeliveryChallanApprovalAuto() === false) {
-                        //main stock table data save
-                       // $this->stockSave($general_id, $poMaster->id);
-                        //stock cashing table data save
-                        //$this->stockSummarySave($poMaster->id);
-                        //sales order
-                    }else if(helper::isDeliveryChallanActive() === false){                      
+
+                    }else if(helper::isDeliveryChallanActive() === false){
+                            $challan_id =  $this->deliveryChallan($poMaster->id,$request->date);
                             //main stock table data save
-                            $this->stockSave($general_id, $poMaster->id);
+                            $this->stockSave($general_id, $poMaster->id,$challan_id);
                             //stock cashing table data save
                             $this->stockSummarySave($poMaster->id);
                             //sales order
                             $poMaster->challan_status =  'Approved';
-
                     }
                     $poMaster->sales_status = 'Approved';
                     $poMaster->approved_by = helper::userId();
@@ -300,18 +289,18 @@ class SalesRepositories
                     endif;
                     $poMaster->sales_status = 'Pending';
                     $poMaster->save();
-                }  
+                }
                 if (!empty($request->sales_quatation_id)) :
                     $this->salesQuatationUpdate($request->sales_quatation_id);
-                endif;  
+                endif;
             }
-           
+
             DB::commit();
             // all good
             return $poMaster->id;
         } catch (\Exception $e) {
 
-           
+
 
             DB::rollback();
             return $e->getMessage();
@@ -329,7 +318,7 @@ class SalesRepositories
             endforeach;
             return $totalFalse;
         }
-    }  
+    }
 
     public function temporaryBankPayment($purchases_id,$request){
         $pendingCheck =  new TemporaryPendingCheck();
@@ -348,7 +337,7 @@ class SalesRepositories
         $pendingCheck->status ="Pending";//cheque approved sales
         $pendingCheck->save();
         return $pendingCheck;
- 
+
      }
     public function accountApproved($sales_id,$request){
 
@@ -363,16 +352,15 @@ class SalesRepositories
                 $general_id = $this->generalSave($poMaster->id,5);
                     //sales credit journal
                 Journal::saleCreditJournal($general_id,$costOfGoods);
-              
+
                 if(helper::isDeliveryChallanActive() && helper::isDeliveryChallanApprovalAuto()){
                     //1.master mrr
                     //2.details mrr
                     $chalan_id =  $this->deliveryChallan($poMaster->id);
-                   
+
                     //main stock table data save
                     $this->stockSave($general_id, $poMaster->id,5);
 
-                    
                     //stock cashing table data save
                     $this->stockSummarySave($poMaster->id);
                     //sale order
@@ -405,7 +393,7 @@ class SalesRepositories
                 $poMaster->sales_status = 'Approved';
                 $poMaster->approved_by = helper::userId();
                 $poMaster->save();
-            else: 
+            else:
 
                 $poMaster->sales_status =$status;
                 $poMaster->approved_by = helper::userId();
@@ -418,14 +406,14 @@ class SalesRepositories
             // all good
             return $poMaster->id;
         } catch (\Exception $e) {
-          
+
             DB::rollback();
             return $e->getMessage();
         }
 
     }
 
-    
+
 
     public function deliveryChallan($sale_id){
 
@@ -444,7 +432,7 @@ class SalesRepositories
         $poMaster->updated_by = helper::userId();
         $poMaster->company_id = helper::companyId();
         $poMaster->save();
-       
+
         if($poMaster->id){
        return  $this->deliveryChallanDetails($poMaster->id,$sale_id);
        }
@@ -477,7 +465,7 @@ class SalesRepositories
 
         $pendingCheque = TemporaryPendingCheck::where('voucher_id',$sale_id)->where('form_id',5)->company()->first();
 
-        if(!empty($pendingCheque)): 
+        if(!empty($pendingCheque)):
             $pendingCheck =  new SalePendingCheque();
             $pendingCheck->company_id = helper::companyId();
             $pendingCheck->voucher_id = $sale_id;
@@ -496,7 +484,7 @@ class SalesRepositories
             TemporaryPendingCheck::where('voucher_id',$sale_id)->delete();
             return $pendingCheck;
 
-        else: 
+        else:
 
         $pendingCheck =  new SalePendingCheque();
         $pendingCheck->company_id = helper::companyId();
@@ -521,13 +509,13 @@ class SalesRepositories
 
     public function salesDebitPayment($sale_id,$payment,$form_id=null)
     {
-        if($form_id == 5): 
+        if($form_id == 5):
             $saleInfo = $this->sales::find($sale_id);
-            
+
         elseif($form_id == 17):
             $saleInfo = Pos::find($sale_id);
-        else: 
-   
+        else:
+
         endif;
 
         $saleDebitPayment =  new SalePayment();
@@ -550,37 +538,34 @@ class SalesRepositories
 
     public function salesCreditPayment($sale_id,$payment,$payment_type,$pendingChequeId=null,$form=null)
     {
-        if($form == 17): 
+      
+        if($form == 17):
             $salesInfo = Pos::find($sale_id);
             $dueAmount = $salesInfo->grand_total - ($salesInfo->paid_amount+$payment);
             $salesInfo->paid_amount= $salesInfo->paid_amount+$payment;
             $salesInfo->due_amount= $dueAmount;
             $salesInfo->save();
-        elseif($form == 18): 
+        elseif($form == 18):
             $salesInfo = Booking::find($sale_id);
             $dueAmount = $salesInfo->grand_total - ($salesInfo->paid_amount+$payment);
             $salesInfo->paid_amount= $salesInfo->paid_amount+$payment;
             $salesInfo->due_amount= $dueAmount;
             if($salesInfo->due_amount <= 0){
             $salesInfo->payment_status = "Approved";
-              
             }
             $salesInfo->save();
-
-           
-
-        else: 
+        else:
             $salesInfo = $this->sales::find($sale_id);
             $dueAmount = $salesInfo->grand_total - ($salesInfo->paid_amount+$payment);
             $salesInfo->paid_amount= $salesInfo->paid_amount+$payment;
             $salesInfo->due_amount= $dueAmount;
             $salesInfo->save();
         endif;
-        
+
         if(!empty($pendingChequeId)):
             $chequeInfo =  SalePendingCheque::find($pendingChequeId);
         endif;
-       
+
         $salesCreditPayment =  new SalePayment();
         $salesCreditPayment->date = helper::mysql_date();
         $salesCreditPayment->company_id = helper::companyId(); //sales info
@@ -595,12 +580,12 @@ class SalesRepositories
         if($payment_type == "Cash"):
             $salesCreditPayment->note  = 'Cash sale payment';
          else:
-             if(!empty($chequeInfo)): 
+             if(!empty($chequeInfo)):
                  $salesCreditPayment->bank_id  = $chequeInfo->bank_id ?? '';
                  $salesCreditPayment->cheque_number  = $chequeInfo->cheque_number ?? '';
                  $salesCreditPayment->cheque_date  =  $chequeInfo->cheque_date ?? '';
                  $salesCreditPayment->note  = 'Cheque sale payment';
-             endif;   
+             endif;
          endif;
         $salesCreditPayment->updated_by = Helper::userId();
         $salesCreditPayment->created_by = Helper::userId();
@@ -610,7 +595,6 @@ class SalesRepositories
 
     public function masterDetails($masterId, $request)
     {
-
         salesDetails::where('sales_id', $masterId)->company()->delete();
         $productInfo = $request->product_id;
         $allDetails = array();
@@ -640,10 +624,9 @@ class SalesRepositories
 
     public function generalSave($sale_id,$form_id)
     {
-
-        if($form_id == 5): 
+        if($form_id == 5):
             $salesInfo = $this->sales::find($sale_id);
-        else: 
+        else:
             $salesInfo = Pos::find($sale_id);
         endif;
 
@@ -661,22 +644,24 @@ class SalesRepositories
         return $general->id;
     }
 
-    public function stockSave($general_id, $sale_id,$form_id=null)
+    public function stockSave($general_id, $sale_id,$form_id=null,$challan_id=null)
     {
-       
-        if($form_id == 17): 
+
+        if($form_id == 17):
             $salesDetails = PosDetails::where('pos_id', $sale_id)->company()->get();
             // dd($salesDetails);
-        else: 
+        else:
             $salesDetails = SalesDetails::where('sales_id', $sale_id)->company()->get();
         endif;
 
+        
         $allStock = array();
         foreach ($salesDetails as $key => $value) :
             $generalStock = array();
             $generalStock['date'] = helper::mysql_date($value->date);
             $generalStock['company_id'] = helper::companyId();
             $generalStock['general_id'] = $general_id;
+            $generalStock['delivery_challan_id'] = $challan_id ?? 0;
             $generalStock['branch_id']  = $value->branch_id ?? helper::getDefaultBranch();
             $generalStock['store_id']  = $value->store_id ?? helper::getDefaultStore();
             $generalStock['product_id']  = $value->product_id;
@@ -689,15 +674,15 @@ class SalesRepositories
             $generalStock['total_price']  = $value->total_price;
             array_push($allStock, $generalStock);
         endforeach;
-          $stockInfo = Stock::insert($allStock);   
-        
+          $stockInfo = Stock::insert($allStock);
+
         return $stockInfo;
     }
 
 
     public function getCostOfGoods($sale_id)
     {
-       
+
         $salesDetails = SalesDetails::where('sales_id', $sale_id)->company()->get();
         $costOfGoods=0;
         foreach ($salesDetails as $key => $value) :
@@ -707,12 +692,12 @@ class SalesRepositories
         return $costOfGoods;
     }
 
- 
+
     public function stockSummarySave($sales_id,$form_id = null)
     {
-        if($form_id == 17): 
+        if($form_id == 17):
             $salesDetails = PosDetails::where('pos_id', $sales_id)->company()->get();
-        else: 
+        else:
             $salesDetails = SalesDetails::where('sales_id', $sales_id)->company()->get();
         endif;
         foreach ($salesDetails as $key => $value) :
@@ -725,8 +710,8 @@ class SalesRepositories
                 $stockSummary->quantity = $stockSummary->quantity - $value->quantity;
             }
             $stockSummary->company_id = helper::companyId();
-            $stockSummary->branch_id = $value->branch_id;
-            $stockSummary->store_id = $value->store_id;
+            $stockSummary->branch_id = $value->branch_id ?? helper::getDefaultBranch();
+            $stockSummary->store_id = $value->store_id ?? helper::getDefaultStore();
             $stockSummary->product_id = $value->product_id;
             $stockSummary->category_id = helper::getRow('products','id',$value->product_id,'category_id');
             $stockSummary->brand_id = helper::getRow('products','id',$value->product_id,'brand_id');

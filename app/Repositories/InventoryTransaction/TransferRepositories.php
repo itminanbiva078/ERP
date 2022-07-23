@@ -87,7 +87,7 @@ class TransferRepositories
                 $value->to_store_id  = $value->tStore->name ?? '';
         endforeach;
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
 
         if ($transpfers) {

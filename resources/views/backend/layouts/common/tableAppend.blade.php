@@ -1,5 +1,5 @@
 
-<?php 
+<?php
 
 $accessRoute = array(
     'inventoryTransaction.purchases.create',
@@ -12,14 +12,18 @@ $accessRoute = array(
     'inventoryTransaction.transfer.edit',
     'inventoryTransaction.inventoryAdjustment.create',
     'inventoryTransaction.inventoryAdjustment.edit',
-  
+
 );
 
 
 $transferRoute = array(
-
     'inventoryTransaction.transfer.create',
     'inventoryTransaction.transfer.edit',
+);
+
+$saleLoanRoute = array(
+    'salesTransaction.salesLoan.create',
+    'salesTransaction.salesLoan.edit',
 );
 
 $notificationRoute = array(
@@ -60,7 +64,7 @@ $mrrRoute = array(
     <table class="table table-bordered table-hover" id="show_item">
         @if(Route::currentRouteName() == "inventoryTransaction.purchasesMRR.create")
         <thead id="thead" class="bg-default" style="display: none!important">
-        @else 
+        @else
         <thead class="bg-default">
         @endif
             <tr>
@@ -80,7 +84,7 @@ $mrrRoute = array(
                             <th @if($eachInput->type == 'tnumber') class="text-left" @endif>Transfer  {{ucfirst($eachInput->label)}}</th>
                             @else
                             <th @if($eachInput->type == 'tnumber') class="text-left" @endif>Purchases {{ucfirst($eachInput->label)}}</th>
-                          
+
                             @endif
                         @else
                            <th @if($eachInput->type == 'tnumber') class="text-left" @endif>{{ucfirst($eachInput->label)}}</th>
@@ -109,7 +113,7 @@ $mrrRoute = array(
                     </select>
                 </td>
                 @endif
-                
+
                 @if(in_array('batch_no',$activeColumn))
                 @if(helper::mrrIsActive() ||  Route::currentRouteName() == "openingSetup.inventory.create")
                 <td>
@@ -124,9 +128,9 @@ $mrrRoute = array(
                         </select>
                         @else
                         <input type="text" name="batch_no[]" class="form-control batch_no border-success border" id=""  placeholder="Batch No" value="{{ $value->batch_no}}">
-                
+
                         @endif
-                
+
                     </td>
                 @endif
                 @endif
@@ -179,50 +183,50 @@ $mrrRoute = array(
             <tr class="new_item1">
                 <input type="hidden" value="" class="old_stock_value"/>
                 @foreach($formInputDetails as $key => $eachInput)
-               
+
                     @if($eachInput->name == 'batch_no')
                         @if(helper::mrrIsActive() ||  Route::currentRouteName() == "openingSetup.inventory.create")
                           <td>@php htmlform::formfiled($eachInput, $errors, old()) @endphp</td>
                         @endif
-                    @else 
+                    @else
                          <td>@php htmlform::formfiled($eachInput, $errors, old()) @endphp</td>
                     @endif
 
-                   
+
 
                 @endforeach
                 <td class="text-center"><button del_id="1" class="delete_item btn btn-danger" type="button"   href="javascript:;" title="Are you Remove?"><i class="fa fa-minus"></i></button></td>
-              
+
             </tr>
 
-           @endif 
+           @endif
         </tbody>
         @if(Route::currentRouteName() == "inventoryTransaction.purchasesMRR.create")
         <tfoot id="tfoot" style="display: none!important">
-        @else 
+        @else
         <tfoot>
         @endif
 
             <tr>
                 <input type="hidden" value="" class="old_stock_value"/>
                 @foreach($formInputDetails as $key => $eachInput)
-                
+
                     @if($eachInput->name == "batch_no")
                         @if(helper::mrrIsActive() ||  Route::currentRouteName() == "openingSetup.inventory.create")
                         <td class="text-left table_data_{{$eachInput->name}}"><span class="sub_total_{{$eachInput->name}}">0.00</span></td>
                         @endif
-                    @else 
+                    @else
                     <td class="text-left table_data_{{$eachInput->name}}"><span class="sub_total_{{$eachInput->name}}">0.00</span></td>
                     @endif
 
                 @endforeach
-               
-                <td nowrap class="text-center"><button id="add_item" class="btn btn-success" type="button"  title="Add new Item"><i class="fa fa-plus"></i></button></td>
-                
-            </tr>
-           
 
-            @if(in_array(Route::currentRouteName(),$accessRoute) &&  !in_array(Route::currentRouteName(),$transferRoute))
+                <td nowrap class="text-center"><button id="add_item" class="btn btn-success" type="button"  title="Add new Item"><i class="fa fa-plus"></i></button></td>
+
+            </tr>
+
+
+            @if(in_array(Route::currentRouteName(),$accessRoute) &&  !in_array(Route::currentRouteName(),$transferRoute) && !in_array(Route::currentRouteName(), $saleLoanRoute))
 
                 <tr>
                     <td class="grand_total text-right "  colspan="6">Sub Total:</td>
@@ -241,19 +245,28 @@ $mrrRoute = array(
                             value="{{$editInfo->grand_total ?? ''}}" name="grand_total" placeholder="0.00"></td>
                 </tr>
 
+                
+                <tr class="div_payment" style="display: none!important">
+                    <td class="grand_total text-right" colspan="6">Available Balance:</td>
+                    <td><input  type="text" id="accountBalance" class="form-control accountBalance" readonly  name="accountBalance" placeholder="0.00"></td>
+                </tr>
+
                 <tr class="div_payment" style="display: none!important">
                     <td class="grand_total text-right" colspan="6">Payment:</td>
                     <td><input  type="text" id="paid_amount" class="form-control payment"  value="{{$editInfo->paid_amount ?? ''}}" name="paid_amount" placeholder="0.00"></td>
                 </tr>
+
+               
+
                 <tr class="div_payment" style="display: none!important">
                     <td class="grand_total text-right" colspan="6">Present Due:</td>
-                    <td><input  type="text" id="due_amount" class="form-control payment" readonly  value="{{$editInfo->due_amount ?? ''}}" name="due_amount" placeholder="0.00"></td>
+                    <td><input  type="text" id="due_amount" class="form-control" readonly  value="{{$editInfo->due_amount ?? ''}}" name="due_amount" placeholder="0.00"></td>
                 </tr>
-        
+
             @endif
             @if(in_array(Route::currentRouteName(),$notificationRoute))
 
-            <tr> 
+            <tr>
                 <td class="check-information" style="border:0; padding:5px !important; ">
 
                     <div class="form-check form-check-inline">
@@ -264,11 +277,11 @@ $mrrRoute = array(
                         <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
                         <label class="form-check-label" for="inlineCheckbox2"> <i class="far fa-envelope"></i> email </label>
                     </div>
-                   
+
                 </td>
             </tr>
             @endif
-            
+
             <tr>
                 <td colspan="8" class="note"><textarea class="summernote"  name="note" rows="4" colspan="6" placeholder="Type Note Here...">{{$editInfo->note ?? ''}}</textarea></td>
             </tr>
@@ -276,9 +289,9 @@ $mrrRoute = array(
     </table>
     </div>
 </div>
-   
 
-    
+
+
 
 
 @section('scripts')
@@ -328,26 +341,26 @@ $(document).ready(function() {
             +  '<input type="hidden"   class="form-control actual_remaining_quantity decimal"  placeholder="Remaining" value="">'+
             '<input type="hidden"  class="form-control product_id" value="" name="product_id[]">'
             <?php endif;?>
-            <?php foreach ($formInputDetails as $key => $eachInput) : 
+            <?php foreach ($formInputDetails as $key => $eachInput) :
                     if($eachInput->name == 'batch_no' ):
                         if(helper::mrrIsActive() ||  Route::currentRouteName() == "openingSetup.inventory.create"):
                             ?> +
                             '<td><?php trim(htmlform::formfiled($eachInput, $errors, old())); ?></td>'
                         <?php
                         endif;
-                        else: 
+                        else:
                         ?>+
             '<td><?php trim(htmlform::formfiled($eachInput, $errors, old())); ?></td>'
             <?php
-            
-             endif; 
-            
+
+             endif;
+
             endforeach; ?> +
             '<td class="text-center"><button del_id="' + j +'" class="delete_item btn btn-danger" type="button"  title="Remove This Item"><i class="fa fa-minus"></i></button></td></tr>'
         );
 
         j++;
-        
+
 
 
         $('.select2').select2();
@@ -381,21 +394,21 @@ $(document).ready(function() {
                     // Append it to the select
                     tr.find('.product_id').append(newOption);
                 });
-                
+
 
         <?php endif;?>
         const $selects = $(".product_id");
         const selectedValue = [];
         $("#store_id").trigger("keyup");
-       
-    
+
+
         $selects.find(':selected').filter(function(idx, el) {
             return $(el).attr('value');
         }).each(function(idx, el) {
             selectedValue.push($(el).attr('value'));
         });
         // loop all the options
-        $selects.find('option').each(function(idx, option) { 
+        $selects.find('option').each(function(idx, option) {
             // if the array contains the current option value otherwise we re-enable it.
             if (selectedValue.indexOf($(option).attr('value')) > -1) {
                 // if the current option is the selected option, we skip it otherwise we disable it.
@@ -414,7 +427,7 @@ $(document).ready(function() {
 
 
 
-$(document).on('change', '.product_id', function() {      
+$(document).on('change', '.product_id', function() {
     const $selects2 = $(".product_id");
     const selectedValue = [];
 
@@ -426,13 +439,13 @@ $(document).on('change', '.product_id', function() {
             if($(this).val() > 0){
             var remaining_value  = parseFloat($(".mainQuantity_"+$(this).val()).val()-0);
             $(".approved_quantity_"+product_id).each(function(){
-                    allApprovedQty += parseFloat($(this).val()-0);          
+                    allApprovedQty += parseFloat($(this).val()-0);
             });
             var pack_size  = $("#pack_size_"+$(this).val()).val();
             var quantity  = $("#quantyty_"+$(this).val()).val();
             $('#pack_no_'+$(this).val()).prop('readonly', true);
                var tr = $(this).closest('tr');
-             
+
                 tr.find('input.product_id').val(product_id);
                 tr.find('input.remaining_quantity').val(remaining_value-allApprovedQty);
                 tr.find('input.actual_remaining_quantity').val(remaining_value-allApprovedQty);
@@ -443,11 +456,11 @@ $(document).on('change', '.product_id', function() {
                 tr.find('input.quantity').val(quantity);
                 tr.find('input.approved_quantity').removeClass("approved_quantity_"+product_id );
                 tr.find('input.approved_quantity').addClass("approved_quantity_"+product_id );
-                
+
             }
 
     <?php endif;?>
-    
+
     // get all selected options and filter them to get only options with value attr (to skip the default options). After that push the values to the array.
     $selects2.find(':selected').filter(function(idx, el) {
         return $(el).attr('value');
@@ -455,7 +468,7 @@ $(document).on('change', '.product_id', function() {
         selectedValue.push($(el).attr('value'));
     });
     // loop all the options
-    $selects2.find('option').each(function(idx, option) { 
+    $selects2.find('option').each(function(idx, option) {
         // if the array contains the current option value otherwise we re-enable it.
         if (selectedValue.indexOf($(option).attr('value')) > -1) {
             // if the current option is the selected option, we skip it otherwise we disable it.
@@ -483,9 +496,6 @@ $(document).on('change', '.product_id', function() {
             var pack_no = Number(tr.find('input.pack_no').val());
             var old_stock_value = Number(tr.find('input.old_stock_value').val());
 
-
-
-
             <?php if(in_array(Route::currentRouteName(),$mrrRoute)): ?>
 
 
@@ -495,26 +505,20 @@ $(document).on('change', '.product_id', function() {
                     } else {
                         var quantity = Number(tr.find('input.quantity').val());
                     }
-
-
-
                     var approved_quantity = Number(tr.find('input.approved_quantity').val()-0);
                     var remaining_quantity = Number(tr.find('input.actual_remaining_quantity').val()-0);
 
-                   
                     tr.find('input.remaining_quantity').val(remaining_quantity-approved_quantity);
-                
-            
+
                     if(approved_quantity > remaining_quantity){
                         tr.find('input.approved_quantity').val(0);
                         tr.find('input.remaining_quantity').val(remaining_quantity);
                         tr.find('input.pack_no').val(0);
-                        Swal.fire('Warning!', "Approved QTY can't greater than from main qty="+remaining_quantity, 'warning');  
-                    }
+                        Swal.fire('Warning!', "Approved QTY can't greater than from main qty="+remaining_quantity, 'warning');
+                    } 
 
 
 
-                
             <?php else: ?>
 
 
@@ -528,15 +532,15 @@ $(document).on('change', '.product_id', function() {
                         var approved_quantity = Number(tr.find('input.approved_quantity').val());
                         var remaining_quantity = Number(tr.find('input.actual_remaining_quantity').val());
                         tr.find('input.remaining_quantity').val(remaining_quantity-approved_quantity);
-                    
+
                         if(approved_quantity > remaining_quantity){
                             tr.find('input.approved_quantity').val(0);
                             tr.find('input.remaining_quantity').val(remaining_quantity);
                             tr.find('input.pack_no').val(0);
-                            Swal.fire('Warning!', "Approved QTY can't greater than from main qty="+remaining_quantity, 'warning');  
+                            Swal.fire('Warning!', "Approved QTY can't greater than from main qty="+remaining_quantity, 'warning');
                         }
 
-            
+
            <?php endif; ?>
 
             var unit_price = Number(tr.find('input.unit_price').val());
@@ -550,7 +554,7 @@ $(document).on('change', '.product_id', function() {
                 tr.find('input.quantity').val(0);
                 tr.find('input.pack_no').val(0);
 
-                Swal.fire('Warning!', "Quantity should be less than = "+ old_stock_value, 'warning');  
+                Swal.fire('Warning!', "Quantity should be less than = "+ old_stock_value, 'warning');
             }
           <?php endif;?>
 
@@ -572,7 +576,7 @@ $(document).on('change', '.product_id', function() {
         var total_total_price = 0;
         var total_approved_quantity = 0;
         var total_remaining_quantity = 0;
-       
+
 
         $('.pack_size').each(function(i, e) {
 
@@ -598,10 +602,11 @@ $(document).on('change', '.product_id', function() {
             var approved_quantity = parseFloat($(this).val() - 0);
             total_approved_quantity += approved_quantity;
         });
-        
+
         var subTotal = total_total_price - 0;
         var discount = parseFloat($('.discount').val() - 0);
         var grandTotal = subTotal - discount;
+
 
         $('.sub_total_pack_size').text(numberFormat(total_pack_size));
         $('.sub_total_pack_size').text(numberFormat(total_pack_size));
@@ -670,7 +675,7 @@ $(document).on('change', '.product_id', function() {
 //                         });
 //                     }
 //                 }
-//         });  
+//         });
 //     });
 
 //     $(document).on('change', '.sproduct_id', function() {
@@ -694,12 +699,8 @@ $(document).on('change', '.product_id', function() {
 //                         });
 //                     }
 //                 }
-//         });  
+//         });
 //     });
-
-
-
-
 
 
 
@@ -731,9 +732,12 @@ $(document).on('change', '.requsisition_id', function() {
 });
 
 
-$(document).on('keyup', '.paid_amount', function() {
-    let requisition_id = parseFloat((this).val()-0);
-         
+$(document).on('keyup', '.payment', function() {
+    let paymentNow = parseFloat($(this).val()-0);
+   var grandTotal =  parseFloat($('#grand_total').val()-0);
+   var presentDue = grandTotal - paymentNow;
+   $("#due_amount").val(presentDue);
+
 });
 
 
@@ -761,10 +765,10 @@ $(document).on('change', '.purchases_order_id', function() {
 
                 $("#supplier_id").val(data.details.supplier_id).trigger("change")
                 $("#branch_id").val(data.details.branch_id).trigger("change")
-                
+
             }else{
                 $("#supplier_id").val("").trigger("change")
-                $("#branch_id").val("").trigger("change") 
+                $("#branch_id").val("").trigger("change")
             }
         }
     });
@@ -811,7 +815,7 @@ $(document).on('change', '.branch_id,.store_id', function() {
     let store_id = $('.store_id').val();
     var tr = $(this).closest('tr');
 
-   
+
     $.ajax({
         url: "{{route('inventorySetup.product.stockInfo')}}",
         method: 'GET',
@@ -823,7 +827,7 @@ $(document).on('change', '.branch_id,.store_id', function() {
             if (data.code == 200) {
                 <?php if(in_array(Route::currentRouteName(),$accessSaleTransRoute)): ?>
                   tr.find('.unit_price').val(data.data.sprice);
-                 
+
                         $('.select2').select2();
                         let bselect = $('.batch_no');
                         bselect.empty();
@@ -831,7 +835,6 @@ $(document).on('change', '.branch_id,.store_id', function() {
                         $.each(data.data, function(key, value) {
                             bselect.append('<option value=' + value.batch_no + '>' + value.bname + '</option>');
                         });
-
 
                         var pselect = $('.product_id');
                         pselect.empty();
@@ -847,7 +850,7 @@ $(document).on('change', '.branch_id,.store_id', function() {
                 <?php endif;?>
                 $(".unit_price").trigger("keyup");
             }else{
-               
+
             }
         }
     });
@@ -859,7 +862,7 @@ $(document).on('keyup', '#store_id', function() {
     let branch_id = $('.branch_id').val();
     let store_id = $('.store_id').val();
    var tr =  $('table tbody tr:last').closest('tr');
-  
+
     $.ajax({
         url: "{{route('inventorySetup.product.stockInfo')}}",
         method: 'GET',
@@ -871,9 +874,9 @@ $(document).on('keyup', '#store_id', function() {
             if (data.code == 200) {
                 <?php if(in_array(Route::currentRouteName(),$accessSaleTransRoute)): ?>
                   tr.find('.unit_price').val(data.data.sprice);
-                 
+
                         $('.select2').select2();
-            
+
                         let bselect = tr.find('.batch_no');
                         bselect.empty();
                         bselect.append('<option value="0" selected> (:-Select Batch-:) </option>');
@@ -893,7 +896,7 @@ $(document).on('keyup', '#store_id', function() {
                 <?php endif;?>
                 $(".unit_price").trigger("keyup");
             }else{
-               
+
             }
         }
     });
@@ -928,9 +931,9 @@ $(document).on('change', '.product_id', function() {
         success: function(data) {
             if (data.code == 200) {
                 <?php if(in_array(Route::currentRouteName(),$accessSaleTransRoute)): ?>
-                  
+
                         <?php if(helper::mrrIsActive()): ?>
-                           
+
                             $('.select2').select2();
                             let bselect = tr.find('.batch_no');
                             bselect.empty();
@@ -983,7 +986,7 @@ $.ajax({
             tr.find('.pack_size').val(data.data[0].pack_size);
         }
     }
-});  
+});
 });
 
 <?php endif;?>
@@ -1043,19 +1046,7 @@ $(document).on('change', '.sales_quatation_id', function() {
 });
 
 
-// $(document).on('change', '.payment_type', function() {
-//     let payment_type = $(this).val();
-//     if(payment_type == 'Cash'){
-//         $('.div_account_id').removeClass("hide");
-//         $('.div_bank_id').addClass('hide');
-//     }else if(payment_type == 'Credit'){
-//         $('.div_account_id').addClass("hide");
-//         $('.div_bank_id').addClass("hide");
-//     }else{
-//         $('.div_account_id').addClass("hide");
-//         $('.div_bank_id').removeClass("hide");
-//     }   
-// });
+
 
 
 $('.from_branch').change(function() {
@@ -1110,12 +1101,12 @@ trs.forEach(function(tr, index) {
 
 // Use the buttons added by the function above
 table.addEventListener("click", function(e) {
-  
+
   // Event management
   if (!e) return;
   if (e.target.outerHTML !== tr_ToggleButton) return;
   e.preventDefault();
-  
+
   // Get the parent tr and its level
   var row = e.target.closest("tr");
   row.classList.toggle(tr_OpenedClass);

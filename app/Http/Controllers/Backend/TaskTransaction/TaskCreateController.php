@@ -39,6 +39,7 @@ class TaskCreateController extends Controller
     {
 
         $title = 'Task Create List';
+        $companyInfo =   helper::companyInfo();
         $datatableRoute = 'taskTransaction.taskCreate.dataProcessingTaskCreate';
         return view('backend.pages.taskTransaction.taskCreate.index', get_defined_vars());
     }
@@ -58,6 +59,7 @@ class TaskCreateController extends Controller
     public function create()
     {
         $title = 'Add New Task Create';
+        $companyInfo =   helper::companyInfo();
         $formInput =  helper::getFormInputByRoute();
         return view('backend.pages.taskTransaction.taskCreate.create', get_defined_vars());
     }
@@ -93,6 +95,7 @@ class TaskCreateController extends Controller
             return redirect()->back();
         }
         $title = 'Add New Task Create';
+        $companyInfo =   helper::companyInfo();
         $formInput =  helper::getFormInputByRoute();
         return view('backend.pages.taskTransaction.taskCreate.edit', get_defined_vars());
     }

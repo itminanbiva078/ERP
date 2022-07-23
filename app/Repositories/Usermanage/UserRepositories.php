@@ -25,10 +25,7 @@ class UserRepositories
     public function __construct(User $user)
     {
         $this->user = $user;
-        //$this->middleware(function ($request, $next) {
-        $this->user_id = 1; //auth()->user()->id;
-        //  return $next($request);
-        //});
+       
     }
     /**
      * @param $request
@@ -43,7 +40,7 @@ class UserRepositories
        */
     public function getList($request)
     {
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         array_push($columns,"id");
         $edit = Helper::roleAccess('usermanage.user.edit') ? 1 : 0;
         $delete = Helper::roleAccess('usermanage.user.destroy') ? 1 : 0;
@@ -56,7 +53,7 @@ class UserRepositories
         $dir = $request->input('order.0.dir');
 
         if (empty($request->input('search.value'))) {
-            $users = $this->user::select($columns)->with('userRole','company')->offset($start)
+            $users = $this->user::select($columns)->company()->with('userRole','company')->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir)
                 //->orderBy('status', 'desc')
@@ -64,7 +61,7 @@ class UserRepositories
             $totalFiltered = $this->user::count();
         } else {
             $search = $request->input('search.value');
-            $users = $this->user::select($columns)->with('userRole','company')->where(function ($q) use ($columns,$search) {
+            $users = $this->user::select($columns)->company()->with('userRole','company')->where(function ($q) use ($columns,$search) {
                 $q->where('id', 'like', "%{$search}%");
                 foreach ($columns as $column) {
                 $q->orWhere($column, 'like', "%{$search}%");
@@ -76,14 +73,16 @@ class UserRepositories
                 ->orderBy($order, $dir)
                 // ->orderBy('status', 'desc')
                 ->get();
-            $totalFiltered = $this->user::select($columns)->where(function ($q) use ($columns,$search) {
+            $totalFiltered = $this->user::select($columns)->company()->where(function ($q) use ($columns,$search) {
                 $q->where('id', 'like', "%{$search}%");
                 foreach ($columns as $column) {
                 $q->orWhere($column, 'like', "%{$search}%");
                 }
             })->count();
         }
-        $columns = Helper::getTableProperty();
+
+        $columns = Helper::getQueryProperty();
+
         foreach($users as $key => $eachUser){
             $eachUser->role_id = $eachUser->userRole->name;
             $eachUser->company_id = $eachUser->company->name;
@@ -150,20 +149,20 @@ class UserRepositories
     public function store($request)
     {
         $user = new $this->user();
-        $user->company_id   = $request->company_id;
+        $user->company_id   = helper::companyId();
         $user->name         = $request->name;
         $user->email        = $request->email;
         $user->password     = Hash::make($request->password);
         $user->phone        = $request->phone;
         $user->role_id      = $request->role_id;
-        $user->status       = $request->status;
+        $user->status       = 'Approved';
         $user->created_by   = Auth::user()->id;
         $user->save();
         if($user):
           $roleAccess = new RoleAccess();
           $roleAccess->user_id = $user->id;
           $roleAccess->role_id = $request->role_id;
-          $roleAccess->company_id =$request->company_id;
+          $roleAccess->company_id =helper::companyId();
           $roleAccess->save();
         endif;
         return $user;
@@ -172,7 +171,7 @@ class UserRepositories
     public function update($request, $id)
     {
         $user = $this->user::findOrFail($id);
-        $user->company_id   = $request->company_id;
+        $user->company_id   = helper::companyId();
         $user->name         = $request->name;
         $user->email        = $request->email;
         $user->phone        = $request->phone;
@@ -180,14 +179,14 @@ class UserRepositories
          $user->password     = Hash::make($request->password);
         endif;
         $user->role_id      = $request->role_id;
-        $user->status       = $request->status;
+        $user->status       = 'Approved';
         $user->updated_by   = Auth::user()->id;
         $user->save();
         if($user){
           $roleAccess =  RoleAccess::where('user_id',$id)->first();
           $roleAccess->user_id = $id;
           $roleAccess->role_id = $request->role_id;
-          $roleAccess->company_id =$request->company_id;
+          $roleAccess->company_id =helper::companyId();
           $roleAccess->save();
         }
         return $user;

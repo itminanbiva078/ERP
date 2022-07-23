@@ -69,18 +69,18 @@ SalesTransaction - {{$title}}
               </div>
               <table style="width:100%;">
                 <tr> 
-                  <td style="width:50%;"> <span> Voucher No:  </span> {{$details->voucher_no}} </td>
+                  <td style="width:50%;"> <span> Voucher No:  </span> {{$details->voucher_no ?? ''}} </td>
                   <td style="width:50%;"> <span> Date :  </span>{{helper::get_php_date(date('Y-m-d'))}} </td>
                 </tr>
               </table>
               <table style="width:100%;">
                 <tr> 
-                  <td> <span> Received With Thanks From :  </span> {{$details->customer->name}}</td>
+                  <td> <span> Received With Thanks From :  </span> {{$details->customer->name ?? ''}}</td>
                 </tr>
               </table>
               <table style="width:100%;">
                 <tr> 
-                  <td> <span> Amount Of Taka : </span> {{helper::get_bd_amount_in_text($details->credit)}} </td>
+                  <td> <span> Amount Of Taka : </span> {{helper::get_bd_amount_in_text($details->credit ?? '')}} </td>
                 </tr>
               </table>
               <table style="width:100%;">
@@ -91,7 +91,7 @@ SalesTransaction - {{$title}}
                   @else
                   <td style="width:33%;">  Bank  </td>
                   @endif
-                  <td style="width:33%;"> <span> Date </span> : {{helper::get_php_date($details->date)}} </td>
+                  <td style="width:33%;"> <span> Date </span> : {{helper::get_php_date($details->date ?? '')}} </td>
                 </tr>
               </table>
               <table style="width:100%;">
@@ -102,7 +102,7 @@ SalesTransaction - {{$title}}
               </table>
               <table style="width:100%;" class="autorization-section">
                 <tr> 
-                  <td style="width:33%;"> <span> Taka <input type="text" readonly value="{{helper::pricePrint($details->credit)}}"> </span>  </td>
+                  <td style="width:33%;"> <span> Taka <input type="text" readonly value="{{helper::pricePrint($details->credit ?? '')}}"> </span>  </td>
                   <td style="width:33%; text-align:right; "> <span> <p> Received By </p> </span>  </td>
                   <td style="width:33%; text-align:right; "> <span> <p> authorization signature </p> </span>  </td>
                 </tr>

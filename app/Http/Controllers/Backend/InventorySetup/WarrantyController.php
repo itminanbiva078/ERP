@@ -39,6 +39,7 @@ class WarrantyController extends Controller
 
         $title = 'Warranty List';
         $datatableRoute = 'inventorySetup.warranty.dataProcessingWarranty';
+        $companyInfo =   helper::companyInfo();
         return view('backend.pages.inventorySetup.warranty.index', get_defined_vars());
     }
 
@@ -57,6 +58,7 @@ class WarrantyController extends Controller
     public function create()
     {
         $title = 'Add New Unit';
+        $companyInfo =   helper::companyInfo();
         $formInput =  helper::getFormInputByRoute();
         return view('backend.pages.inventorySetup.warranty.create', get_defined_vars());
     }
@@ -92,6 +94,7 @@ class WarrantyController extends Controller
             return redirect()->back();
         }
         $title = 'Add New Currency';
+        $companyInfo =   helper::companyInfo();
         $formInput =  helper::getFormInputByRoute();
         return view('backend.pages.inventorySetup.warranty.edit', get_defined_vars());
     }

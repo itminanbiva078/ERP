@@ -1,15 +1,6 @@
 
 
 
-<?php 
-
-
-
-    //dd($reports);
-
-?>
-
-
 @if($customer_id == "All")
 <table class="table table-striped table-bordered">
     <thead>
@@ -32,24 +23,28 @@
         $tpaid=0;
         $tbalance=0;
         @endphp
+        @if(!empty($reports))
         @foreach($reports as $key => $report)
             @php 
         
             $topening+=$report->opening;
             $tpayable+=$report->payment;
-         
             $tbalance +=$report->opening + $report->payment;
+            $transaction = $report->opening + $report->payment;
             @endphp
+             @if(!empty($transaction))
             <tr>
                 <td>{{$key+1}}</td>
-                <td>{{$report->customer->name}} [{{$report->customer->code}}]</td>
-                <td>{{$report->customer->address}}</td>
-                <td>{{$report->customer->phone}}</td>
+                <td>{{$report->name ?? ''}} [{{$report->code ?? ''}}]</td>
+                <td>{{$report->address ?? ''}}</td>
+                <td>{{$report->phone ?? ''}}</td>
                 <td class="text-right">{{helper::pricePrint($report->opening ?? '')}}</td>
-                <td class="text-right">{{helper::pricePrint($report->payment)}}</td>
-                <td class="text-right">{{helper::pricePrint($report->opening+$report->payment)}}</td>
+                <td class="text-right">{{helper::pricePrint($report->payment ?? '')}}</td>
+                <td class="text-right">{{helper::pricePrint($report->opening+$report->payment ?? '')}}</td>
             </tr>
+            @endif
         @endforeach
+        @endif
     </tbody>
     <tfoot>
         <tr>

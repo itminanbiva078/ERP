@@ -37,6 +37,7 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         $title = 'Product Manage | Category - List';
+        $companyInfo =   helper::companyInfo();
         $explodeRoute = "inventorySetup.category.explode";
         $createRoute = "inventorySetup.category.create";
         $columns = helper::getTableProperty();
@@ -59,6 +60,7 @@ class CategoryController extends Controller
     public function create()
     {
         $title = "Product Manage | Add New - Category";
+        $companyInfo =   helper::companyInfo();
         $listRoute = "inventorySetup.category.index";
         $explodeRoute = "inventorySetup.category.explode";
         $implodeModal ="'inventory-setup-load-import-form','inventorySetup.category.import','Import Category List','/backend/assets/excelFormat/inventorySetup/category/category.csv','2'";
@@ -97,6 +99,7 @@ class CategoryController extends Controller
             session()->flash('error', 'Edit info is invalid!!');
             return redirect()->back();
         }
+        $companyInfo =   helper::companyInfo();
         $title = "Product Manage | Edit - category";
         $listRoute = "inventorySetup.category.index";
         $explodeRoute = "";

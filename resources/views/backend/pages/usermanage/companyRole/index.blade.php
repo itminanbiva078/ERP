@@ -23,8 +23,8 @@ Settings - {{$title}}
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{route('home') }}">Dashboard</a></li>
-                    @if(helper::roleAccess('usermanage.userRole.index'))
-                    <li class="breadcrumb-item"><a href="{{route('usermanage.userRole.index') }}">Company Resource</a>
+                    @if(helper::roleAccess('company.resource.index'))
+                    <li class="breadcrumb-item"><a href="{{route('company.resource.index') }}">Company Resource</a>
                     </li>
                     @endif
                     <li class="breadcrumb-item active"><span>Company Resource List</span></li>

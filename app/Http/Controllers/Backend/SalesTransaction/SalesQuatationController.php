@@ -49,6 +49,7 @@ class SalesQuatationController extends Controller
     public function index(Request $request)
     {
        $title = 'Sales Quatation List';
+       $companyInfo =   helper::companyInfo();
        $datatableRoute = 'salesTransaction.salesQuatation.dataProcessingSalesQuatation';
        return view('backend.pages.salesTransaction.salesQuatation.index', get_defined_vars());
     }
@@ -68,6 +69,7 @@ class SalesQuatationController extends Controller
     {
         $title = 'Add New Sales Quatation';
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
         $formInputDetails =  helper::getFormInputByRoute('salesTransaction.salesQuatation.details.create');
         return view('backend.pages.salesTransaction.salesQuatation.create', get_defined_vars());
     }
@@ -125,6 +127,7 @@ class SalesQuatationController extends Controller
             return redirect()->back();
         }
         $title = 'Sales Quatation Edit';
+        $companyInfo =   helper::companyInfo();
         $invoiceDetails = $editInfo->salesQuatationDetails;
         $products = $this->productService->getActiveProduct();
         $activeColumn = Helper::getQueryProperty('salesTransaction.salesQuatation.details.create');

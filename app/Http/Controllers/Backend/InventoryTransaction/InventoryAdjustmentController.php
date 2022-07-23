@@ -43,6 +43,7 @@ class InventoryAdjustmentController extends Controller
     public function index(Request $request)
     {
        $title = 'Inventory Adjustment List';
+       $companyInfo =   helper::companyInfo();
        $datatableRoute = 'inventoryTransaction.inventoryAdjustment.dataProcessingInventoryAdjustment';
        return view('backend.pages.inventoryTransaction.inventoryAdjustment.index', get_defined_vars());
     }
@@ -64,6 +65,7 @@ class InventoryAdjustmentController extends Controller
         $title = 'Add New Inventory Adjustment';
         $formInput =  helper::getFormInputByRoute();
         $batchList = $this->systemService->getActiveBatch();
+        $companyInfo =   helper::companyInfo();
         $formInputDetails =  helper::getFormInputByRoute('inventoryTransaction.inventoryAdjustment.details.create');
         return view('backend.pages.inventoryTransaction.inventoryAdjustment.create', get_defined_vars());
 
@@ -126,7 +128,7 @@ class InventoryAdjustmentController extends Controller
             return redirect()->back();
         }
         $title = 'Inventory Adjustment Edit';
-
+        $companyInfo =   helper::companyInfo();
         $invoiceDetails = $editInfo->inventoryAdjustmentDetails;
         $products = $this->productService->getActiveProduct();
         $activeColumn = Helper::getQueryProperty('inventoryTransaction.inventoryAdjustment.details.create');

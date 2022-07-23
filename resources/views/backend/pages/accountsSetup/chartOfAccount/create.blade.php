@@ -57,11 +57,9 @@ Accounts - {{$title}}
                     @if(!empty($formInput) && is_array($formInput))
                     <div class="form-row">
                         @foreach ($formInput as $key => $eachInput)
-                        @php htmlform::formfiled($eachInput, $errors, old()) @endphp
+                           @php htmlform::formfiled($eachInput, $errors, old()) @endphp
                         @endforeach
                     </div>
-
-
 
                     <button class="btn btn-info" type="submit"><i class="fa fa-save"></i> &nbsp;Save</button>
                     @else
@@ -71,7 +69,7 @@ Accounts - {{$title}}
                     @endif
                 </form>
 
-                
+
 
 
             </div>
@@ -129,10 +127,10 @@ Accounts - {{$title}}
     <script>
 $.fn.extend({
     treed: function (o) {
-      
+
       var openedClass = 'background-image: url(https://img.icons8.com/color/48/000000/plus.png)';
       var closedClass = 'fa fa-minus';
-      
+
       if (typeof o!= 'undefined'){
         if (typeof o.openedClass != 'undefined'){
         openedClass = o.openedClass;
@@ -141,7 +139,7 @@ $.fn.extend({
         closedClass = o.closedClass;
         }
       };
-      
+
         /* initialize each of the top levels */
         var tree = $(this);
         tree.addClass("tree");
@@ -188,9 +186,9 @@ $(function() {
         $(this).toggleClass('folder-open');
         e.stopPropagation();
     });
-    
+
     $('.file').on('click', function(e) {
-       e.stopPropagation(); 
+       e.stopPropagation();
     });
 })
 

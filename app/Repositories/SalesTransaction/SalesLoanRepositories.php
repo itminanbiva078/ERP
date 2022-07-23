@@ -36,7 +36,7 @@ class SalesLoanRepositories
     public function __construct(SalesLon $salesLon)
     {
         $this->salesLon = $salesLon;
-      
+
     }
 
     /**
@@ -98,15 +98,15 @@ class SalesLoanRepositories
                 $value->store_id  = $value->store->name ?? '';
         endforeach;
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($salesLons) {
             foreach ($salesLons as $key => $salesLon) {
                 $nestedData['id'] = $key + 1;
-               
+
                 if ($ced != 0) :
                     if ($edit != 0)
-                        if ($salesLon->sales_status == 'Pending' && $salesLon->challan_status == "Pending") :
+                        if ($salesLon->status == 'Pending') :
 
                             $edit_data = '<a href="' . route('salesTransaction.salesLoan.edit', $salesLon->id) . '" class="btn btn-xs btn-default"><i class="fa fa-edit" aria-hidden="true"></i></a>';
                         else :
@@ -120,7 +120,7 @@ class SalesLoanRepositories
 
                     if ($delete != 0)
 
-                        if ($salesLon->sales_status == 'Pending' && $salesLon->challan_status == "Pending") :
+                        if ($salesLon->status == 'Pending') :
                             $delete_data = '<a delete_route="' . route('salesTransaction.salesLoan.destroy', $salesLon->id) . '" delete_id="' . $salesLon->id . '" title="Delete" class="btn btn-xs btn-default delete_row uniqueid' . $salesLon->id . '"><i class="fa fa-times"></i></a>';
                         else :
                             $delete_data = '';
@@ -195,6 +195,7 @@ class SalesLoanRepositories
 
     public function store($request)
     {
+
         DB::beginTransaction();
         try {
             $poMaster =  new $this->salesLon();
@@ -204,13 +205,11 @@ class SalesLoanRepositories
             $poMaster->branch_id  = $request->branch_id ?? helper::getDefaultBranch();
             if (!empty($request->sales_quatation_id))
             $poMaster->sales_quatation_id  = implode(",", $request->sales_quatation_id ?? '');
-            $poMaster->voucher_no  = $request->voucher_no;
+            $poMaster->voucher_no  = helper::generateInvoiceId("sales_loan_prefix","sales_lons");
             $poMaster->subtotal  = $request->sub_total;
             $poMaster->discount  = $request->discount;
-            $poMaster->grand_total  = array_sum($request->total_price);
             $poMaster->note  = $request->note;
-            $poMaster->sales_status  = 'Approved';
-            $poMaster->challan_status  = 'Approved';
+            $poMaster->status  = 'Approved';
             $poMaster->updated_by = Auth::user()->id;
             $poMaster->company_id = Auth::user()->company_id;
             $poMaster->save();
@@ -218,9 +217,14 @@ class SalesLoanRepositories
                 if(!empty($request->documents))
                 $poMaster->documents = helper::upload($request->documents,500,500,'salesLoan',$poMaster->id);
                 $poMaster->save();
-                $this->masterDetails($poMaster->id,$request);
+                $totalPrice = $this->masterDetails($poMaster->id,$request);
+                $poMaster->grand_total = $totalPrice;
+                $poMaster->save();
                 //general table data save
                 $general_id = $this->generalSave($poMaster->id,$request);
+                //general ledger table data save
+                Journal::salesLoanLedgerSave($general_id, $poMaster->grand_total,$request->account_id[0],$request->date,12);
+            
                 //main stock table data save
                 $this->stockSave($general_id,$poMaster->id);
                 //stock cashing table data save
@@ -231,8 +235,10 @@ class SalesLoanRepositories
             }
             DB::commit();
             // all good
+
             return $poMaster->id;
         } catch (\Exception $e) {
+
             DB::rollback();
             return $e->getMessage();
         }
@@ -249,17 +255,21 @@ class SalesLoanRepositories
             endforeach;
             return $totalFalse;
         }
-    }  
+    }
 
 
 
     public function masterDetails($masterId, $request)
     {
 
+        $totalPrice=0;
         SalesLonDetails::where('sales_lons_id', $masterId)->company()->delete();
         $productInfo = $request->product_id;
         $allDetails = array();
         foreach ($productInfo as $key => $value) :
+            $pbatch = $request->batch_no[$key] ?? helper::getProductBatchById($request->product_id[$key]);
+            $unitPrice =  helper::productAvg($request->product_id[$key],$pbatch);
+
             $masterDetails = array();
             $masterDetails['sales_lons_id'] = $masterId;
             $masterDetails['company_id'] = helper::companyId();
@@ -267,17 +277,18 @@ class SalesLoanRepositories
             $masterDetails['branch_id']  = $request->branch_id ?? helper::getDefaultBranch();
             $masterDetails['store_id']  = $request->store_id ?? helper::getDefaultStore();
             $masterDetails['product_id']  = $request->product_id[$key];
-            $masterDetails['batch_no']  = $request->batch_no[$key] ?? helper::getProductBatchById($request->product_id[$key]);
+            $masterDetails['batch_no']  =$pbatch;
             $masterDetails['pack_size']  = $request->pack_size[$key] ?? $request->quantity[$key];
             $masterDetails['pack_no']  = $request->pack_no[$key] ?? 1;
             $masterDetails['quantity']  = $request->quantity[$key];
-            $masterDetails['unit_price']  = $request->unit_price[$key];
-            $masterDetails['total_price']  = $request->total_price[$key];
+            $masterDetails['unit_price']  =  $unitPrice;
+            $masterDetails['total_price']  =  $unitPrice*$request->quantity[$key];
             array_push($allDetails, $masterDetails);
+            $totalPrice+= $masterDetails['total_price'];
         endforeach;
            $saveInfo =  SalesLonDetails::insert($allDetails);
 
-        return $saveInfo;
+        return $totalPrice;
     }
 
 
@@ -286,7 +297,7 @@ class SalesLoanRepositories
         $salesLoanInfo = $this->salesLon::find($sales_lons_id);
         $general =  new General();
         $general->date = helper::mysql_date($salesLoanInfo->date);
-        $general->form_id = 12; //purchases info
+        $general->form_id = 12; //sales loan info
         $general->branch_id  = $salesLoanInfo->branch_id ?? helper::getDefaultBranch();
         $general->store_id  = $salesLoanInfo->store_id ?? helper::getDefaultStore();
         $general->voucher_id  = $sales_lons_id;
@@ -299,9 +310,9 @@ class SalesLoanRepositories
     }
 
 
+
     public function stockSave($general_id, $sales_lons_id)
     {
-       
         $salesLoanDetails = SalesLonDetails::where('sales_lons_id', $sales_lons_id)->company()->get();
         $allStock = array();
         foreach ($salesLoanDetails as $key => $value) :
@@ -312,7 +323,7 @@ class SalesLoanRepositories
             $generalStock['branch_id']  = $value->branch_id ?? helper::getDefaultBranch();
             $generalStock['store_id']  = $value->store_id ?? helper::getDefaultStore();
             $generalStock['product_id']  = $value->product_id;
-            $generalStock['type']  = "out";
+            $generalStock['type']  = "lout";
             $generalStock['batch_no']  = $value->batch_no;
             $generalStock['pack_size']  = $value->pack_size;
             $generalStock['pack_no']  = $value->pack_no;
@@ -320,14 +331,14 @@ class SalesLoanRepositories
             $generalStock['unit_price']  = $value->unit_price;
             $generalStock['total_price']  = $value->total_price;
             array_push($allStock, $generalStock);
-           
+
         endforeach;
-          $stockInfo = Stock::insert($allStock);  
+          $stockInfo = Stock::insert($allStock);
         return $stockInfo;
     }
 
 
- 
+
     public function stockSummarySave($salesLoan_id)
     {
         $salesLoanDetails = SalesLonDetails::where('sales_lons_id', $salesLoan_id)->company()->get();
@@ -354,9 +365,6 @@ class SalesLoanRepositories
         return true;
     }
 
-
-  
-
     public function update($request, $id)
     {
         DB::beginTransaction();
@@ -380,9 +388,13 @@ class SalesLoanRepositories
                 $this->masterDetails($poMaster->id, $request);
                 //general table data save
                 $general_id = $this->generalSave($poMaster->id, $request);
+                //general Ledger table data save
+             Journal::salesLoanLedgerSave($general_id,$request->grand_total,$request->account_id[0],$request->date,12);
+
                 //main stock table data save
                 $this->stockSave($general_id, $poMaster->id);
                 //stock cashing table data save
+            
                 $this->stockSummarySave($poMaster->id);
             }
             DB::commit();
@@ -394,6 +406,7 @@ class SalesLoanRepositories
         }
     }
 
+  
 
     public function salesQuatationUpdate($salesQuatationId)
     {
@@ -425,7 +438,7 @@ class SalesLoanRepositories
         try {
             $sales = $this->sales::find($id);
             $sales->delete();
-            SalesDetails::where('sales_lons_id', $id)->delete();
+            SalesLonDetails::where('sales_lons_id', $id)->delete();
             DB::commit();
             // all good
             return true;

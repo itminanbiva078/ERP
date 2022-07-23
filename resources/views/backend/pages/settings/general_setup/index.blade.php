@@ -41,9 +41,9 @@ Settings - {{$title}}
             <div class="card-header">
                 <h3 class="card-title">General Setup List</h3>
                 <div class="card-tools">
-                @if(helper::roleAccess('settings.generalSetup.create'))
+                {{-- @if(helper::roleAccess('settings.generalSetup.create'))
                     <a class="btn btn-default" href="{{ route('settings.generalSetup.create') }}"><i class="fas fa-plus"></i>Add New</a>
-                @endif
+                @endif --}}
                     <span id="buttons"></span>
                     <a class="btn btn-tool btn-default" data-card-widget="collapse">
                         <i class="fas fa-minus"></i>

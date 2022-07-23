@@ -31,7 +31,7 @@ class SalesReturnRepositories
     public function __construct(SaleReturn $saleReturn)
     {
         $this->salesReturn = $saleReturn;
-      
+
     }
 
     /**
@@ -90,7 +90,7 @@ class SalesReturnRepositories
                $value->branch_id  = $value->branch->name ?? '';
         endforeach;
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($salessReturn) {
             foreach ($salessReturn as $key => $sales) {
@@ -108,16 +108,16 @@ class SalesReturnRepositories
                     if ($edit != 0)
                         if($sales->$value == 'Pending'):
                         $edit_data = '<a href="' . route('salesTransaction.salesReturn.edit', $sales->id) . '" class="btn btn-xs btn-default"><i class="fa fa-edit" aria-hidden="true"></i></a>';
-                        else: 
+                        else:
                             $edit_data = '';
                         endif;
                         else
                         $edit_data = '';
-                        $show_data = '<a href="' . route('salesTransaction.salesReturn.show', $sales->id) . '" show_id="' . $sales->id . '" title="Details" class="btn btn-xs btn-default  uniqueid' . $sales->id . '"><i class="fa fa-search-plus"></i></a>';                               
+                        $show_data = '<a href="' . route('salesTransaction.salesReturn.show', $sales->id) . '" show_id="' . $sales->id . '" title="Details" class="btn btn-xs btn-default  uniqueid' . $sales->id . '"><i class="fa fa-search-plus"></i></a>';
                     if ($delete != 0)
                     if($sales->$value == 'Pending'):
                         $delete_data = '<a delete_route="' . route('salesTransaction.salesReturn.destroy', $sales->id) . '" delete_id="' . $sales->id . '" title="Delete" class="btn btn-xs btn-default delete_row uniqueid' . $sales->id . '"><i class="fa fa-times"></i></a>';
-                    else: 
+                    else:
                         $delete_data = '';
                     endif;
                     else
@@ -149,13 +149,17 @@ class SalesReturnRepositories
               $q->select('id','sales_id','branch_id','batch_no','date','pack_size','pack_no','discount','quantity','approved_quantity','return_quantity','unit_price','total_price','company_id','product_id');
           },'salesDetails.product' => function($q){
             $q->select('id','code','name','category_id','status','brand_id','company_id');
-        },'customer' => function($q){
+        },'salesDetails.batch' => function($q){
+            $q->select('id','name','company_id');
+        },
+        'customer' => function($q){
             $q->select('id','code','contact_person','branch_id','name','email','phone','address');
         },'branch' => function($q){
             $q->select('id','name','email','phone','address');
         }])->company()->where('id', $id)->first();
           return $result;
     }
+
     /**
      * @param $request
      * @return mixed
@@ -207,11 +211,11 @@ class SalesReturnRepositories
            $response[] = array("value"=>$eachVoucher->id,"label"=>$voucherInfo);
         }
 
-       
+
           return $response;
     }
 
-    
+
     /**
      * @param $request
      * @return mixed
@@ -227,14 +231,16 @@ class SalesReturnRepositories
     {
         DB::beginTransaction();
         try {
+
                 $saleInfo =  $this->details($request->sale_id);
+              
                 $poMaster =  new $this->salesReturn();
                 $poMaster->date = date('Y-m-d');
                 $poMaster->payment_type  = $request->payment_type;
                 $poMaster->customer_id  = $saleInfo->customer_id;
                 $poMaster->sale_id  = $request->sale_id;
                 $poMaster->branch_id  = $saleInfo->branch_id;
-                $poMaster->voucher_no  = $saleInfo->voucher_no;
+                $poMaster->voucher_no  = helper::generateInvoiceId("sales_return_prefix","sale_returns"); // $saleInfo->voucher_no
                 $poMaster->subtotal  = $request->sub_total;
                 $poMaster->documents  = $request->documents;
                 $poMaster->deduction_amount  = $request->deduction_amount;
@@ -242,12 +248,12 @@ class SalesReturnRepositories
                 $poMaster->total_qty  = array_sum($request->return_quantity);
                 $poMaster->grand_total  = $request->grand_total;
                 $poMaster->note  = $request->note;
-                $poMaster->status  = 'Pending';
+                $poMaster->status  = 'Approved';
                 $poMaster->created_by = Auth::user()->id;
                 $poMaster->company_id = Auth::user()->company_id;
                 $poMaster->save();
                 if($poMaster->id){
-                    $this->masterDetails($poMaster->id,$request);
+                    $costOfGoodSold = $this->masterDetails($poMaster->id,$request);
 
                         if(helper::isSalesReturnApprovalAuto()):
                             //sales return credit payment
@@ -255,30 +261,37 @@ class SalesReturnRepositories
                             //general table data save
                             $general_id = $this->generalSave($poMaster->id,$request);
                             //sales return Journal
-                            $this->saleReturnJournal($general_id,$request);
+                            $this->saleReturnJournal($general_id,$request,$costOfGoodSold);
                             //sales payment journal
-                            $this->saleReturnPaymentJournal($general_id,$request);
-                            //main stock table data save
-                            $this->stockSave($general_id,$poMaster->id);
-                            //stock cashing table data save
-                            $this->stockSummarySave($poMaster->id);
-                            $poMaster->status  = 'Approved';
-                            $poMaster->save();
+
+                            // if payment type cash    
+                            if($request->payment_type == "Cash"):
+                                        
+                                $this->salesReturnCashtPayment($poMaster->id,$request->paid_amount);
+                                $this->saleReturnCashPaymentJournal($general_id,$request->paid_amount,$request->account_id[0],$request->date,6);
+                                // if payment type cash
+                            endif;
+
+                             //main stock table data save
+                             $this->stockSave($general_id,$poMaster->id);
+                             //stock cashing table data save
+                             $this->stockSummarySave($poMaster->id);
+                             $poMaster->status  = 'Approved';
+                             $poMaster->save();
+
                         endif;
-
-            }
-            DB::commit();
-            // all good
-            return $poMaster->id ;
-        } catch (\Exception $e) {
-            DB::rollback();
-
-            return $e->getMessage();
-        }
+                    }
+                    DB::commit();
+                    // all good
+                    return $poMaster->id ;
+                } catch (\Exception $e) {
+                    DB::rollback();
+                    return $e->getMessage();
+                }
     }
 
     public function approved($id, $request)
-    {   
+    {
 
         DB::beginTransaction();
         try {
@@ -286,7 +299,7 @@ class SalesReturnRepositories
             $request->merge(['date' => $request->date_picker]);
             $status = $request->status;
             $poMaster = $this->salesReturn::find($id);
-            if($status == 'Approved'): 
+            if($status == 'Approved'):
             //sales return credit payment
             $this->salesReturnCreditPayment($poMaster->id,$poMaster->grand_total);
             //general table data save
@@ -302,7 +315,7 @@ class SalesReturnRepositories
                 $poMaster->status = $request->status;
                 $poMaster->approved_by = helper::userId();
                 $poMaster->save();
-            else: 
+            else:
                 $poMaster->status = $request->status;
                 $poMaster->approved_by = helper::userId();
                 $poMaster->save();
@@ -315,7 +328,7 @@ class SalesReturnRepositories
 
         return $e->getMessage();
     }
-  
+
     }
 
     public function salesReturnCreditPayment($saleReturn_id,$payment)
@@ -330,19 +343,39 @@ class SalesReturnRepositories
         $salesReturnCreditPayment->voucher_id  = $salesInfo->id;
         $salesReturnCreditPayment->payment_type  = 'Cash';
         $salesReturnCreditPayment->voucher_no  = helper::generateInvoiceId("sales_payment_prefix","sale_payments");
+        $salesReturnCreditPayment->debit  = $payment;
+        $salesReturnCreditPayment->status  = 'Approved';
+        $salesReturnCreditPayment->note  = 'Sale Return';
+        $salesReturnCreditPayment->updated_by = Helper::userId();
+        $salesReturnCreditPayment->created_by = Helper::userId();
+        $salesReturnCreditPayment->save();
+        return $salesReturnCreditPayment->id;
+    }
+    public function salesReturnCashtPayment($saleReturn_id,$payment)
+    {
+        $salesInfo = $this->salesReturn::find($saleReturn_id);
+        $salesReturnCreditPayment =  new SalePayment();
+        $salesReturnCreditPayment->date = helper::mysql_date();
+        $salesReturnCreditPayment->company_id = helper::companyId(); //sales info
+        $salesReturnCreditPayment->form_id  = 6;
+        $salesReturnCreditPayment->customer_id  = $salesInfo->customer_id;
+        $salesReturnCreditPayment->branch_id  = $salesInfo->branch_id;
+        $salesReturnCreditPayment->voucher_id  = $salesInfo->id;
+        $salesReturnCreditPayment->payment_type  = 'Cash';
+        $salesReturnCreditPayment->voucher_no  = helper::generateInvoiceId("sales_payment_prefix","sale_payments");
         $salesReturnCreditPayment->credit  = $payment;
         $salesReturnCreditPayment->status  = 'Approved';
-        $salesReturnCreditPayment->note  = 'Sale Return Payment';
+        $salesReturnCreditPayment->note  = 'Sale Return';
         $salesReturnCreditPayment->updated_by = Helper::userId();
         $salesReturnCreditPayment->created_by = Helper::userId();
         $salesReturnCreditPayment->save();
         return $salesReturnCreditPayment->id;
     }
 
-
     public function masterDetails($masterId,$request){
         $productInfo = $request->product_id;
         $allDetails = array();
+        $costOfGoods=0;
         foreach($productInfo as $key => $value):
           $masterDetails=array();
           if(!empty($request->return_quantity[$key])):
@@ -356,7 +389,6 @@ class SalesReturnRepositories
             $masterDetails['batch_no']  =$saleItemInfo->batch_no;
             $masterDetails['pack_size']  =$saleItemInfo->pack_size ?? 0;
             $masterDetails['pack_no']  =$saleItemInfo->pack_no ?? 0;
-            
             $masterDetails['quantity']  =$request->return_quantity[$key];
             $masterDetails['deduction_percent']  =$request->deduction[$key];
             $masterDetails['deduction_amount']  =$request->deduction_percen_amount[$key];
@@ -365,27 +397,31 @@ class SalesReturnRepositories
             array_push($allDetails,$masterDetails);
             //update sales details table.
             $saleItemInfo->return_quantity = $saleItemInfo->return_quantity + $request->return_quantity[$key];
+
+            $singleProductAvgPrice =helper::productAvg($masterDetails['product_id'],$masterDetails['batch_no']);
+          
+            $costOfGoods+=$singleProductAvgPrice*$request->return_quantity[$key];
             $saleItemInfo->save();
+            
           endif;
         endforeach;
-       $saveInfo =  SaleReturnDetail::insert($allDetails);
-       return $saveInfo;
+            SaleReturnDetail::insert($allDetails);
+       return  $costOfGoods;
     }
 
 
-    public function saleReturnJournal($masterLedgerId,$request){
+    public function saleReturnJournal($masterLedgerId,$request,$costOfGoods=null){
 
         $generalInfo=General::find($masterLedgerId);
-
         //account Receiable = credit
          $accountReceiveable = new GeneralLedger();
          $accountReceiveable->company_id = helper::companyId();
          $accountReceiveable->general_id = $masterLedgerId;
          $accountReceiveable->form_id = 6;
-         $accountReceiveable->account_id = 38;//account receiable come from chartOfAccount
+         $accountReceiveable->account_id = 12;//account receiable come from chartOfAccount
          $accountReceiveable->date = date('Y-m-d',strtotime($request->date));
          $accountReceiveable->credit = $generalInfo->debit;
-         $accountReceiveable->memo ='Account Receiable';
+         $accountReceiveable->memo ='Account Receivable';
          $accountReceiveable->created_by =helper::userId();
          $accountReceiveable->save();
          //sales = debit
@@ -396,7 +432,7 @@ class SalesReturnRepositories
          $sales->account_id = 44;//purchases stock or inventory stock
          $sales->date = date('Y-m-d',strtotime($request->date));
          $sales->debit = $generalInfo->debit;
-         $sales->memo ='Sales';
+         $sales->memo ='Sales Return';
          $sales->created_by =helper::userId();
          $sales->save();
         //sales = debit
@@ -406,8 +442,8 @@ class SalesReturnRepositories
          $purchases->form_id = 6;
          $purchases->account_id = 4;//account payable come from chartOfAccount
          $purchases->date = date('Y-m-d',strtotime($request->date));
-         $purchases->debit = $generalInfo->debit;
-         $purchases->memo ='Sales';
+         $purchases->debit = $costOfGoods;
+         $purchases->memo ='Sales return';
          $purchases->created_by =helper::userId();
          $purchases->save();
          //cost of good sold = credit
@@ -417,13 +453,38 @@ class SalesReturnRepositories
          $costOfGoodSols->form_id =6;
          $costOfGoodSols->account_id = 52;//purchases stock or inventory stock
          $costOfGoodSols->date = date('Y-m-d',strtotime($request->date));
-         $costOfGoodSols->credit = $generalInfo->debit;
+         $costOfGoodSols->credit = $costOfGoods;
          $costOfGoodSols->memo ='Cost Of Goods Sold';
          $costOfGoodSols->created_by =helper::userId();
          $costOfGoodSols->save();
      }
+
+     public static function saleReturnCashPaymentJournal($masterLedgerId,$paidAmount,$accountId,$date,$from_id=null)
+     {
  
- 
+         //account receivable = debit
+         $accountReceiveable = new GeneralLedger();
+         $accountReceiveable->company_id = helper::companyId();
+         $accountReceiveable->general_id = $masterLedgerId;
+         $accountReceiveable->form_id = $from_id;
+         $accountReceiveable->account_id = 12; //account receiable come from chartOfAccount
+         $accountReceiveable->date = helper::mysql_date($date);
+         $accountReceiveable->debit = $paidAmount;
+         $accountReceiveable->memo = 'Account Receivable';
+         $accountReceiveable->created_by = helper::userId();
+         $accountReceiveable->save();
+         //cash or bank = credit
+         $cashOrBank = new GeneralLedger();
+         $cashOrBank->company_id = helper::companyId();
+         $cashOrBank->general_id = $masterLedgerId;
+         $cashOrBank->form_id = $from_id;
+         $cashOrBank->account_id = $accountId; //cash in hand
+         $cashOrBank->date = helper::mysql_date($date);
+         $cashOrBank->credit = $paidAmount;
+         $cashOrBank->memo = 'Cash or bank credit';
+         $cashOrBank->created_by = helper::userId();
+         $cashOrBank->save();
+     }
      public function saleReturnPaymentJournal($masterLedgerId,$request){
         $generalInfo=General::find($masterLedgerId);
          //account receivable = debit
@@ -431,7 +492,7 @@ class SalesReturnRepositories
          $accountReceiveable->company_id = helper::companyId();
          $accountReceiveable->general_id = $masterLedgerId;
          $accountReceiveable->form_id = 6;
-         $accountReceiveable->account_id = 38;//account receiable come from chartOfAccount
+         $accountReceiveable->account_id = 12;//account receiable come from chartOfAccount
          $accountReceiveable->date = date('Y-m-d',strtotime($request->date));
          $accountReceiveable->credit = $generalInfo->debit;
          $accountReceiveable->memo ='Account Payable';
@@ -465,7 +526,7 @@ class SalesReturnRepositories
         $general->company_id = helper::companyId();
         $general->save();
         return $general->id;
-        
+
     }
 
     public function stockSave($general_id,$sale_id){
@@ -505,10 +566,9 @@ class SalesReturnRepositories
                 $stockSummary = $stockSummaryExits;
                 $stockSummary->quantity =$stockSummary->quantity+$value->quantity;
             }
-            $stockSummary->branch_id = $value->branch_id;
-            $stockSummary->store_id = $value->store_id;
+            $stockSummary->branch_id = $value->branch_id ?? helper::getDefaultBranch();
+            $stockSummary->store_id = $value->store_id ?? helper::getDefaultStore();
             $stockSummary->company_id = helper::companyId();
-            $stockSummary->branch_id = $value->branch_id;
             $stockSummary->product_id = $value->product_id;
             $stockSummary->batch_no = $value->batch_no;
             $stockSummary->pack_size = $value->pack_size;
@@ -518,5 +578,5 @@ class SalesReturnRepositories
         return true;
     }
 
-    
+
 }

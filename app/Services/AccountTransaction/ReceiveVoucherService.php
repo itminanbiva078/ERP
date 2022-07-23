@@ -42,6 +42,15 @@ class ReceiveVoucherService
         return $this->systemRepositories->statusUpdate($request, $id);
     }
 
+    /**
+     * @param $request
+     * @return mixed
+     */
+    public function accountApproved($id, $status)
+    {
+        return $this->systemRepositories->accountApproved($id, $status);
+    }
+    
     public function statusValidation($request)
     {
         return [

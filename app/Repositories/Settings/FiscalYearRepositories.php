@@ -73,7 +73,7 @@ class FiscalYearRepositories
             })->count();
         }
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($fiscalYears) {
             foreach ($fiscalYears as $key => $fiscalYear) {

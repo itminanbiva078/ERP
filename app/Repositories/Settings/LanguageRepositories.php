@@ -52,7 +52,7 @@ class LanguageRepositories
         $dir = $request->input('order.0.dir');
 
         if (empty($request->input('search.value'))) {
-            $languages = $this->language::select($columns)->offset($start)
+            $languages = $this->language::select($columns)->company()->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir)
                 //->orderBy('status', 'desc')
@@ -60,7 +60,7 @@ class LanguageRepositories
             $totalFiltered = $this->language::count();
         } else {
             $search = $request->input('search.value');
-            $languages = $this->language::select($columns)->where(function ($q) use ($columns,$search) {
+            $languages = $this->language::select($columns)->company()->where(function ($q) use ($columns,$search) {
                 $q->where('id', 'like', "%{$search}%");
                 foreach ($columns as $column) {
                 $q->orWhere($column, 'like', "%{$search}%");
@@ -71,7 +71,7 @@ class LanguageRepositories
                 ->orderBy($order, $dir)
                 // ->orderBy('status', 'desc')
                 ->get();
-            $totalFiltered = $this->language::select($columns)->where(function ($q) use ($columns,$search) {
+            $totalFiltered = $this->language::select($columns)->company()->where(function ($q) use ($columns,$search) {
                 $q->where('id', 'like', "%{$search}%");
                 foreach ($columns as $column) {
                 $q->orWhere($column, 'like', "%{$search}%");
@@ -80,7 +80,7 @@ class LanguageRepositories
         }
 
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($languages) {
             foreach ($languages as $key => $language) {

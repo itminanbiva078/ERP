@@ -125,10 +125,6 @@
             });
         });
 
-
-
-
-
                 $('tbody,tfoot').delegate(
                     'input.supplier_id,input.opening_balance',
                     'keyup',

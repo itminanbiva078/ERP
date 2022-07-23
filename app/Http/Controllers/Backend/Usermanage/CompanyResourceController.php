@@ -39,7 +39,8 @@ class CompanyResourceController extends Controller
      */
     public function index(Request $request)
     {
-        $title = 'Company Role';
+        $title = 'Company Resource';
+        $companyInfo =   helper::companyInfo();
         return view('backend.pages.usermanage.companyRole.index', get_defined_vars());
     }
 
@@ -55,6 +56,7 @@ class CompanyResourceController extends Controller
     public function create()
     {
         $title = 'Add New Company Resource';
+        $companyInfo =   helper::companyInfo();
         $companyCategory = $this->systemService->getCompanyCategory();
         $formProperty = $this->systemService->getFormProperty();
         return view('backend.pages.usermanage.companyRole.create', get_defined_vars());
@@ -96,7 +98,9 @@ class CompanyResourceController extends Controller
           array_push($allNavigation,$value->navigation_id);
         endforeach;
         $company_id = $id;
+        $companyInfo =   helper::companyInfo();
         $companyCategory = $this->systemService->getCompanyCategory();
+       // dd( $companyCategory);
         return view('backend.pages.usermanage.companyRole.edit', get_defined_vars());
     }
 

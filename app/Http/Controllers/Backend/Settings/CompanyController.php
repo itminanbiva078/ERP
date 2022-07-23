@@ -33,6 +33,7 @@ class CompanyController extends Controller
     public function index(Request $request)
     {
         $title = 'Company List';
+        $companyInfo =   helper::companyInfo();
         $datatableRoute = 'settings.company.dataProcessingCompany';
         return view('backend.pages.settings.company.index', get_defined_vars());
     }
@@ -50,6 +51,7 @@ class CompanyController extends Controller
     {
         $title = 'Add New Company';
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
         return view('backend.pages.settings.company.create', get_defined_vars());
     }
     /**
@@ -67,6 +69,7 @@ class CompanyController extends Controller
             return redirect()->back();
         }
         $title = 'Update Company';
+        $companyInfo =   helper::companyInfo();
         return view('backend.pages.settings.company.edit', get_defined_vars());
     }
 

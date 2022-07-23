@@ -2195,7 +2195,15 @@ aside.color-dynamic-sidebar .sidebar-color div#myTabContent {
 }
 
 .table tr td {
-    color: var(--main-font-color)
+    color: var(--main-font-color);
+    padding: 3px 5px !important;
+    font-size: var(--smaller-font-size);
+}
+
+.table td, .table th {
+    padding: 3px 5px !important;
+    vertical-align: top;
+    border: 1px solid var(--border-color);
 }
 
 .card .card-title {
@@ -2799,4 +2807,7 @@ nav#main-sidebar-section> ul >li.active > a p {
 
 .nav-treeview >li.active > a p {
     color: #4c5358;
+}
+.card-body form.needs-validation label span {
+    color: red;
 }

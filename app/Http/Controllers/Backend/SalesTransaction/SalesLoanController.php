@@ -43,6 +43,7 @@ class SalesLoanController extends Controller
     public function index(Request $request)
     {
        $title = 'Sales Loan List';
+       $companyInfo =   helper::companyInfo();
        $datatableRoute = 'salesTransaction.salesLoan.dataProcessingSalesLoan';
        return view('backend.pages.salesTransaction.salesLoan.index', get_defined_vars());
     }
@@ -62,6 +63,7 @@ class SalesLoanController extends Controller
 
         $stock =   helper::getProductStock(1,2);
         $title = 'Add New Sales Loan';
+        $companyInfo =   helper::companyInfo();
         $formInput =  helper::getFormInputByRoute();
         $formInputDetails =  helper::getFormInputByRoute('salesTransaction.salesLoan.details.create');
         $batchList = $this->systemService->getActiveBatch();
@@ -130,7 +132,7 @@ class SalesLoanController extends Controller
             return redirect()->back();
         }
         $title = 'Sales Loan Edit';
-
+        $companyInfo =   helper::companyInfo();
         $invoiceDetails = $editInfo->salesLoanDetails;
         $products = $this->productService->getActiveProduct();
         $activeColumn = Helper::getQueryProperty('salesTransaction.salesLoan.details.create');

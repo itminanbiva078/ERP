@@ -63,42 +63,9 @@ SalesTransaction - {{$title}}
             </div>
             <!-- Main content -->
             <div class="invoice p-3 mb-3">
-             
-              <!-- info row -->
-              <div class="row invoice-info">
-                <div class="col-sm-4 invoice-col">
-                  Company Info
-                  <address>
-                    <strong>{{$companyInfo->name ?? ''}}</strong><br>
-                    {{$companyInfo->address ?? ''}}
-                    <br>
-                    Phone: {{$companyInfo->phone ?? ''}}<br>
-                    Email: {{$companyInfo->email ?? ''}}
-                  </address>
-                </div>
-                <!-- /.col -->
-                <div class="col-sm-4 invoice-col">
-                  Customer Info
-                  <address>
-                    <strong>{{$details->customer->name ?? ''}}</strong>
-                    <br>
-                    {{$details->customer->address ?? ''}}<br>
-                    Phone: {{$details->customer->phone ?? ''}}<br>
-                    Email: {{$details->customer->email ?? ''}}
-                  </address>
-                </div>
-                <!-- /.col -->
-                <div class="col-sm-4 invoice-col">
-                  <b>Invoice {{$details->voucher_no}}</b><br>
-                  <b>Date:</b> {{ helper::get_php_date($details->date)}}<br>
-                  <b>Payment Type:</b> {{$details->payment_type}}<br>
-                  <b>Sales Status:</b> @php echo helper::statusBar($details->sales_status) @endphp<br>
-                  <b>Challan Status:</b> @php echo helper::statusBar($details->challan_status) @endphp<br>
+              
+              @include('backend.layouts.common.detailsHeader',['details' => $details])
 
-                </div>
-                <!-- /.col -->
-              </div>
-              <!-- /.row -->
 
               <!-- Table row -->
               <div class="row">
@@ -118,8 +85,7 @@ SalesTransaction - {{$title}}
                             <th class="text-right">Pack No.	</th>
                             @endif
                             <th class="text-right">Quantity</th>
-                            <th class="text-right">Unit Price</th>
-                            <th class="text-right">Total Price</th>
+                           
                         </tr>
                     </thead>
                     <tbody>
@@ -146,17 +112,17 @@ SalesTransaction - {{$title}}
                                 <td  class="text-right">{{$eachDetails->pack_no ?? ''}}</td>
                                 @endif
                                 <td class="text-right">{{$eachDetails->quantity ?? ''}}</td>
-                                <td class="text-right">{{helper::pricePrint($eachDetails->unit_price)}}</td>
-                                <td class="text-right">{{helper::pricePrint($eachDetails->total_price)}}</td>
+                                
                             </tr>
                         @endforeach
                     </tbody>
                     <tfoot>
                       <tr>
-                        <th colspan="{{helper::getColspan($activeColumn)}}" class="text-right">Sub-Total</th>
-                        <th class="text-right">{{$tqty}}</th>
+                        <th colspan="{{helper::getColspan($activeColumn)}}" class="text-right">Total Qty</th>
+                        <th class="text-right"></th>
                         <th class="text-right">0.00</th>
-                        <th class="text-right">{{helper::pricePrint($tprice)}}</th>
+                        <th class="text-right">{{$tqty}}</th>
+                        
                     </tr>
                     </tfoot>
                   </table>
@@ -168,7 +134,7 @@ SalesTransaction - {{$title}}
               <div class="row">
                 <!-- accepted payments column -->
                 <div class="col-9">
-                  <p class="" style="text-transform: capitalize;"><b> In Word :  </b>{{ helper::get_bd_amount_in_text($tprice) }}</p>
+                 
                   <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
                   {{$details->note}}
                   </p>
@@ -177,33 +143,20 @@ SalesTransaction - {{$title}}
                 <div class="col-3">
                
                   <div class="table-responsive">
-                    <table class="table">
+                    {{-- <table class="table">
                       <tr>
                         <th  class="text-right" style="width:50%">Subtotal:</th>
-                        <td  class="text-right">{{helper::pricePrint($details->subtotal)}}</td>
+                        <td  class="text-right">{{helper::pricePrint($details->grand_total)}}</td>
                       </tr>
                      
-                      <tr>
-                        <th class="text-right">Grand Total:</th>
-                        <td class="text-right" ><span style="border-bottom: double;">{{helper::pricePrint($details->grand_total,2)}}</span></td>
-                      </tr>
-                    </table>
+                    </table> --}}
                   </div>
                 </div>
                 <!-- /.col -->
               </div>
               <!-- /.row -->
-              <div class="row">
-                <div class="col-md-4">
-                    <p class="text-center">____________________<br>Prepared By</p>                        
-                </div>
-                <div class="col-md-4">
-                    <p class="text-center">____________________<br>Checked By</p>           
-                </div>
-                <div class="col-md-4">
-                    <p class="text-center">____________________<br>Approved By </p>             
-                </div>
-             </div>
+              @include('backend.layouts.common.detailsFooter',['details' => $details])
+
               <!-- this row will not appear when printing -->
               
             </div>

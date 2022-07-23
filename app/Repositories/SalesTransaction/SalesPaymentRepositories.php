@@ -93,7 +93,7 @@ class SalesPaymentRepositories
             if (!empty($value->date))
                 $value->date = helper::get_php_date($value->date) ?? '';
         endforeach;
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
 
        
 
@@ -189,9 +189,6 @@ class SalesPaymentRepositories
      */
     public function dueVoucherList($customer_id,$form_id)
     {
-
-  
-
             $duePaymentList = $this->salePayment::groupBy("sale_payments.voucher_id")->groupBy('sale_returns.sale_id')
             ->leftJoin('sale_returns', function($join) {
                 $join->on('sale_payments.voucher_id', '=', 'sale_returns.sale_id');
@@ -204,24 +201,17 @@ class SalesPaymentRepositories
             ->company()
             ->get();
 
-        //dd($duePaymentList);
-
-
-
         return $duePaymentList;
     }
 
     
     public function store($request)
-    {
+    { 
         DB::beginTransaction();
         try {
-
            
-
             $voucherList = $request->sale_voucher_id;
             $collection_type = $request->collection_type;
-
 
             if($collection_type == 'General Sale'): 
 
@@ -229,10 +219,13 @@ class SalesPaymentRepositories
                
                     if(!empty($request->credit[$key])): 
                         $request->paid_amount = $request->credit[$key];
+                       
                         if($request->payment_type == "Cash"): 
+                            $request->request->add(['account_id' => 7]);
                             $moneyReceitId =   $this->salesRepositories->salesCreditPayment($eachVoucher,$request->paid_amount,$request->payment_type,null,5);
                             //sales payment journal
-                            Journal::salePaymentJournal($eachVoucher,$request->credit[$key],$request->account_id,$request->date,5);
+                          Journal::salePaymentJournal($eachVoucher,$request->credit[$key],$request->account_id,$request->date,5);
+                         
                         else: 
                             $moneyReceitId =  $this->salesRepositories->saleBankPayment($eachVoucher,$request,5);
                         endif;
@@ -241,12 +234,11 @@ class SalesPaymentRepositories
 
             elseif($collection_type == 'Pos Sale'): 
 
-              
-
                 foreach($voucherList as $key => $eachVoucher): 
                     if(!empty($request->credit[$key])): 
                         $request->paid_amount = $request->credit[$key];
                         if($request->payment_type == "Cash"): 
+                            $request->request->add(['account_id' =>7]);
                             $moneyReceitId =   $this->salesRepositories->salesCreditPayment($eachVoucher,$request->paid_amount,$request->payment_type,null,17);
                             //sales payment journal
                             Journal::salePaymentJournal($eachVoucher,$request->credit[$key],$request->account_id,$request->date,17);
@@ -255,37 +247,15 @@ class SalesPaymentRepositories
                         endif;
                     endif;
                 endforeach;
-
-        elseif($collection_type == 'Booking'): 
-       
-                
-            foreach($voucherList as $key => $eachVoucher): 
-              
-                if(!empty($request->credit[$key])): 
-                    $request->paid_amount = $request->credit[$key];
-               
-                    if($request->payment_type == "Cash"): 
-                        $moneyReceitId =   $this->salesRepositories->salesCreditPayment($eachVoucher,$request->paid_amount,$request->payment_type,null,18);
-                        //sales payment journal
-                        Journal::salePaymentJournal($eachVoucher,$request->credit[$key],$request->account_id,$request->date,18);
-                    else: 
-                        $moneyReceitId =  $this->salesRepositories->saleBankPayment($eachVoucher,$request,18);   
-                     
-                    endif;
-                endif;
-            endforeach;
-
-                    else: 
             endif;
-
             DB::commit();
             // all good
           
             return $moneyReceitId;
         } catch (\Exception $e) {
-            DB::rollback();
+            // DB::rollback();
 
-            
+            dd($e->getMessage());
 
             return $e->getMessage();
         }

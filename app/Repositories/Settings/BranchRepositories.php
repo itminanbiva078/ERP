@@ -34,7 +34,7 @@ class BranchRepositories
      */
     public function getAllBranch()
     {
-        return  $this->branch::get();
+      return  $this->branch::company()->get();
     }
 
     /**
@@ -86,7 +86,7 @@ class BranchRepositories
         }
 
 
-       $columns = Helper::getTableProperty();
+       $columns = Helper::getQueryProperty();
 
         $data = array();
         if ($branchs) {

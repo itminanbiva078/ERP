@@ -8,15 +8,14 @@ use App\Models\General;
 use App\Models\GeneralLedger;
 use App\Models\OpeningBalance;
 use PHPUnit\TextUI\Help;
-
+use Illuminate\Support\Facades\Route;
 class Journal
 {
 
 
     public $parents=[];
 
-   
-   
+
     public static function purchasesCreditJournal($masterLedgerId,$date)
     {
 
@@ -63,7 +62,7 @@ class Journal
         //cash or bank = credit
         $cashOrBank = new GeneralLedger();
         $cashOrBank->company_id = helper::companyId();
-        $cashOrBank->general_id = $masterLedgerId;
+        $cashOrBank->general_id =  $generalId->id;
         $cashOrBank->form_id = 4;
         $cashOrBank->account_id = $cash_account_id; //purchases stock or inventory stock
         $cashOrBank->date = helper::mysql_date($date);
@@ -74,12 +73,8 @@ class Journal
     }
 
 
-
-
-
     public static function saleCreditJournal($masterLedgerId,$costOfGoods=null)
     {
-
         $generalId =   General::where("id",$masterLedgerId)->company()->first();
         //account Receiable = debit
         $accountReceiveable = new GeneralLedger();
@@ -89,7 +84,7 @@ class Journal
         $accountReceiveable->account_id = 12; //account receiveable come from chartOfAccount
         $accountReceiveable->date = helper::mysql_date();
         $accountReceiveable->debit = $generalId->debit;
-        $accountReceiveable->memo = 'Account Receiable';
+        $accountReceiveable->memo = 'Account Receivable';
         $accountReceiveable->created_by = helper::userId();
         $accountReceiveable->save();
         //sales = credit
@@ -108,7 +103,7 @@ class Journal
         $purchases->company_id = helper::companyId();
         $purchases->general_id = $masterLedgerId;
         $purchases->form_id = 5;
-        $purchases->account_id = 4; //purchases 
+        $purchases->account_id = 4; //purchases
         $purchases->date = helper::mysql_date();
         $purchases->credit = $costOfGoods;
         $purchases->memo = 'Purchases';
@@ -154,13 +149,12 @@ class Journal
         $inventoryStock->created_by = helper::userId();
         $inventoryStock->save();
         return true;
-    
+
     }
 
     public static function salePaymentJournal($masterLedgerId,$paidAmount,$accountId,$date,$from_id=null)
     {
 
-        
         //account receivable = credit
         $accountReceiveable = new GeneralLedger();
         $accountReceiveable->company_id = helper::companyId();
@@ -169,7 +163,7 @@ class Journal
         $accountReceiveable->account_id = 12; //account receiable come from chartOfAccount
         $accountReceiveable->date = helper::mysql_date($date);
         $accountReceiveable->credit = $paidAmount;
-        $accountReceiveable->memo = 'Account Receiveable';
+        $accountReceiveable->memo = 'Account Receivable';
         $accountReceiveable->created_by = helper::userId();
         $accountReceiveable->save();
         //cash or bank = debit
@@ -185,7 +179,60 @@ class Journal
         $cashOrBank->save();
     }
 
-
+    public static function salesLoanLedgerSave($masterLedgerId,$paidAmount,$accountId,$date,$from_id=null)
+    {
+        //loan stock = debit
+        $loanStock = new GeneralLedger();
+        $loanStock->company_id = helper::companyId();
+        $loanStock->general_id = $masterLedgerId;
+        $loanStock->form_id = $from_id;
+        $loanStock->account_id = 88; //cash in hand
+        $loanStock->date = helper::mysql_date($date);
+        $loanStock->debit = $paidAmount;
+        $loanStock->memo = 'Loan Stock';
+        $loanStock->created_by = helper::userId();
+        $loanStock->save();
+        //inventory stock = credit
+        $inventoryStock = new GeneralLedger();
+        $inventoryStock->company_id = helper::companyId();
+        $inventoryStock->general_id = $masterLedgerId;
+        $inventoryStock->form_id = $from_id;
+        $inventoryStock->account_id = 4; //inventory stock come from chartOfAccount
+        $inventoryStock->date = helper::mysql_date($date);
+        $inventoryStock->credit = $paidAmount;
+        $inventoryStock->memo = 'Inventory Stock';
+        $inventoryStock->created_by = helper::userId();
+        $inventoryStock->save();
+       
+    }
+    
+    public static function salesLoanReturnLedgerSave($masterLedgerId,$paidAmount,$date,$from_id=null)
+    {
+        //loan stock = credit
+        $loanStock = new GeneralLedger();
+        $loanStock->company_id = helper::companyId();
+        $loanStock->general_id = $masterLedgerId;
+        $loanStock->form_id = $from_id;
+        $loanStock->account_id = 88; //cash in hand
+        $loanStock->date = helper::mysql_date($date);
+        $loanStock->credit = $paidAmount;
+        $loanStock->memo = 'Loan Stock';
+        $loanStock->created_by = helper::userId();
+        $loanStock->save();
+        //inventory stock = debit
+        $inventoryStock = new GeneralLedger();
+        $inventoryStock->company_id = helper::companyId();
+        $inventoryStock->general_id = $masterLedgerId;
+        $inventoryStock->form_id = $from_id;
+        $inventoryStock->account_id = 4; //inventory stock come from chartOfAccount
+        $inventoryStock->date = helper::mysql_date($date);
+        $inventoryStock-> debit = $paidAmount;
+        $inventoryStock->memo = 'Inventory Stock';
+        $inventoryStock->created_by = helper::userId();
+        $inventoryStock->save();
+        
+      
+    }
     public static function openingInventoryJournal($masterLedgerId,$date,$paidAmount)
     {
         //account receivable = credit
@@ -196,28 +243,51 @@ class Journal
         $accountReceiveable->account_id = 12; //account receiable come from chartOfAccount
         $accountReceiveable->date = helper::mysql_date($date);
         $accountReceiveable->credit = $paidAmount;
-        $accountReceiveable->memo = 'Account Receiveable';
+        $accountReceiveable->memo = 'Account Receivable';
         $accountReceiveable->created_by = helper::userId();
         $accountReceiveable->save();
-       
+
     }
-
-
-
 
 
     public static function accountAmount($account,$from_date,$to_date=null,$optional=null){
 
         if(empty($to_date) && $optional == "liability"):
             $amount =  GeneralLedger::selectRaw('ABS(sum(ifnull(credit,0)-ifnull(debit,0))) as balance,ABS(sum(debit)) as debit,ABS(sum(credit)) as credit')->company()->where('account_id',$account)->where('date', "<=",helper::mysql_date($from_date))->first();
-        elseif(!empty($to_date) && $optional == "liability"): 
+        elseif(!empty($to_date) && $optional == "liability"):
         $amount =  GeneralLedger::selectRaw('ABS(sum(ifnull(credit,0)-ifnull(debit,0))) as balance,ABS(sum(debit)) as debit,ABS(sum(credit)) as credit')->company()->where('account_id',$account)->whereBetween('date', [helper::mysql_date($from_date), helper::mysql_date($to_date)])->first();
-        elseif(!empty($to_date) && empty($optional)): 
-            $amount =  GeneralLedger::selectRaw('ABS(sum(ifnull(debit,0)-ifnull(credit,0))) as balance,ABS(sum(debit)) as debit,ABS(sum(credit)) as credit')->company()->where('account_id',$account)->whereBetween('date', [helper::mysql_date($from_date), helper::mysql_date($to_date)])->first(); 
+       
+        elseif(!empty($to_date) && empty($optional)):
+           
+            $amount =  GeneralLedger::selectRaw('ABS(sum(ifnull(debit,0)-ifnull(credit,0))) as balance,ABS(sum(debit)) as debit,ABS(sum(credit)) as credit')->company()->where('account_id',$account)->whereBetween('date', [helper::mysql_date($from_date), helper::mysql_date($to_date)])->first();
         else:
             $amount =  GeneralLedger::selectRaw('ABS(sum(ifnull(debit,0)-ifnull(credit,0))) as balance,ABS(sum(debit)) as debit,ABS(sum(credit)) as credit')->company()->where('account_id',$account)->where('date', "<=",helper::mysql_date($from_date))->first();
         endif;
        return $amount;
+    }
+
+    
+    public static function accountAmount2($account,$from_date,$to_date=null,$optional=null){
+
+        if(empty($to_date) && $optional == "liability"):
+            $amount =  GeneralLedger::selectRaw('ABS(sum(ifnull(credit,0)-ifnull(debit,0))) as balance,ABS(sum(debit)) as debit,ABS(sum(credit)) as credit')->company()->where('account_id',$account)->where('date', "<",helper::mysql_date($from_date))->first();
+        elseif(!empty($to_date) && $optional == "liability"):
+           
+        $amount =  GeneralLedger::selectRaw('ABS(sum(ifnull(credit,0)-ifnull(debit,0))) as balance,ABS(sum(debit)) as debit,ABS(sum(credit)) as credit')->company()->where('account_id',$account)->whereBetween('date', [helper::mysql_date($from_date), helper::mysql_date($to_date)])->first();
+       
+        elseif(!empty($to_date) && empty($optional)):   
+            $amount =  GeneralLedger::selectRaw('ABS(sum(ifnull(debit,0)-ifnull(credit,0))) as balance,ABS(sum(debit)) as debit,ABS(sum(credit)) as credit')->company()->where('account_id',$account)->whereBetween('date', [helper::mysql_date($from_date), helper::mysql_date($to_date)])->first();
+        else:
+            $amount =  GeneralLedger::selectRaw('ABS(sum(ifnull(debit,0)-ifnull(credit,0))) as balance,ABS(sum(debit)) as debit,ABS(sum(credit)) as credit')->company()->where('account_id',$account)->where('date', "<",helper::mysql_date($from_date))->first();
+        endif;
+       return $amount;
+    }
+
+    public static function accountBalance($accountId){
+
+            $openingBalance =  self::getOpBalance($accountId);
+            $amount =  GeneralLedger::selectRaw('ABS(sum(ifnull(debit,0)-ifnull(credit,0))) as balance,ABS(sum(debit)) as debit,ABS(sum(credit)) as credit')->company()->where('account_id',$accountId)->first();
+           return $amount->balance + $openingBalance;
     }
 
 
@@ -227,7 +297,7 @@ class Journal
         $allChild = $allAccountHead->getAllChildren()->pluck('id');
         $allHead = self::getLedgerHead($allChild,$from_date,$to_date,$optional);
        return $allHead;
-        
+
     }
 
 
@@ -244,12 +314,9 @@ class Journal
 
     public static function getLedgerHead($ids,$from_date=null,$to_date=null,$optional=null)
     {
-
-     
-      
         if(!empty($optional) && is_int($optional)):
             $ledgerParent = ChartOfAccount::select('parent_id')->whereIn('id',$ids)->company()->where('is_posted', 1)->where('parent_id','!=',$optional)->distinct()->get();
-        else: 
+        else:
             $ledgerParent = ChartOfAccount::select('parent_id')->whereIn('id',$ids)->company()->where('is_posted', 1)->distinct()->get();
         endif;
 
@@ -259,8 +326,20 @@ class Journal
             $index['parent'] = ChartOfAccount::select('name', 'id','parent_id')->company()->where('id', $value->parent_id)->first();
             $data = ChartOfAccount::select('name', 'id','parent_id')->company()->where('parent_id', $value->parent_id)->where('is_posted', 1)->get();
             $data->map(function ($d) use($from_date,$to_date,$optional) {
-                    $balanceInfo =  self::accountAmount($d->id,$from_date,$to_date,$optional);
-                    $openingInfo=  self::accountAmount($d->id,$from_date);
+
+
+                    // $balanceInfo =  self::accountAmount($d->id,$from_date,$to_date,$optional);
+                    // $openingInfo=  self::accountAmount($d->id,$from_date);
+
+                    if(Route::currentRouteName() == "accountReport.trialBalance"):
+                        $balanceInfo =  self::accountAmount2($d->id,$from_date,$to_date,$optional);
+                        $openingInfo=  self::accountAmount2($d->id,$from_date);
+                    else:
+                        $balanceInfo =  self::accountAmount($d->id,$from_date,$to_date,$optional);
+                        $openingInfo=  self::accountAmount($d->id,$from_date);
+        
+                    endif;
+
                     $opening = self::getOpBalance($d->id);
 
                     $d['balance']=$balanceInfo->balance+$opening;
@@ -271,7 +350,7 @@ class Journal
                     $d['opening_debit']=$openingInfo->debit;
                     $d['opening_credit']=$openingInfo->credit;
                     $d['final_balance'] = $balanceInfo->balance+$openingInfo->balance;
-                 
+
                 return $d;
             });
             $balance = 0;
@@ -281,7 +360,7 @@ class Journal
             $opening_debit = 0;
             $opening_credit = 0;
             $final_balance=0;
-            foreach($data as $value): 
+            foreach($data as $value):
 
                     $opening = self::getOpBalance($value->id);
                     $balanceInfo =  self::accountAmount($value->id,$from_date,$to_date,$optional);
@@ -308,7 +387,7 @@ class Journal
         }
         return $ledgerAccount;
     }
-    
+
 
 
     public static function getChildHeadList($parent_id,$optional=null){
@@ -317,7 +396,7 @@ class Journal
         $allChild = $allAccountHead->getAllChildren()->pluck('id');
         if(!empty($optional) && is_int($optional)):
             $ledgerParent = ChartOfAccount::select('parent_id')->whereIn('id',$allChild)->company()->where('is_posted', 1)->where('parent_id','!=',$optional)->distinct()->get();
-        else: 
+        else:
             $ledgerParent = ChartOfAccount::select('parent_id')->whereIn('id',$allChild)->company()->where('is_posted', 1)->distinct()->get();
         endif;
 
@@ -333,9 +412,6 @@ class Journal
     }
 
 
-
-
-
     public static function incomeStatement($from_date){
 
         $salesLedger = self::getChildList(41,$from_date);
@@ -345,8 +421,6 @@ class Journal
         $sub_total_sales=0;
         $sub_total_cost_of_goods=0;
         $sub_total_expense=0;
-
-
 
         foreach($salesLedger as $key => $value):
           if($value['balance'] > 0):
@@ -378,34 +452,33 @@ class Journal
     public static function getAllJournal($from_date,$to_date){
 
         $allJournal =  GeneralLedger::selectRaw('ABS(sum(ifnull(debit,0)-ifnull(credit,0))) as balance,ABS(sum(debit)) as debit,ABS(sum(credit)) as credit')->company()->whereBetween('date', [helper::mysql_date($from_date), helper::mysql_date($to_date)])->groupBy('general_id')->get();
-       
+
         return $allJournal;
 
 
     }
 
-
     public static function journalCheck($from_date,$to_date=null){
 
-        $journalLedger =   General::with(['formType','purchase','inventoryAdjust','sale','paymentVoucher','receiveVoucher','journalVoucher','journals' => function($q){
-                             $q->select("*")->company()->get(); 
+        $journalLedger =   General::with(['formType','purchase','inventoryAdjust','sale','paymentVoucher','receiveVoucher','journalVoucher','journals','salesReturn' => function($q){
+                             $q->select("*")->company()->get();
                          },'journals.account' => function($q){
-                             $q->select('*'); 
+                             $q->select('*');
                          }])->whereBetween('date', [helper::mysql_date($from_date), helper::mysql_date($to_date)])->company()->get();
          $journalLedger->map(function($data){
              $total_debit = 0;
              $total_credit = 0;
-             foreach($data->journals as $eky => $eachLedger): 
+             foreach($data->journals as $eky => $eachLedger):
                  $total_debit+=$eachLedger->debit;
                  $total_credit+=$eachLedger->credit;
              endforeach;
              $data['total_debit_amount'] = $total_debit;
              $data['total_credit_amount'] = $total_credit;
              return $data;
-         });                
+         });
 
      return $journalLedger;
-     
+
      }
 
 

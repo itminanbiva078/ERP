@@ -80,7 +80,7 @@ class SalesReferenceRepositories
         }
       
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($references) {
             foreach ($references as $key => $reference) {

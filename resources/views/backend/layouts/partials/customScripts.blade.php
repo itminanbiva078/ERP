@@ -6,16 +6,15 @@
         $(this).find(':input[type=submit]').prop('disabled', true);
     });
     $(document).on({
-       
+
         ajaxStart: function(){
             $('#loader').fadeIn();
         },
-        ajaxStop: function(){ 
+        ajaxStop: function(){
             $('#loader').fadeOut();
-            
-        }    
-    });
 
+        }
+    });
 
     function ValidationEvent(){
         let quantity =$('input[name="quantity[]"]').length;
@@ -120,12 +119,12 @@
 
                 $('#loader').hide();
                 $('#loader').css("display", "none");
-                
-                setTimeout(function(){ 
+
+                setTimeout(function(){
                     Swal.fire('Warning!','Validation Error.','warning');
                         $('#loader').hide();
                         $('#loader').css("display", "none");
-                        
+
                         $("button").attr("disabled",false);
                     }, 100);
                 return false;
@@ -134,19 +133,19 @@
             return false;
         }
     }
-    
-    
+
+
     function numberFormat(amount){
         return (amount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
     }
-    
+
     $(document).on("keypress", ".decimal", function () {
        $(this).val($(this).val().replace(/[^0-9\.]/g,''));
        if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
            event.preventDefault();
        }
     });
-    
+
     $(document).ready(function(){
         $(".decimal").click(function () {
         $(this).select();
@@ -157,8 +156,8 @@
         $(this).select();
         });
     });
-    
-    
+
+
     function search_filter(el) {
         $('#search_filter').submit();
     }
@@ -204,7 +203,7 @@
                                 title: 'Your data successfully deleted!!'
                             })
                         }
-    
+
                     },
                     error: function(data) {
                         alert(data.responseText);
@@ -212,7 +211,7 @@
                 });
             }
         })
-    
+
     });
 
     $(document).on('click', '.transaction_approved', function(e) {
@@ -284,30 +283,30 @@
                     });
                 }
             })
-    
+
     });
 
 
     function check_approved_type(){
       var check_status =  $("#check_approved_type").val();
-     
+
         if(check_status !='Approved'){
             $(".modal_bank_id").hide();
         }else{
             $(".modal_bank_id").show();
         }
-      
+
     }
-    
+
 
     $(document).on('click', '.transaction_approved2', function(e) {
             e.preventDefault();
             let approved_url = $(this).attr('approved_url');
 
-            <?php 
+            <?php
             use App\Helpers\Journal;
             $bankAccountHead =  Journal::getChildHeadList(8);
-        
+
             ?>
 
             Swal.fire({
@@ -332,7 +331,7 @@
             showCancelButton: true,
             focusConfirm: true,
 
-            
+
                 preConfirm: () => {
             const bank_id = Swal.getPopup().querySelector('#bank_id').value
             const date_picker = Swal.getPopup().querySelector('#date_picker').value
@@ -348,7 +347,7 @@
                         //everything looks good
                     }
 
-           
+
         return { bank_id: bank_id, date_picker: date_picker,status:status }
     }
     }).then((result) => {
@@ -368,7 +367,7 @@
             "bank_id": bank_id,
             "date_picker": date_picker,
         },
-            
+
             success: function(data) {
                 if (data.code == 203) {
                     Swal.fire(
@@ -449,13 +448,13 @@
                 });
             }
         })
-    
+
     });
-    
-    
+
+
     $('#systemDatatable').on('switchChange.bootstrapSwitch', 'input[name="my-checkbox"]', function(event, state) {
         let status_url = $(this).attr('status_route');
-    
+
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -501,18 +500,18 @@
             }
         })
     });
-    
-    
-    
+
+
+
     var Toast = Swal.mixin({
         toast: true,
         position: 'top-end',
         showConfirmButton: false,
         timer: 3000
     });
-    
+
     $(document).ready(function() {
-    
+
         $(".store_hide").hide();
         $('.branch_id').on('change', function() {
             let selected = $(this).find(":selected").attr('value');
@@ -531,9 +530,53 @@
                 $.each(data, function(key, value) {
                     select.append('<option value=' + value.id + '>' + value.name + '</option>');
                 });
-    
+
             })
         });
+
+
+        $('.account_balance').on('change', function() {
+            let payment_type = $(this).find(":selected").attr('value');
+            if(payment_type =='Cash'){
+                $.ajax({
+                    "url": "{{ route('accountSetup.chartOfAccount.getAccountBalance') }}",//new route
+                    "dataType": "json",
+                    "type": "GET",
+                    "data": {
+                        "_token": "<?= csrf_token() ?>",
+                        "account_id": 7,
+                    }
+                }).done(function(data) {
+
+                $('.accountBalance').val(data);
+
+                })
+         
+        }else{
+            $('.accountBalance').val(0);
+        }
+        });
+
+        $('.bank_val_id').on('change', function() {
+            let bank_id = $(this).find(":selected").attr('value');
+            $.ajax({
+                "url": "{{ route('accountSetup.chartOfAccount.getAccountBankBalance') }}",//new route
+                "dataType": "json",
+                "type": "GET",
+                "data": {
+                    "_token": "<?= csrf_token() ?>",
+                    "bank_id": bank_id,
+                }
+            }).done(function(data) {
+
+               $('.accountBalance').val(data);
+
+            })
+        });
+
+
+
+
     });
 
 
@@ -555,7 +598,7 @@
                 $.each(data.data, function(key, value) {
                     select.append('<option value=' + value.id + '>' + value.name + '</option>');
                 });
-    
+
             })
         });
     });
@@ -579,7 +622,7 @@
                 $.each(data.data, function(key, value) {
                     select.append('<option value=' + value.id + '>' + value.name + '</option>');
                 });
-    
+
             })
         });
     });
@@ -603,7 +646,7 @@
                 $.each(data.data, function(key, value) {
                     select.append('<option value=' + value.id + '>' + value.name + '</option>');
                 });
-    
+
             })
         });
     });
@@ -648,7 +691,7 @@
             $.each(data.data, function(key, value) {
                 select.append('<option value=' + value.phone + '>' + value.phone +
                     '</option>');
-               
+
             });
 
         })
@@ -659,12 +702,15 @@
 $(document).on('change', '.payment_type', function() {
     let payment_type = $(this).val();
     if(payment_type == 'Cash'){
-        $('.div_account_id').removeClass("hide");
+       // $('.div_account_id').removeClass("hide");
         $('.div_bank_id').addClass('hide');
         $('.div_cheque_number').addClass("hide");
         $('.div_bank_id').addClass("hide");
         $('.div_cheque_date').addClass("hide");
         $('.div_payment').show();
+        $('.div_accountBalance').show();
+        $('.payment').val(0);
+        $('#paid_amount,.payment').trigger('keyup');
     }else if(payment_type == 'Credit'){
         $('.div_account_id').addClass("hide");
         $('.div_bank_id').addClass("hide");
@@ -678,21 +724,26 @@ $(document).on('change', '.payment_type', function() {
         $('.div_cheque_number').removeClass("hide");
         $('.div_cheque_date').removeClass("hide");
         $('.div_payment').show();
-    }   
+        $('.div_accountBalance').show();
+    }
 });
 
 
-$(document).on('keyup', '#paid_amount', function() {
-  
+
+
+
+$(document).on('keyup', '#paid_amount,.payment', function() {
+
   var thisPayment = parseFloat($(this).val()-0);
   var grandTotal = parseFloat($(".grandTotal").val()-0);
+  var accountBalance = parseFloat($(".accountBalance").val()-0);
 
     if(grandTotal > thisPayment ){
         $(this).removeClass("border border-danger");
         $(this).addClass("border border-success");
         $("#due_amount").val(grandTotal-thisPayment);
         $("#due_amount").addClass("bg-danger border-success");
-       
+
     }else if(grandTotal < thisPayment){
         Swal.fire('Warning!', 'Payment should be less than grand total.', 'warning' );
         $(this).val(grandTotal);
@@ -701,13 +752,40 @@ $(document).on('keyup', '#paid_amount', function() {
         $("#due_amount").addClass("bg-success border-success");
         $(this).removeClass("border border-success");
         $(this).addClass("border border-danger");
-    }else{
+    }
+    if(accountBalance > thisPayment ){
+        $(this).removeClass("border border-danger");
+        $(this).addClass("border border-success");
+        $("#due_amount").val(accountBalance-thisPayment);
+        $("#due_amount").addClass("bg-danger border-success");
+
+    }else if(accountBalance < thisPayment){
+        <?php 
+
+        $saleRoute = array(
+            'salesTransaction.sales.create',
+            'salesTransaction.sales.edit',
+        );
+        if(!in_array(Route::currentRouteName(),$saleRoute)): ?>
+       
+        Swal.fire('Warning!', 'Payment should be less than account balance.', 'warning' );
+        $(this).val(accountBalance);
+        $("#due_amount").val(0);
+        $("#due_amount").removeClass("bg-danger border-success");
+        $("#due_amount").addClass("bg-success border-success");
+        $(this).removeClass("border border-success");
+        $(this).addClass("border border-danger");
+        <?php endif ;?>
+    }
+
+
+    else{
         $("#due_amount").removeClass("bg-danger border-success");
         $("#due_amount").addClass("bg-primary border-success text-black");
     }
 });
 
-setTimeout(function(){ 
+setTimeout(function(){
 $('.product_type').trigger('change');
 },100);
 
@@ -773,4 +851,4 @@ $(document).on('change', '.delivery_challan', function() {
 
 $(".delivery_challan").trigger("change");
 
-</script>    
+</script>

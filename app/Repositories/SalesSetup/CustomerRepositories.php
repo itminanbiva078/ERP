@@ -84,7 +84,7 @@ class CustomerRepositories
                $value->customer_type = $value->customerType->name ?? '';
         endforeach;
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($customers) {
             foreach ($customers as $key => $customer) {
@@ -234,7 +234,6 @@ class CustomerRepositories
     public function store($request)
     {
         $customer = new $this->customer();
-        $customer->code = $this->customerCode();
         $customer->code = $request->code;
         $customer->contact_person = $request->contact_person;
         $customer->customer_type = $request->customer_type;
@@ -243,8 +242,11 @@ class CustomerRepositories
         $customer->district_id  = $request->district_id ;
         $customer->upazila_id  = $request->upazila_id ;
         $customer->union_id  = $request->union_id ;
+        $customer->media_id  = $request->media_id ;
+        $customer->sr_id  = $request->sr_id ;
         $customer->name = $request->name;
         $customer->email = $request->email;
+        $customer->address = $request->address;
         $customer->phone = $request->phone;
         $customer->pay_term = $request->pay_term;
         $customer->pay_term_type = $request->pay_term_type;
@@ -261,13 +263,16 @@ class CustomerRepositories
         $customer->code = $request->code;
         $customer->contact_person = $request->contact_person;
         $customer->customer_type = $request->customer_type;
-        $customer->branch_id   = $request->branch_id  ;
+        $customer->branch_id  = $request->branch_id ?? helper::getDefaultBranch();
         $customer->division_id  = $request->division_id ;
         $customer->district_id  = $request->district_id ;
         $customer->upazila_id  = $request->upazila_id ;
         $customer->union_id  = $request->union_id ;
+        $customer->media_id  = $request->media_id ;
+        $customer->sr_id  = $request->sr_id ;
         $customer->name = $request->name;
         $customer->email = $request->email;
+        $customer->address = $request->address;
         $customer->phone = $request->phone;
         $customer->pay_term = $request->pay_term;
         $customer->pay_term_type = $request->pay_term_type;

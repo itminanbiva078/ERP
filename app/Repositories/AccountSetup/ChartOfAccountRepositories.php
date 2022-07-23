@@ -23,7 +23,7 @@ class ChartOfAccountRepositories
     public function __construct(ChartOfAccount $chartOfAccount)
     {
         $this->chartOfAccount = $chartOfAccount;
-       
+
     }
 
 
@@ -80,7 +80,7 @@ class ChartOfAccountRepositories
                 $value->is_posted = 'Parent Account';
         endforeach;
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
 
         $data = array();
         if ($chartOfAccounts) {
@@ -104,7 +104,7 @@ class ChartOfAccountRepositories
                         $edit_data = '<a href="' . route('accountSetup.chartOfAccount.edit', $chartOfAccount->id) . '" class="btn btn-xs btn-default"><i class="fa fa-edit" aria-hidden="true"></i></a>';
                     else
                         $edit_data = '';
-                    
+
                     $nestedData['action'] = $edit_data;
                 else :
                     $nestedData['action'] = '';
@@ -145,9 +145,6 @@ class ChartOfAccountRepositories
 
     public function store($request)
     {
-
-       
-
         $chartOfAccount = new $this->chartOfAccount();
         $chartOfAccount->name = $request->name;
         $chartOfAccount->account_type_id = $request->account_type_id;
@@ -188,6 +185,26 @@ class ChartOfAccountRepositories
         $chartOfAccount->save();
         return $chartOfAccount;
     }
+
+    public function chartListByTypeWise($id)
+    {
+        $chartOfAccountTypeWise = helper::getLedgerHead($id);
+        $html = '';
+
+       // echo '<select name="'.$name.'[]" class="'.$class.'" id="'.$id.'"  placeholder="'.$placeholder.'">';
+         foreach ($chartOfAccountTypeWise as $key => $parent) :
+            $pname = $parent['parent']->name ?? '';
+            $html.='<optgroup label="'.$pname .'">';
+           $childNames =  $parent['parentChild'];
+                foreach ($childNames as $child => $accountHeads) :
+                    $html.='<option  value="'. $accountHeads->id . '">'. $accountHeads->name .'</option>';
+                endforeach;
+                $html.'</optgroup>';
+         endforeach;
+        return $html;
+        return $chartOfAccountTypeWise;
+    }
+
 
     public function destroy($id)
     {

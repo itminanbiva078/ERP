@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-
+use App\Helpers\Helper;
 class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
@@ -51,7 +51,10 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo(CompanyCategory::class,'company_id','id');
     }
 
-   
+    public function scopeCompany($query)
+    {
+        return $query->where('company_id', Helper::companyId());
+    }
    public function getJWTIdentifier()
    {
        return $this->getKey();

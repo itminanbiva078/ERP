@@ -66,11 +66,7 @@ table#show_item tr td {
                                @php htmlform::formfiled($eachInput, $errors, old()) @endphp
                             @endif
                         @endforeach
-                        {{-- <div class="col-md-3 col-sm-6 col-xs-12">
-                            <div class="form-group"><br>
-                                <button class="btn btn-info btn-block" type="submit"><i class="fa fa-search"></i> &nbsp;Search</button>
-                            </div>
-                        </div> --}}
+                     
                     </div>
                     @else
                     <div class="alert alert-default">

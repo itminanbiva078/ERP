@@ -77,7 +77,7 @@ class CustomerGroupRepositories
                 })->count();
         }
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($customerGroups) {
             foreach ($customerGroups as $key => $customerGroup) {

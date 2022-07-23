@@ -82,14 +82,14 @@ SalesTransaction - {{$title}}
                             <th>Batch No</th>
                             @endif
                             @if(in_array('pack_size',$activeColumn))
-                            <th>Pack Size	</th>
+                            <th class="text-right">Pack Size	</th>
                             @endif
                             @if(in_array('pack_no',$activeColumn))
-                            <th>Pack No.	</th>
+                            <th class="text-right">Pack No.	</th>
                             @endif
-                            <th>Quantity</th>
-                            <th>Unit Price</th>
-                            <th>Total Price</th>
+                            <th class="text-right">Quantity</th>
+                            <th class="text-right">Unit Price</th>
+                            <th class="text-right">Total Price</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -125,7 +125,7 @@ SalesTransaction - {{$title}}
                         <th colspan="{{helper::getColspan($activeColumn)}}" class="text-right">Sub-Total</th>
                         <th class="text-right">{{$tqty}}</th>
                         <th class="text-right">0.00</th>
-                        <th class="text-right">{{helper::pricePrint($tprice)}}</th>
+                        <th class="text-right">{{helper::pricePrint($details->subtotal)}}</th>
                     </tr>
                     </tfoot>
                   </table>
@@ -137,7 +137,7 @@ SalesTransaction - {{$title}}
               <div class="row">
                 <!-- accepted payments column -->
                 <div class="col-9">
-                    <p class="" style="text-transform: capitalize;"><b> In Word :  </b>{{ helper::get_bd_amount_in_text($tprice) }}</p>
+                    <p class="" style="text-transform: capitalize;"><b> In Word :  </b>{{ helper::get_bd_amount_in_text($details->subtotal) }}</p>
 
                   </b></p>
                   <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">

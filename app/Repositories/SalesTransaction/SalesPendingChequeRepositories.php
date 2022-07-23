@@ -97,7 +97,7 @@ class SalesPendingChequeRepositories
             if (!empty($value->date))
                 $value->date = helper::get_php_date($value->date) ?? '';
         endforeach;
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
     
         $data = array();
         if ($salesPendingCheque) {

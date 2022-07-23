@@ -1,6 +1,4 @@
 
-
-
 @extends('backend.layouts.master')
 @section('title')
 Balance Sheet
@@ -19,7 +17,7 @@ table tr td {
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1 class="m-0">Trial Balance</h1>
+                <h1 class="m-0">Account Report</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
@@ -143,20 +141,28 @@ table tr td {
                                         @if(!empty($eachChildLedger->final_balance))
 
                                         @php 
-                                            $opening_debit+=$eachChildLedger->opening_debit;
-                                            $opening_credit+=$eachChildLedger->opening_credit;
-                                            $balance_debit+=$eachChildLedger->balance_debit;
-                                            $balance_credit+=$eachChildLedger->balance_credit;
+                                            $opening_debit+=$eachChildLedger->opening_debit-$eachChildLedger->opening_credit;
+                                           //  $opening_credit+=$eachChildLedger->opening_credit;
+                                             $balance_debit+=$eachChildLedger->balance_debit-$eachChildLedger->balance_credit;
+                                             //$balance_credit+=$eachChildLedger->balance_credit;
+
+                                             $opcredit = $eachChildLedger->opening_debit-$eachChildLedger->opening_credit;
+                                             $blcredit = $eachChildLedger->balance_debit-$eachChildLedger->balance_credit;
+
+
                                         @endphp 
+
+
+
 
                                             <tr>
                                                 <td><a href="#">&nbsp;&nbsp;&nbsp; A.  {{$a}} .  {{$aa}}&nbsp;&nbsp;&nbsp;{{$eachChildLedger->name}}</a></td>
-                                                <td  class="text-right color1">{{ helper::pricePrint($eachChildLedger->opening_debit) }}</td>
-                                                <td  class="text-right color1"> {{helper::pricePrint($eachChildLedger->opening_credit)}} </td>
-                                                <td  class="text-right color2">{{helper::pricePrint($eachChildLedger->balance_debit)}}</td>
-                                                <td  class="text-right color2"> {{helper::pricePrint($eachChildLedger->balance_credit)}} </td>
-                                                <td  class="text-right color3"> {{helper::pricePrint($eachChildLedger->opening_debit+$eachChildLedger->balance_debit)}} </td>
-                                                <td  class="text-right color3"> {{helper::pricePrint($eachChildLedger->opening_credit+$eachChildLedger->balance_credit)}} </td>
+                                                <td  class="text-right color1">{{ helper::pricePrint($eachChildLedger->opening_debit-$eachChildLedger->opening_credit) }}</td>
+                                                <td  class="text-right color1"> </td>
+                                                <td  class="text-right color2">{{helper::pricePrint($eachChildLedger->balance_debit-$eachChildLedger->balance_credit)}}</td>
+                                                <td  class="text-right color2"></td>
+                                                <td  class="text-right color3"> {{helper::pricePrint($opcredit+ $blcredit)}} </td>
+                                                <td  class="text-right color3"></td>
                                             </tr>
                                             @php $aa++ @endphp
                                         @endif
@@ -182,19 +188,24 @@ table tr td {
                                     @foreach ($eachLedger['parentChild'] as $child => $eachChildLedger)
                                         @if(!empty($eachChildLedger->final_balance))
                                             @php 
-                                                $opening_debit+=$eachChildLedger->opening_debit;
-                                                $opening_credit+=$eachChildLedger->opening_credit;
-                                                $balance_debit+=$eachChildLedger->balance_debit;
-                                                $balance_credit+=$eachChildLedger->balance_credit;
+                                                // $opening_debit+=$eachChildLedger->opening_debit;
+                                                $opening_credit+=$eachChildLedger->opening_credit-$eachChildLedger->opening_debit;
+                                                // $balance_debit+=$eachChildLedger->balance_debit;
+                                                $balance_credit+=$eachChildLedger->balance_credit-$eachChildLedger->balance_debit;
+
+                                              $openingCredit = $eachChildLedger->opening_credit-$eachChildLedger->opening_debit;
+                                              $balanceCredit = $eachChildLedger->balance_credit-$eachChildLedger->balance_debit;
+
+
                                             @endphp
                                             <tr>
                                                 <td><a href="#">&nbsp;&nbsp;&nbsp; B. {{$b}} . {{$bb}}&nbsp;&nbsp;&nbsp;{{$eachChildLedger->name}}</a></td>
-                                                <td  class="text-right color1">{{ helper::pricePrint($eachChildLedger->opening_debit) }}</td>
-                                                <td  class="text-right color1"> {{helper::pricePrint($eachChildLedger->opening_credit)}} </td>
-                                                <td  class="text-right color2">{{helper::pricePrint($eachChildLedger->balance_debit)}}</td>
-                                                <td  class="text-right color2"> {{helper::pricePrint($eachChildLedger->balance_credit)}} </td>
-                                                <td  class="text-right color3"> {{helper::pricePrint($eachChildLedger->opening_debit+$eachChildLedger->balance_debit)}} </td>
-                                                <td  class="text-right color3"> {{helper::pricePrint($eachChildLedger->opening_credit+$eachChildLedger->balance_credit)}} </td>
+                                                <td  class="text-right color1"></td>
+                                                <td  class="text-right color1"> {{helper::pricePrint($eachChildLedger->opening_credit-$eachChildLedger->opening_debit)}} </td>
+                                                <td  class="text-right color2"></td>
+                                                <td  class="text-right color2"> {{helper::pricePrint($eachChildLedger->balance_credit-$eachChildLedger->balance_debit)}} </td>
+                                                <td  class="text-right color3"> </td>
+                                                <td  class="text-right color3"> {{helper::pricePrint($openingCredit+$balanceCredit)}} </td>
                                             </tr>
                                             @php $bb++ @endphp
                                         @endif
@@ -215,19 +226,22 @@ table tr td {
                                     @foreach ($eachLedger['parentChild'] as $child => $eachChildLedger)
                                         @if(!empty($eachChildLedger->final_balance))
                                             @php 
-                                                $opening_debit+=$eachChildLedger->opening_debit;
-                                                $opening_credit+=$eachChildLedger->opening_credit;
-                                                $balance_debit+=$eachChildLedger->balance_debit;
-                                                $balance_credit+=$eachChildLedger->balance_credit;
+                                                // $opening_debit+=$eachChildLedger->opening_debit;
+                                                $opening_credit+=$eachChildLedger->opening_credit-$eachChildLedger->opening_debit;
+                                                // $balance_debit+=$eachChildLedger->balance_debit;
+                                                $balance_credit+=$eachChildLedger->balance_credit-$eachChildLedger->balance_debit;
+
+                                               $opcreditbalance =  $eachChildLedger->opening_credit-$eachChildLedger->opening_debit;
+                                               $opdebitbalance = $eachChildLedger->balance_credit-$eachChildLedger->balance_debit;
                                             @endphp
                                             <tr>
                                                 <td><a href="#">&nbsp;&nbsp;&nbsp;C . {{$c}} .  {{$cc}}&nbsp;&nbsp;&nbsp;{{$eachChildLedger->name}}</a></td>
-                                                <td  class="text-right color1">{{ helper::pricePrint($eachChildLedger->opening_debit) }}</td>
-                                                <td  class="text-right color1"> {{helper::pricePrint($eachChildLedger->opening_credit)}} </td>
-                                                <td  class="text-right color2">{{helper::pricePrint($eachChildLedger->balance_debit)}}</td>
-                                                <td  class="text-right color2"> {{helper::pricePrint($eachChildLedger->balance_credit)}} </td>
-                                                <td  class="text-right color3"> {{helper::pricePrint($eachChildLedger->opening_debit+$eachChildLedger->balance_debit)}} </td>
-                                                <td  class="text-right color3"> {{helper::pricePrint($eachChildLedger->opening_credit+$eachChildLedger->balance_credit)}} </td>
+                                                <td  class="text-right color1"></td>
+                                                <td  class="text-right color1"> {{helper::pricePrint($eachChildLedger->opening_credit-$eachChildLedger->opening_debit)}} </td>
+                                                <td  class="text-right color2"></td>
+                                                <td  class="text-right color2"> {{helper::pricePrint($eachChildLedger->balance_credit-$eachChildLedger->balance_debit)}} </td>
+                                                <td  class="text-right color3"> </td>
+                                                <td  class="text-right color3"> {{helper::pricePrint($opcreditbalance+$opdebitbalance)}} </td>
                                             </tr>
                                             @php $cc++ @endphp
                                         @endif
@@ -247,19 +261,21 @@ table tr td {
                                     @foreach ($eachLedger['parentChild'] as $child => $eachChildLedger)
                                         @if(!empty($eachChildLedger->final_balance))
                                         @php 
-                                            $opening_debit+=$eachChildLedger->opening_debit;
-                                            $opening_credit+=$eachChildLedger->opening_credit;
-                                            $balance_debit+=$eachChildLedger->balance_debit;
-                                            $balance_credit+=$eachChildLedger->balance_credit;
+                                            $opening_debit+=$eachChildLedger->opening_debit-$eachChildLedger->opening_credit;
+                                            // $opening_credit+=$eachChildLedger->opening_credit;
+                                            $balance_debit+=$eachChildLedger->balance_debit-$eachChildLedger->balance_credit;
+                                            // $balance_credit+=$eachChildLedger->balance_credit;
+                                           $liabilityCredit =  $eachChildLedger->opening_debit-$eachChildLedger->opening_credit;
+                                            $liabilityDebit = $eachChildLedger->balance_debit-$eachChildLedger->balance_credit;
                                         @endphp
                                             <tr>
                                                 <td><a href="#">&nbsp;&nbsp;&nbsp;D . {{$d}} . {{$dd}}&nbsp;&nbsp;&nbsp;{{$eachChildLedger->name}}</a></td>
-                                                <td  class="text-right color1">{{ helper::pricePrint($eachChildLedger->opening_debit) }}</td>
-                                                <td  class="text-right color1"> {{helper::pricePrint($eachChildLedger->opening_credit)}} </td>
-                                                <td  class="text-right color2">{{helper::pricePrint($eachChildLedger->balance_debit)}}</td>
-                                                <td  class="text-right color2"> {{helper::pricePrint($eachChildLedger->balance_credit)}} </td>
-                                                <td  class="text-right color3"> {{helper::pricePrint($eachChildLedger->opening_debit+$eachChildLedger->balance_debit)}} </td>
-                                                <td  class="text-right color3"> {{helper::pricePrint($eachChildLedger->opening_credit+$eachChildLedger->balance_credit)}} </td>
+                                                <td  class="text-right color1">{{ helper::pricePrint($eachChildLedger->opening_debit-$eachChildLedger->opening_credit) }}</td>
+                                                <td  class="text-right color1">  </td>
+                                                <td  class="text-right color2">{{helper::pricePrint($eachChildLedger->balance_debit-$eachChildLedger->balance_credit)}}</td>
+                                                <td  class="text-right color2">  </td>
+                                                <td  class="text-right color3"> {{helper::pricePrint($liabilityCredit+$liabilityDebit)}} </td>
+                                                <td  class="text-right color3">  </td>
                                             </tr>
                                             @php $dd++ @endphp
                                         @endif
@@ -273,10 +289,6 @@ table tr td {
                     
                             <!-- /chart_master -->
                         </tbody>
-                    
-
-                       
-
                         <tfoot>
                             <tr>
                                 <td class="text-right"><strong>Total Ending Balance (In BDT.)</strong></td>
@@ -290,13 +302,9 @@ table tr td {
                         </tfoot>
                     </table>
 
-
                     @endif
-
-
-                            
-                           
-                        </div>
+   
+                    </div>
                     </div>
                 </div>
             </div>

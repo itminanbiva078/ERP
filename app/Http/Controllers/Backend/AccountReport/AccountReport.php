@@ -55,6 +55,7 @@ class AccountReport extends Controller
             $reportTitle='General Ledger';
             $reportResult = $this->systemService->getAccountLedger($account_id,$from_date,$to_date);
         }
+        $companyInfo =   helper::companyInfo();
         $title = 'General Ledger';
         $reportTitle = 'General Ledger';
         $accountLedger = helper::getLedgerHead();
@@ -65,8 +66,11 @@ class AccountReport extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
+ 
+
     public function trialBalance(Request $request)
     {
+       
         if($request->method() == 'POST'){
 
             $account_id = $request->account_id;
@@ -75,13 +79,11 @@ class AccountReport extends Controller
             $from_date = date('Y-m-d',strtotime($from_to_date[0]));
             $to_date = date('Y-m-d',strtotime($from_to_date[1]));
             $oldValue = $request->all();
-           
-
-            $assetLedger = Journal::getChildList(2,$from_date);
-            $liabilityLedger = Journal::getChildList(31,$from_date,null,'liability');
-            $incomeLedger = Journal::getChildList(41,$from_date);
-            $expenseLedger = Journal::getChildList(50,$from_date);
-
+            $assetLedger = Journal::getChildList(2,$from_date,$to_date);
+            //dd($assetLedger );
+            $liabilityLedger = Journal::getChildList(31,$from_date,$to_date,'liability');
+            $incomeLedger = Journal::getChildList(41,$from_date,$to_date);
+            $expenseLedger = Journal::getChildList(50,$from_date,$to_date);
            
         }
         $title = 'Trial Balance';
@@ -148,6 +150,7 @@ class AccountReport extends Controller
         return view('backend.pages.accountReport.incomeStatement', get_defined_vars());
     }
 
+
     public function journalCheck(Request $request)
     {
         if($request->method() == 'POST'){
@@ -158,7 +161,6 @@ class AccountReport extends Controller
             $reportTitle = 'All Journal Ledger';
           
             $journalCheck = Journal::journalCheck($from_date,$to_date);
-
             $oldValue = $request->all();
         }
 

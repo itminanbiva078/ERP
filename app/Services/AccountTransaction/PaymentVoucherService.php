@@ -27,7 +27,14 @@ class PaymentVoucherService
     {
         return $this->systemRepositories->getList($request);
     }
-    
+     /**
+     * @param $request
+     * @return mixed
+     */
+    public function accountApproved($id, $status)
+    {
+        return $this->systemRepositories->accountApproved($id, $status);
+    }
     /**
      * @param $request
      * @return mixed

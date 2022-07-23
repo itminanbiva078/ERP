@@ -37,6 +37,7 @@ class InboxController extends Controller
     public function index(Request $request)
     {
        $title = 'Inbox List';
+       $companyInfo =   helper::companyInfo();
        $result =  $this->systemService->getList($request);
        return view('backend.pages.mailbox.inbox.index', get_defined_vars());
     }
@@ -57,7 +58,7 @@ class InboxController extends Controller
             session()->flash('error', 'Details info is invalid!!');
             return redirect()->back();
         }
-
+        $companyInfo =   helper::companyInfo();
         return view('backend.pages.mailbox.inbox.show', get_defined_vars());
     }
    

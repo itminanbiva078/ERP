@@ -47,7 +47,7 @@ table tr td {
                             <td><input type="number"  name="purchases_amount[]" readonly class="form-control purchasesAmount" value="{{$eachResult->purchasesAmount}}"></td>
                             <td><input type="number"  name="total_payment[]"  readonly class="form-control totalPayment" value="{{$eachResult->totalPayment}}"></td>
                             <td><input type="number"  name="due_amount[]"  readonly class="form-control dueAmount" value="{{$eachResult->dueAmount}}"></td>
-                            <td><input type="number"  name="credit[]"   class="form-control paymentNow decimal" value="{{$eachResult->dueAmount}}"></td>
+                            <td><input type="number"  name="credit[]"   class="form-control paymentNow decimal" value=""></td>
                             <td><input type="number"  name="present_due[]"  readonly class="form-control presentDue  decimal" value="" placeholder="0.00"></td>
                         </tr>
                     @endforeach
@@ -95,11 +95,20 @@ $('tbody,tfoot').delegate( 'input.paymentNow', 'keyup', function() {
             var current_dueAmount = parseFloat(tr.find('input.dueAmount').val()-0);
             var paymentNow = parseFloat(tr.find('input.paymentNow').val()-0);
             var present_due = parseFloat(tr.find('input.presentDue').val()-0);
+            
+            var account_val = parseFloat($(".accountBalance").val()-0);
+
             tr.find('input.presentDue').val(current_dueAmount-paymentNow);
+
             if(paymentNow > current_dueAmount){
                 tr.find('input.paymentNow').val(current_dueAmount);
                 Swal.fire('Warning!', "Payment can't gratherthan from current due", 'warning');  
+
+            }else if(paymentNow > account_val){
+                $(this).val(account_val);
+                Swal.fire('Warning!', "Payment can't gratherthan from account balance", 'warning'); 
             }
+
             $(this).removeClass("border border-danger");
             $(this).addClass("border border-success");
             calculation();

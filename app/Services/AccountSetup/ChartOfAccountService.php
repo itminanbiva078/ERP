@@ -28,7 +28,7 @@ class ChartOfAccountService
         return $this->systemRepositories->getList($request);
     }
 
-     
+
     /**
      * @param $request
      * @return mixed
@@ -73,6 +73,14 @@ class ChartOfAccountService
     public function update($request, $id)
     {
         return $this->systemRepositories->update($request, $id);
+    }
+ /**
+     * @param $request
+     * @param $id
+     */
+    public function chartListByTypeWise($id)
+    {
+        return $this->systemRepositories->chartListByTypeWise($id);
     }
  /**
      * @param $request

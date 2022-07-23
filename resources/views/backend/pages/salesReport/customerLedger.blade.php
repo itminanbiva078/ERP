@@ -1,6 +1,6 @@
 @extends('backend.layouts.master')
 @section('title')
-General Ledger Report
+Customer Ledger
 @endsection
 
 @section('styles')
@@ -81,15 +81,17 @@ table#show_item tr td {
                     </a>
                 </div>
                 @include('backend.layouts.common.reportHeader',['reportTitle' => $reportTitle,'from_date' =>$from_date,'to_date' => $to_date])
-               
+
             </div>
             <!-- /.card-header -->
             <div class="card-body">
                 <div class="row">
                     <div class="col-12 table-responsive">
-                       
+
                         @if($report_type == "Ledger")
                          @include('backend.pages.salesReport.customerLedgerPartials.customerLedger',['opening' => $opening,'reports' =>$reports,'customer_id' => $customer_id])
+                        @elseif($report_type == "Ledger With Pending Cheque")
+                          @include('backend.pages.salesReport.customerLedgerPartials.customerLedgerWithPendingCheque',['opening' => $opening,'reports' =>$reports,'customer_id' => $customer_id])
                         @elseif($report_type == "Payment")
                            @include('backend.pages.salesReport.customerLedgerPartials.customerPayment',['opening' => $opening,'reports' =>$reports,'customer_id' => $customer_id])
                         @elseif($report_type == "Cash Payment")
@@ -102,12 +104,12 @@ table#show_item tr td {
                            @include('backend.pages.salesReport.customerLedgerPartials.saleVoucher',['opening' => $opening,'reports' =>$reports,'customer_id' => $customer_id])
                         @elseif($report_type == "Due Sale Voucher")
                            @include('backend.pages.salesReport.customerLedgerPartials.dueSaleVoucher',['opening' => $opening,'reports' =>$reports,'customer_id' => $customer_id])
-                        @else 
+                        @else
                         <div class="alert alert-default" role="alert">
                             Sorry Result not found!!
                           </div>
                         @endif
-                           
+
                         </div>
                     </div>
                 </div>

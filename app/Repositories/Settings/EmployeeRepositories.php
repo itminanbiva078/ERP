@@ -76,7 +76,7 @@ class EmployeeRepositories
             })->count();
         }
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
          $data = array();
         if ($employees) {
             foreach ($employees as $key => $employee) {

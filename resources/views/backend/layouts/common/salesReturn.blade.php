@@ -1,7 +1,6 @@
-
     
-    @if(!empty($salesList))
-    
+    @if(!empty($salesList)) 
+  
     <div class="form-row">
       <div class="form-group row col-md-6 mb-3 ">
          <label for="validationCustom01" class="col-sm-3 col-form-label">Sales Date :</label>
@@ -78,12 +77,10 @@
             $rqty = 0;
             @endphp
          <tbody>
+           
             @foreach($salesList->salesDetails as $key => $eachProduct)
 
-
               @php 
-            
-            
             
             $tpsize += $eachProduct->pack_size;
                  $tpno += $eachProduct->pack_no;
@@ -97,7 +94,7 @@
                @endif
 
                @if(in_array('batch_no',$activeColumn))
-               <td nowrap> {{$eachProduct->batch_no}}</td>
+               <td nowrap> {{$eachProduct->batch->name}}</td>
                @endif
 
                @if(in_array('pack_size',$activeColumn))
@@ -122,6 +119,9 @@
                @if(in_array('total_price',$activeColumn))
                <td> <input type="number" required=""  name="total_price[]" readonly="" class="form-control total_price decimal" id="" placeholder="Total Price" value=""></td>
                @endif
+               <td class="text-center"><button del_id="1" class="delete_item btn btn-danger"
+                  type="button" href="javascript:;" title="Are you Remove?"><i class="fa fa-minus"></i></button>
+          </td>
             </tr>
             @endforeach
          </tbody>
@@ -161,7 +161,7 @@
                <td class="grand_total text-right" colspan="@php helper::getColspan($activeColumn,4);@endphp">Grand Total:</td>
                <td><input  type="text" id="grand_total" readonly="" class="form-control grandTotal" value="" name="grand_total" placeholder="0.00"></td>
             </tr>
-            <tr>
+            <tr class="div_payment" required style="display: none!important">
                <td class="grand_total text-right" colspan="@php helper::getColspan($activeColumn,4);@endphp">Payment:</td>
                <td><input  type="text" id="paid_amount" class="form-control payment" value="" name="paid_amount" placeholder="0.00"></td>
             </tr>
@@ -239,10 +239,54 @@
          $('#grand_total').val((total_price_amount-total_deduction_percentage_amount).toFixed(2));
          $('#paid_amount').val((total_price_amount-total_deduction_percentage_amount).toFixed(2));
    }
+
+
+   $(document).on('click', '.delete_item', function() {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let totalRow = $('.batch_no').length
+                if (totalRow == 1) {
+                    Swal.fire('Warning!', "There only one row you can't delete", 'warning');
+                } else {
+                    let id = $(this).attr("del_id");
+                    $('.new_item' + id).remove();
+                    calculation();
+                    Swal.fire('Successs!', 'You are remove one item!.', 'success');
+                }
+
+            }
+        })
+    });
+
+   $(document).on('change', '.payment_type', function() {
+    let payment_type = $(this).val();
+
+    if(payment_type == 'Cash'){
+      
+        $('.div_payment').show();
+     
+    }else if(payment_type == 'Credit'){
+      
+        $('.div_payment').hide();
+    }else{
+      
+        $('.div_payment').show();
+    }
+
+}); 
+
 $(document).on('change', '.payment_type', function() {
    let payment_type = $(this).val();
    if(payment_type == 'Cash'){
-       $('.div_account_id').removeClass("hide");
+      //  $('.div_account_id').removeClass("hide");
        $('.div_bank_id').addClass('hide');
    }else if(payment_type == 'Credit'){
        $('.div_account_id').addClass("hide");
@@ -253,6 +297,7 @@ $(document).on('change', '.payment_type', function() {
    }  
 
 });
+
 </script>
 @else 
 

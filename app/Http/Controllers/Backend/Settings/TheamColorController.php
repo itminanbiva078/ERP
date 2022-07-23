@@ -43,11 +43,5 @@ class TheamColorController extends Controller
         return back();
     }
     
-
-   
-
-
-
-    
     
 }

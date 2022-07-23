@@ -28,10 +28,7 @@ class UserRoleRepositories
     public function __construct(UserRole $userRole)
     {
         $this->userRole = $userRole;
-        //$this->middleware(function ($request, $next) {
-        $this->user_id = 1; //auth()->user()->id;
-        //  return $next($request);
-        //});
+        
     }
     /**
      * @param $request
@@ -119,7 +116,6 @@ class UserRoleRepositories
      */
     public function getNavigation()
     {
-
        $companyModule =  CompanyCategory::where('id',helper::companyId())->first();
 
        $accessModule = explode(",",$companyModule->module);
@@ -153,12 +149,10 @@ class UserRoleRepositories
         endforeach;
         $userRole = new $this->userRole();
         $userRole->name = $request->name;
-        $userRole->company_id = helper::companyId();// $request->name;
+        $userRole->company_id = helper::companyId();;
         $userRole->parent_id = implode(",", array_unique($parents));
         $userRole->navigation_id = implode(",", $request->permission);
-
-        $userRole->branch_id =1;// implode(",", $request->branch);
-
+        $userRole->branch_id = 1;//implode(",", $request->branch);
         $userRole->status = 'Approved';
         $userRole->created_by = Auth::user()->id;
         $userRole->save();
@@ -188,7 +182,7 @@ class UserRoleRepositories
         endforeach;
         $userRole = $this->userRole::findOrFail($id);
         $userRole->name = $request->name;
-        $userRole->company_id = helper::companyId();// $request->name;
+        $userRole->company_id = helper::companyId();
         $userRole->parent_id = implode(",", array_unique($parents));
         $userRole->navigation_id = implode(",", $request->permission);
         $userRole->branch_id = 1;//implode(",", $request->branch);

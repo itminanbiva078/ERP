@@ -40,6 +40,7 @@ class SmsSettingController extends Controller
     public function index(Request $request)
     {
         $title = 'SMS Setting';
+        $companyInfo =   helper::companyInfo();
         return view('backend.pages.settings.sms_setting.index', get_defined_vars());
     }
 
@@ -58,6 +59,7 @@ class SmsSettingController extends Controller
     public function create()
     {
         $title = 'Add New SMS Setting';
+        $companyInfo =   helper::companyInfo();
         return view('backend.pages.settings.sms_setting.create', get_defined_vars());
     }
     /**
@@ -92,6 +94,7 @@ class SmsSettingController extends Controller
             return redirect()->back();
         }
         $title = 'Add New SMS Setting';
+        $companyInfo =   helper::companyInfo();
         return view('backend.pages.settings.sms_setting.edit', get_defined_vars());
     }
 

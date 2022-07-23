@@ -46,11 +46,11 @@ class PurchasesReport extends Controller
             $suppplier_id = $request->supplier_id;
             $dateRange = $request->date_range;
             $from_to_date = explode("-",$dateRange);
-           
             $from_date = date('Y-m-d',strtotime($from_to_date[0]));
             $to_date = date('Y-m-d',strtotime($from_to_date[1]));
             $opening = "Opening";
             $oldValue = $request->all();
+
             if($report_type == "Ledger"){
                 $reportTitle = "Supplier Ledger";
                 $opening = $this->systemService->getSupplierLedger($suppplier_id,$from_date,$opening);
@@ -83,12 +83,13 @@ class PurchasesReport extends Controller
 
         }
         $title = 'Supplier Ledger';
+        $companyInfo =   helper::companyInfo();
         $formInput = helper::getColumnProperty('report_models',array('supplier_id','purhcases_report_type','date_range'));
         return view('backend.pages.purchasesReport.supplierLedger', get_defined_vars());
     }
-    
 
-    
+
+
 
 
 }

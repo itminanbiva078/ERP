@@ -1,9 +1,11 @@
 @php
+
 use App\Helpers\Helper;
 $allNavigations = explode(",",Helper::getRoleAccessParent());
-$parentMenu =
-App\Models\Navigation::select('id','label','icon')->whereIn('id',Helper::getRoleRootList())->get();
+$parentMenu = App\Models\Navigation::select('id','label','icon')->whereIn('id',Helper::getRoleRootList())->get();
 $activeClass = Helper::getMenuParent(Route::currentRouteName());
+$companyInfo =   helper::companyInfo();
+
 @endphp
 
 <aside class=" elevation-4    main-sidebar elevation-4 sidebar-light-danger">
@@ -12,18 +14,18 @@ $activeClass = Helper::getMenuParent(Route::currentRouteName());
             <div class="user_profile_section">
                 <div class="row">
                     <div class="col-md-12">
-                        <!-- <div class="profile_img">
+                         {{-- <div class="profile_img">
                             <a href="{{ route('home') }}">
                                 <img src="https://www.pngarts.com/files/8/Github-Logo-PNG-Transparent-Image.png" alt="">
                             </a>
-                        </div> -->
-                        <!-- <div class="profile_img_mini">
+                        </div>
+                        <div class="profile_img_mini">
                             <a href="#">
-                                {{-- <img src="http://127.0.0.1:8000/backend/assets/image/logo.png" alt=""> --}}
+                                 <img src="http://127.0.0.1:8000/backend/assets/image/logo.png" alt=""> 
                             </a>
-                        </div> -->
+                        </div> --}}
                         <div class="profile_information">
-                            <a href="#">MASTER ERP</a>
+                            <a href="#">{{$companyInfo->name ?? ''}}</a>
                         </div>
                     </div>
                 </div>

@@ -47,6 +47,7 @@ class ServiceQuatationController extends Controller
     public function index(Request $request)
     {
         $title = 'Service Quatation List';
+        $companyInfo =   helper::companyInfo();
         $datatableRoute = 'serviceTransaction.serviceQuatation.dataProcessingServiceQuatation';
         return view('backend.pages.serviceTransaction.serviceQuatation.index', get_defined_vars());
     }
@@ -65,6 +66,7 @@ class ServiceQuatationController extends Controller
     public function create()
     {
         $title = 'Add New Service Quatation';
+        $companyInfo =   helper::companyInfo();
         $formInput =  helper::getFormInputByRoute();
         $formInputDetails =  helper::getFormInputByRoute('serviceTransaction.serviceQuatation.details.create');
         return view('backend.pages.serviceTransaction.serviceQuatation.create', get_defined_vars());
@@ -82,7 +84,6 @@ class ServiceQuatationController extends Controller
             return redirect()->back()->withErrors($e->errors())->withInput();
         }
         $result = $this->systemService->store($request);
-        // dd($result);
         if (is_integer($result)){
             session()->flash('success', 'Data successfully save!!');
         } else {
@@ -107,7 +108,7 @@ class ServiceQuatationController extends Controller
             session()->flash('error', 'Edit info is invalid!!');
             return redirect()->back();
         }
-
+        $companyInfo =   helper::companyInfo();
         $title = 'Service Quatation Edit';
         $invoiceDetails = $editInfo->serviceQuatationDetails;
         $services = $this->serviceService->getActiveService();

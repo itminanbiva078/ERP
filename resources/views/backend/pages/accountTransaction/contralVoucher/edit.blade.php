@@ -1,7 +1,7 @@
 @extends('backend.layouts.master')
 
 @section('title')
-Inventory - {{$title}}
+AccountTransaction - {{$title}}
 @endsection
 
 @section('styles')

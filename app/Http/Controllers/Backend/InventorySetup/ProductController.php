@@ -38,13 +38,8 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-
-       // $onlySoftDeleted = Brand::onlyTrashed()->get();
-
-       
-
-
         $title = 'Product Manage | Product - List';
+        $companyInfo =   helper::companyInfo();
         $explodeRoute = "inventorySetup.product.explode";
         $createRoute = "inventorySetup.product.create";
         $datatableRoute = 'inventorySetup.product.dataProcessingProduct';
@@ -62,6 +57,7 @@ class ProductController extends Controller
     public function create()
     {
         $title = 'Add New Product';
+        $companyInfo =   helper::companyInfo();
         $formInput =  helper::getFormInputByRoute();
         $formInputDetails =  helper::getFormInputByRoute('inventorySetup.productDetails.create');
         return view('backend.pages.inventorySetup.product.create', get_defined_vars());
@@ -98,6 +94,7 @@ class ProductController extends Controller
             session()->flash('error', 'Edit info is invalid!!');
             return redirect()->back();
         }
+        $companyInfo =   helper::companyInfo();
         $title = 'Product Edit';
         $detailsEditInfo = $editInfo->productDetails;
         $formInput =  helper::getFormInputByRoute();

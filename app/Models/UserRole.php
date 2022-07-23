@@ -11,6 +11,7 @@ class UserRole extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    
     public function navigation()
     {
         return $this->belongsTo(Navigation::class, 'navigation_id', 'id');

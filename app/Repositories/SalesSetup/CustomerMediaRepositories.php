@@ -78,7 +78,7 @@ class CustomerMediaRepositories
                 })->count();
         }
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($customerMedias) {
             foreach ($customerMedias as $key => $customerMedia) {

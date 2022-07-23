@@ -41,6 +41,7 @@ class CurrencyController extends Controller
         $createRoute = "settings.currency.create";
         $datatableRoute = 'settings.currency.dataProcessingCurrency';
         $columns = helper::getTableProperty();
+        $companyInfo =   helper::companyInfo();
         return view('backend.layouts.common.datatable.datatable', get_defined_vars());
 
     }
@@ -65,6 +66,7 @@ class CurrencyController extends Controller
         $implodeModal ="";
         $storeRoute = "settings.currency.store";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
     /**
@@ -104,6 +106,7 @@ class CurrencyController extends Controller
         $implodeModal ="";
         $storeRoute = "settings.currency.update";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
 

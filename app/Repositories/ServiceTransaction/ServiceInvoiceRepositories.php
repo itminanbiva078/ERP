@@ -86,7 +86,7 @@ class ServiceInvoiceRepositories
                $value->branch_id  = $value->branch->name ?? '';
         endforeach;
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($serviceInvoices) {
             foreach ($serviceInvoices as $key => $serviceInvoice) {

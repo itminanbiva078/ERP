@@ -40,6 +40,7 @@ class CustomerMediaController extends Controller
         $createRoute = "salesSetup.customerMedia.create";
         $datatableRoute = 'salesSetup.customerMedia.dataProcessingCustomerMedia';
         $columns = helper::getTableProperty();
+        $companyInfo =   helper::companyInfo();
         return view('backend.layouts.common.datatable.datatable', get_defined_vars());
     }
 
@@ -61,6 +62,7 @@ class CustomerMediaController extends Controller
         $listRoute = "salesSetup.customerMedia.index";
         $storeRoute = "salesSetup.customerMedia.store";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
 
        
@@ -102,6 +104,7 @@ class CustomerMediaController extends Controller
         $implodeModal ="";
         $storeRoute = "salesSetup.customerMedia.update";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
 
