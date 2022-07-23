@@ -1,4 +1,4 @@
-E<table class="table table-striped table-bordered">
+<table class="table table-striped table-bordered">
     <thead>
         <tr>
             <th>SL</th>
@@ -13,6 +13,7 @@ E<table class="table table-striped table-bordered">
             <th class="text-right color1">Amount</th>
            </tr>
     </thead>
+    
     <tbody>
         @php 
         $sin=0;

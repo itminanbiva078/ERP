@@ -123,6 +123,7 @@ $('.company_category').on('change', function() {
     });
 
 
+    $('.company_category').trigger('change');
 
 
 </script>

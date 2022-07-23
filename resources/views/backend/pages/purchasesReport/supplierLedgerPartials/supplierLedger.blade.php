@@ -18,22 +18,22 @@
             <tbody>
                 @php 
 
-
-
                 $topening=0;
                 $tpayable=0;
                 $tpaid=0;
                 $tbalance=0;
                 @endphp
+                @if(!empty($reports))
                 @foreach($reports as $key => $report)
-               
+
                     @php 
-                
-                    $topening+=$report->opening;
+                    $topening+=$report->opening ?? 0;
                     $tpayable+=$report->debit;
                     $tpaid+=$report->credit;
                     $tbalance +=($report->debit+$report->opening) - $report->credit;
+                    $transaction=$report->debit+$report->opening;
                     @endphp
+                        @if(!empty($transaction))
                     <tr>
                         <td>{{$key+1}}</td>
                         <td>{{$report->name}} [{{$report->code}}]</td>
@@ -44,7 +44,9 @@
                         <td class="text-right">{{helper::pricePrint($report->credit,2)}}</td>
                         <td class="text-right">{{helper::pricePrint(($report->debit+$report->opening) - $report->credit)}}</td>
                     </tr>
+                    @endif
                 @endforeach
+                @endif
             </tbody>
             <tfoot>
                 <tr>

@@ -1,9 +1,3 @@
-<?php 
-
-//dd($reports);
-
-?>
-
 
 <table class="table table-striped table-bordered">
     <thead>

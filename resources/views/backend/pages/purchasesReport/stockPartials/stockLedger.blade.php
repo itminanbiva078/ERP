@@ -14,12 +14,15 @@
             <td  class="text-right color4">Qty</td>
             <td  class="text-right color4">Rate</td>
             <td  class="text-right color4">TK</td>
+
             <td   class="text-right color3">Qty</td>
             <td   class="text-right color3"> Rate</td>
             <td   class="text-right color3">TK</td>
+
             <td   class="text-right color2">Qty</td>
             <td   class="text-right color2"> Rate</td>
             <td   class="text-right color2">TK</td>
+            
             <td  class="text-right color1">Qty</td>
             <td  class="text-right color1">Rate</td>
             <td  class="text-right color1">TK</td>
@@ -43,13 +46,17 @@
 
      @foreach($reports as $key => $report)
 
+     <?php //dd($reports);?>
         @php 
         $oqty+=$report->sopQty;
         $oprice+=$report->sopQty*$report->sopUnitPrice;
+        
         $iqty+=$report->stockIn;
         $iprice+=$report->stockIn*$report->sinUnitPrice;
+        
         $sqty+=$report->stockOut;
-        $sprice+=$report->stockOut*$report->soutUnitPrice;
+        $sprice+=$report->stockOut*$report->sinUnitPrice;
+
         $cqty+=$report->currentStock;
         $cprice+=$report->currentStock*$report->avgPrice;
        @endphp
@@ -68,8 +75,8 @@
             <td    class="text-right color3">{{helper::pricePrint($report->stockIn*$report->sinUnitPrice)}}</td>
 
             <td    class="text-right color2">{{helper::pricePrint($report->stockOut)}}</td>
-            <td    class="text-right color2">{{helper::pricePrint($report->soutUnitPrice)}}</td>
-            <td    class="text-right color2">{{helper::pricePrint($report->stockOut*$report->soutUnitPrice)}}</td>
+            <td    class="text-right color2">{{helper::pricePrint($report->sinUnitPrice)}}</td>
+            <td    class="text-right color2">{{helper::pricePrint($report->stockOut*$report->sinUnitPrice)}}</td>
 
             <td    class="text-right color1">{{helper::pricePrint($report->currentStock)}}</td>
             <td    class="text-right color1">{{helper::pricePrint($report->avgPrice)}}</td>

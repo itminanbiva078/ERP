@@ -13,7 +13,7 @@
             </tr>
         </thead>
         <tbody>
-            
+
             @if(!empty($invoiceDetails))
             @foreach($invoiceDetails as $key => $value)
             <tr class="new_item<?php echo $key + 99; ?>">
@@ -79,8 +79,6 @@
             calculation();
         }, 1000);
 
-
-
         let j = 2;
         $("#add_item").click(function() {
             $("#show_item tbody").append('<tr  style="white-space: nowrap!important;" class="new_item' + j +
@@ -94,7 +92,7 @@
             );
             j++;
             $('.select2').select2();
-           
+
             $(".decimal").on("click", function() {
                 $(this).select();
         });
@@ -108,7 +106,7 @@
                         selectedValue.push($(el).attr('value'));
                     });
                     // loop all the options
-                    $selects.find('option').each(function(idx, option) { 
+                    $selects.find('option').each(function(idx, option) {
                         // if the array contains the current option value otherwise we re-enable it.
                         if (selectedValue.indexOf($(option).attr('value')) > -1) {
                             // if the current option is the selected option, we skip it otherwise we disable it.
@@ -125,7 +123,9 @@
 
                 });
 
-                $(document).on('change', '.debit_id', function() {      
+
+                $(document).on('change', '.debit_id', function() {
+
                         const $selects2 = $(".debit_id");
                             const selectedValue = [];
                             // get all selected options and filter them to get only options with value attr (to skip the default options). After that push the values to the array.
@@ -135,7 +135,7 @@
                                 selectedValue.push($(el).attr('value'));
                             });
                             // loop all the options
-                            $selects2.find('option').each(function(idx, option) { 
+                            $selects2.find('option').each(function(idx, option) {
                                 // if the array contains the current option value otherwise we re-enable it.
                                 if (selectedValue.indexOf($(option).attr('value')) > -1) {
                                     // if the current option is the selected option, we skip it otherwise we disable it.
@@ -178,6 +178,12 @@
             function checkDebitAndCreditAmount(){
                 let tdebit =  parseFloat($('.sub_total_debit').text() - 0);
                 let tcredit =  parseFloat($('.sub_total_credit').text() - 0);
+                if (isNaN(tdebit)) {
+                    tdebit=0;
+                }
+                if (isNaN(tcredit)) {
+                    tcredit=0;
+                }
                 console.log(tdebit);
                 console.log(tcredit);
                 if(tdebit == tcredit){
@@ -189,7 +195,7 @@
 
 
         function calculation() {
-           
+
             var total_debit_price = 0;
             var total_credit_price = 0;
             $('.debit').each(function(i, e) {
@@ -201,42 +207,42 @@
                 total_credit_price += total_price;
             });
 
-            $('.sub_total_debit').text(numberFormat(total_debit_price));
-            $('.sub_total_credit').text(numberFormat(total_credit_price));
+            $('.sub_total_debit').text((total_debit_price));
+            $('.sub_total_credit').text((total_credit_price));
 
         }
 
           $(document).on('click', '.delete_item', function() {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                let totalRow = $('.batch_no').length
-                if (totalRow == 1) {
-                    Swal.fire('Warning!', "There only one row you can't delete", 'warning');
-                } else {
-                    let id = $(this).attr("del_id");
-                    $('.new_item' + id).remove();
-                    calculation();
-                    Swal.fire('Successs!', 'You are remove one item!.', 'success');
-                }
-            }
-        })
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        let totalRow = $('.batch_no').length
+                        if (totalRow == 1) {
+                            Swal.fire('Warning!', "There only one row you can't delete", 'warning');
+                        } else {
+                            let id = $(this).attr("del_id");
+                            $('.new_item' + id).remove();
+                            calculation();
+                            Swal.fire('Successs!', 'You are remove one item!.', 'success');
+                        }
+                    }
+                })
     });
 
     });
 
 
-  
+
     $(document).on('change', '.payment_type', function() {
         let payment_type = $(this).val();
-  
+
         if (payment_type == 'Customer') {
             $('.div_customer_id').removeClass("hide");
             $('.div_supplier_id').addClass('hide');

@@ -51,6 +51,7 @@ class SalesReturnController extends Controller
     {
 
        $title = 'Sales Return List';
+       $companyInfo =   helper::companyInfo();
        $datatableRoute = 'salesTransaction.salesReturn.dataProcessingSalesReturn';
        return view('backend.pages.salesTransaction.salesReturn.index', get_defined_vars());
 
@@ -70,6 +71,7 @@ class SalesReturnController extends Controller
     public function create()
     {
         $title = 'Add New Sales Return';
+        $companyInfo =   helper::companyInfo();
         return view('backend.pages.salesTransaction.salesReturn.create', get_defined_vars());
     }
 

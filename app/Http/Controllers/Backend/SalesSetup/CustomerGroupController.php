@@ -42,6 +42,7 @@ class CustomerGroupController extends Controller
         $createRoute = "salesSetup.customerGroup.create";
         $datatableRoute = 'salesSetup.customerGroup.dataProcessingCustomerGroup';
         $columns = helper::getTableProperty();
+        $companyInfo =   helper::companyInfo();
         return view('backend.layouts.common.datatable.datatable', get_defined_vars());
 
       
@@ -67,6 +68,7 @@ class CustomerGroupController extends Controller
         $implodeModal ="'inventory-setup-load-import-form','salesSetup.customerGroup.import','Import  Customer Group List','/backend/assets/excelFormat/salesSetup/customerGroup/customerGroup.csv','2'";
         $storeRoute = "salesSetup.customerGroup.store";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
 
        
@@ -108,6 +110,7 @@ class CustomerGroupController extends Controller
         $implodeModal ="";
         $storeRoute = "salesSetup.customerGroup.update";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
 

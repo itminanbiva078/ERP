@@ -44,6 +44,7 @@ class PurchasesOrderController extends Controller
     public function index(Request $request)
     {
         $title = 'Purchases Order List';
+        $companyInfo =   helper::companyInfo();
         $datatableRoute = 'inventoryTransaction.purchasesOrder.dataProcessingPurchasesOrder';
         return view('backend.pages.inventoryTransaction.purchasesOrder.index', get_defined_vars());
     }
@@ -74,6 +75,7 @@ class PurchasesOrderController extends Controller
     public function create()
     {
         $title = 'Add New Purchases Order';
+        $companyInfo =   helper::companyInfo();
         $formInput =  helper::getFormInputByRoute();
         $formInputDetails =  helper::getFormInputByRoute('inventoryTransaction.purchasesOrder.details.create');
         return view('backend.pages.inventoryTransaction.purchasesOrder.create', get_defined_vars());
@@ -124,7 +126,7 @@ class PurchasesOrderController extends Controller
             session()->flash('error', 'Edit info is invalid!!');
             return redirect()->back();
         }
-
+        $companyInfo =   helper::companyInfo();
         $title = 'Purchases Order Edit';
         $invoiceDetails = $editInfo->orderDetails;
         $products = $this->productService->getActiveProduct();

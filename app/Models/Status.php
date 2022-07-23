@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Status extends Model
 {
-    use HasFactory; use SoftDeletes;
+    use HasFactory; 
+    use SoftDeletes;
     protected $casts = ['id' => 'string'];
 }

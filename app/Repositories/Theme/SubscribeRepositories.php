@@ -62,7 +62,7 @@ class SubscribeRepositories
                 })->count();
         }
       
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($subscribes) {
             foreach ($subscribes as $key => $subscribe) {

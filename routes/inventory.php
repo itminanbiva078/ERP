@@ -301,7 +301,6 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Backend'], function () {
         //purchases return crud operation end
     });
     
-
     Route::group(['middleware' => ['web', 'auth'], 'namespace' => 'PurchasesReport'], function () {
         //purchases report crud operation start
         Route::any('/purchases-report-supplier-ledger', 'PurchasesReport@supplierLedger')->name('purchasesReport.supplierLedger');

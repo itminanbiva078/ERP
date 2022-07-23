@@ -43,6 +43,7 @@ class FiscalYearController extends Controller
         $createRoute = "settings.fiscal_year.create";
         $datatableRoute = 'settings.fiscal_year.dataProcessingFiscalYear';
         $columns = helper::getTableProperty();
+        $companyInfo =   helper::companyInfo();
         return view('backend.layouts.common.datatable.datatable', get_defined_vars());
 
       
@@ -68,6 +69,7 @@ class FiscalYearController extends Controller
         $implodeModal ="";
         $storeRoute = "settings.fiscal_year.store";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
     /**
@@ -108,6 +110,7 @@ class FiscalYearController extends Controller
         $implodeModal ="";
         $storeRoute = "settings.fiscal_year.update";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
 

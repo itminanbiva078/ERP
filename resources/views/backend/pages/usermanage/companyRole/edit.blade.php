@@ -8,14 +8,14 @@ Settings - {{$title}}
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1 class="m-0"> Company Role </h1>
+                <h1 class="m-0"> Settings </h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('company.resource.index') }}">Company Role List</a>
+                    <li class="breadcrumb-item"><a href="{{ route('company.resource.index') }}">Company Resource List</a>
                     </li>
-                    <li class="breadcrumb-item active"><span>Update Company ROle</span></li>
+                    <li class="breadcrumb-item active"><span>Update Company Resource</span></li>
                 </ol>
             </div><!-- /.col -->
         </div><!-- /.row -->
@@ -33,7 +33,7 @@ Settings - {{$title}}
                 <h3 class="card-title">{{$title}}</h3>
                 <div class="card-tools">
                     <a class="btn btn-default" href="{{ route('company.resource.index') }}"><i class="fa fa-list"></i>
-                        Role List</a>
+                        Resource List</a>
                     <span id="buttons"></span>
 
                     <a class="btn btn-tool btn-default" data-card-widget="collapse">
@@ -58,12 +58,15 @@ Settings - {{$title}}
                                     </label>
                                 </div>
                             </label>
+
                             <select class="form-control select2 company_category" name="company_category">
                                 <option>(:- Select Company Category-:)</option>
                                 @foreach($companyCategory as $key => $value)
+                                <?php //dd($companyCategory);?>
                                 <option @if($company_id == $value->id) selected @endif value="{{$value->id}}">{{$value->name}}</option>
                                 @endforeach
                             </select>
+
                             @error('role_name')
                             <span class=" error text-red text-bold">{{ $message }}</span>
                             @enderror

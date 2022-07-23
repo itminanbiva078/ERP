@@ -50,7 +50,7 @@ class SupplierOpeningController extends Controller
     {
         $title = 'Supplier Opening List';
         $datatableRoute = 'openingSetup.supplierOpening.dataProcessingSupplierOpening';
-
+        $companyInfo =   helper::companyInfo();
         return view('backend.pages.opening.supplierOpening.index', get_defined_vars());
     }
 
@@ -69,7 +69,7 @@ class SupplierOpeningController extends Controller
         $title = 'Add New Supplier Opening';
         $formInput =  helper::getFormInputByRoute();
         $formInputDetails =  helper::getFormInputByRoute('openingSetup.supplierOpening.details.create');
-       
+        $companyInfo =   helper::companyInfo();
         return view('backend.pages.opening.supplierOpening.create', get_defined_vars());
     }
     /**
@@ -113,7 +113,7 @@ class SupplierOpeningController extends Controller
             session()->flash('error', 'Edit info is invalid!!');
             return redirect()->back();
         }
-
+        $companyInfo =   helper::companyInfo();
         $title = 'Supplier Opening Edit';
         $invoiceDetails = $editInfo->supplierOpeningDetails;
         $customers = Supplier::get();

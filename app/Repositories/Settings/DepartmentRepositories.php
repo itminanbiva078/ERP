@@ -76,7 +76,7 @@ class DepartmentRepositories
             })->count();
         }
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($departments) {
             foreach ($departments as $key => $department) {

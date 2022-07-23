@@ -13,6 +13,8 @@ use App\Models\RoleAccess;
 use App\Models\Store;
 use App\Models\User;
 use App\Models\UserRole;
+use App\Models\Status;
+use App\Models\Company;
 use DB;
 use Hash;
 
@@ -111,7 +113,7 @@ class CompanyCategoryRepositories
             $eachInfo->module = $htmlText;
         endforeach;
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($companyCategories) {
             foreach ($companyCategories as $key => $companyCategory) {
@@ -235,16 +237,25 @@ class CompanyCategoryRepositories
             $this->companyUserCreateOrUpdate($companyCategory,$roleInfo->id,'create');
             //company general setup
             $this->companyGeneralSetupCreateOrUpdate($companyCategory,'create');
+            //company Info setup
+            $this->companyCompanyInfoCreateOrUpdate($companyCategory,'create');
+
+            //company status setup
+            $this->companyStatusCreateOrUpdate($companyCategory,'create');
+
             //company default branch create
             $branch_id = $this->companyDefaultBranchCreate($companyCategory,'create');
             //company default store create
             $this->companyDefaultStoreCreate($companyCategory,$branch_id,'create');
+         
+
             DB::commit();
             // all good
+            // die('stop');
             return $companyCategory->id;
         } catch (\Exception $e) {
-            DB::rollback();
-  
+           DB::rollback();
+        //   dd( $e->getMessage());
             return $e->getMessage();
         }
 
@@ -307,10 +318,59 @@ class CompanyCategoryRepositories
                 endif;
             endforeach;
        }
-
        return  $companyResouce;
+    }
+
+    public function companyStatusCreateOrUpdate($companyCategory,$mode){
+
+        $statuss = array(
+            'Approved',
+            'Inactive',
+            'Pending',
+        );
+
+       
+
+        foreach ($statuss as $key => $value) :
+
+            if($mode == 'create'):
+                $status =  new Status();
+            else:
+                $status = Status::where('company_id',$companyCategory->id)->first();
+            endif;
 
 
+            $status->name = $value;
+            $status->company_id = $companyCategory->id;
+            $status->status = 'Approved';
+            // $status->created_by = Auth::user()->id;
+            $status->save();
+        endforeach;
+
+        return $status;
+    }
+
+    public function companyCompanyInfoCreateOrUpdate($companyCategory,$mode){
+
+        if($mode == 'create'):
+            $company =  new Company();
+        else:
+            $company = Company::where('company_id',$companyCategory->id)->first();
+        endif;
+        $company->name = $companyCategory->name;
+        $company->email = $companyCategory->email;
+        $company->phone ="01710000000";
+        $company->address = "Uttra";
+        $company->logo = "logo";
+        $company->favicon = "favicon";
+        $company->invoice_logo = "invoice_logo";
+        $company->website = "www.nextpage.com";
+        $company->task_identification_number = 10;
+        $company->company_id = $companyCategory->id;
+        $company->status = 'Approved';
+        $company->created_by = Auth::user()->id;
+        $company->save();
+        return $company;
     }
 
     public function companyRoleCreateOrUpdate($companyCategory,$mode){
@@ -496,7 +556,9 @@ class CompanyCategoryRepositories
                 //company user 
                 $this->companyUserCreateOrUpdate($companyCategory,$roleInfo->id,'update');
                 //company general setup
-                $this->companyGeneralSetupCreateOrUpdate($companyCategory,'update');             
+                $this->companyGeneralSetupCreateOrUpdate($companyCategory,'update');  
+                
+              
                 }
 
             DB::commit();

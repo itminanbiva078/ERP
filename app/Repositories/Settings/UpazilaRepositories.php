@@ -76,7 +76,7 @@ class UpazilaRepositories
             $value->district_id = $value->district->name ?? '';
         endforeach;
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
          $data = array();
         if ($upazilas) {
             foreach ($upazilas as $key => $upazila) {

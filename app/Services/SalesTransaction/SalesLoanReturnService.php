@@ -1,20 +1,20 @@
 <?php
 
 namespace App\Services\SalesTransaction;
-use App\Repositories\SalesTransaction\SalesReturnRepositories;
+use App\Repositories\SalesTransaction\SalesLoanReturnRepositories;
 
-class SalesReturnService
+class SalesLoanReturnService
 {
 
     /**
-     * @var SalesReturnRepositories
+     * @var SalesLoanReturnRepositories
      */
     private $systemRepositories;
     /**
      * AdminCourseService constructor.
-     * @param SalesReturnRepositories $SalesReturnRepositories
+     * @param SalesLoanReturnRepositories $salesLoanReturnRepositories
      */
-    public function __construct(SalesReturnRepositories $systemRepositories)
+    public function __construct(SalesLoanReturnRepositories $systemRepositories)
     {
         $this->systemRepositories = $systemRepositories;
     }
@@ -31,9 +31,9 @@ class SalesReturnService
      * @param $request
      * @return mixed
      */
-    public function salesList($request)
+    public function salesLoanList($request)
     {
-        return $this->systemRepositories->salesList($request);
+        return $this->systemRepositories->salesLoanList($request);
     }
     
 
@@ -41,18 +41,20 @@ class SalesReturnService
      * @param $request
      * @return mixed
      */
-    public function salesDetails($request)
+    public function salesLoanDetails($request)
     {
-        return $this->systemRepositories->salesDetails($request);
+        return $this->systemRepositories->salesLoanDetails($request);
     }
 
+    
+   
     /**
      * @param $request
      * @return mixed
      */
-    public function statusUpdate($request, $id)
+    public function approved($id,$request)
     {
-        return $this->systemRepositories->statusUpdate($request, $id);
+        return $this->systemRepositories->approved($id,$request);
     }
 
     public function statusValidation($request)

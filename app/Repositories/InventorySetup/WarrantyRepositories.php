@@ -80,7 +80,7 @@ class WarrantyRepositories
             })->count();
         }
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($warrantys) {
             foreach ($warrantys as $key => $warranty) {

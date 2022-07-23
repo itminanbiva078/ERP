@@ -42,6 +42,7 @@ class ServiceCategoryController extends Controller
         $createRoute = "serviceSetup.serviceCategory.create";
         $datatableRoute = 'serviceSetup.serviceCategory.dataProcessingServiceCategory';
         $columns = helper::getTableProperty();
+        $companyInfo =   helper::companyInfo();
         return view('backend.layouts.common.datatable.datatable', get_defined_vars());
 
     
@@ -67,6 +68,7 @@ class ServiceCategoryController extends Controller
         $implodeModal ="'inventory-setup-load-import-form','serviceSetup.serviceCategory.import','Import Service Category List','/backend/assets/excelFormat/serviceSetup/serviceCategory/serviceCategory.csv','2'";
         $storeRoute = "serviceSetup.serviceCategory.store";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
 
     }
@@ -107,6 +109,7 @@ class ServiceCategoryController extends Controller
         $implodeModal ="";
         $storeRoute = "serviceSetup.serviceCategory.update";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
 

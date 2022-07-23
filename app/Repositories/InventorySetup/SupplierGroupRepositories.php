@@ -81,7 +81,7 @@ class SupplierGroupRepositories
         }
 
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($supplierGroups) {
             foreach ($supplierGroups as $key => $supplierGroup) {

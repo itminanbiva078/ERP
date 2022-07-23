@@ -81,7 +81,7 @@ class ServiceRepositories
             $value->service_id = $value->serviceCategory->name ?? '';
         endforeach;
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($services) {
             foreach ($services as $key => $service) {

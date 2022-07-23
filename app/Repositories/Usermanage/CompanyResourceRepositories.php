@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\CompanyResource;
 use App\Models\FormInput;
 use App\Models\Navigation;
-use helper;
+use App\Helpers\Helper;
 use phpDocumentor\Reflection\PseudoTypes\False_;
 
 class CompanyResourceRepositories
@@ -27,10 +27,7 @@ class CompanyResourceRepositories
     public function __construct(CompanyResource $companyResource)
     {
         $this->companyResource = $companyResource;
-        //$this->middleware(function ($request, $next) {
-        $this->user_id = 1; //auth()->user()->id;
-        //  return $next($request);
-        //});
+       
     }
     /**
      * @param $request
@@ -53,7 +50,7 @@ class CompanyResourceRepositories
 
     public function getCompanyCategory()
     {
-        return  CompanyCategory::get();
+        return  CompanyCategory::where('id',Helper::companyId())->get();
     }
 
     public function getList($request)
@@ -63,9 +60,6 @@ class CompanyResourceRepositories
             1 => 'company_category_id',
         );
 
-
-
-        
         $totalData = $this->companyResource::count();
         $limit = $request->input('length');
         $start = $request->input('start');
@@ -73,7 +67,7 @@ class CompanyResourceRepositories
         $dir = $request->input('order.0.dir');
 
         if (empty($request->input('search.value'))) {
-            $companyResources = $this->companyResource::groupBy('company_resources.company_category_id')
+            $companyResources = $this->companyResource::groupBy('company_resources.company_category_id')->where('company_category_id',Helper::companyId())
                 ->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir)
@@ -85,7 +79,7 @@ class CompanyResourceRepositories
         } else {
             $search = $request->input('search.value');
             $companyResources = $this->companyResource::with(['companyCategory' => function($query) use ($search){
-                $query->where('role_name', 'like', "%{$search}%");
+                $query->where('role_name', 'like', "%{$search}%")->where('company_category_id',Helper::companyId());
             }])
             ->groupBy('company_resources.company_category_id')
                 ->offset($start)
@@ -93,7 +87,7 @@ class CompanyResourceRepositories
                 ->orderBy($order, $dir)
                 // ->orderBy('status', 'desc')
                 ->get();
-            $totalFiltered = $this->companyResource::select('company_category_id')->groupBy('company_resources.company_category_id')->get();
+            $totalFiltered = $this->companyResource::select('company_category_id')->where('company_category_id',Helper::companyId())->groupBy('company_resources.company_category_id')->get();
         }
         $totalFiltered = count($totalFiltered);
         $data = array();
@@ -181,9 +175,6 @@ class CompanyResourceRepositories
     }
     public function update($request, $id)
     {   
-
-        
-
         $permissions = $request->permission;
         if(!empty($permissions)):
 
@@ -197,6 +188,7 @@ class CompanyResourceRepositories
                 $company_resource =  new $this->companyResource();
                 $company_resource->company_category_id = $request->company_category;
                 $company_resource->navigation_id = $key;
+                $company_resource->company_id = helper::companyId();
                 $company_resource->form_input = json_encode($permissions_value);
                 $company_resource->save();
             endforeach;

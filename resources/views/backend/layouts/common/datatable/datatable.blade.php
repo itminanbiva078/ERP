@@ -83,6 +83,7 @@
                                 @endforeach
                             </tr>
                         </tfoot>
+
                     </table>
                 </div>
             </div>

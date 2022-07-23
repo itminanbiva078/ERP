@@ -8,6 +8,10 @@ use App\Models\DeliveryChallan;
 use App\Models\Sales;
 use App\Models\SalesDetails;
 use DB;
+use App\Models\Stock;
+use App\Models\StockSummary;
+use App\Models\General;
+use App\Models\PosDetails;
 
 class DeliveryChallanRepositories
 {
@@ -79,7 +83,7 @@ class DeliveryChallanRepositories
 
 
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
 
 
@@ -150,15 +154,15 @@ class DeliveryChallanRepositories
 
     public function store($request)
     {
-
-        //dd($request->all());
-
+        $coustomerId = Sales::where('id', $request->sales_id)->company()->first();
         DB::beginTransaction();
         try {
             $poMaster =  new $this->deliveryChallan();
             $poMaster->date = helper::mysql_date($request->date);
             $poMaster->company_id  = helper::companyId();
-            $poMaster->customer_id  = $request->customer_id;
+
+            $poMaster->customer_id  = $coustomerId->customer_id;
+
             $poMaster->branch_id  = $request->branch_id ?? helper::getDefaultBranch();
             $poMaster->voucher_no  = $request->voucher_no;
             $poMaster->delivery_location  = $request->delivery_location;
@@ -173,6 +177,8 @@ class DeliveryChallanRepositories
             if ($poMaster->id) {
                 $this->masterDetails($poMaster->id, $request);
                 $this->salesQtyUpdate($request);
+                $this->stockSave($request,$poMaster->id);
+                $this->stockSummarySave($request);
             }
             DB::commit();
             // all good
@@ -184,7 +190,69 @@ class DeliveryChallanRepositories
         }
     }
 
+    public function stockSave($request,$chalanId)
+    {
+        $general_id = General::where('voucher_id', $request->sales_id)->where('form_id',5)->company()->first();
+        if(!empty($general_id)):
+            $productId = $request->product_id;
+            $allStock = array();
+            foreach ($productId as $key => $value) :
+                $purchasesExist = SalesDetails::where('sales_id', $request->sales_id)->where('product_id',$value)->company()->first();
 
+
+                    if(!empty($request->approved_quantity[$key])):
+                        $generalStock = array();
+                        $generalStock['date'] = helper::mysql_date($request->date);
+                        $generalStock['company_id'] = helper::companyId();
+                        $generalStock['delivery_challan_id'] = $chalanId;
+                        $generalStock['general_id'] = $general_id->id;
+                        $generalStock['branch_id']  =$request->branch_id ?? helper::getDefaultBranch();
+                        $generalStock['store_id']  = $request->store_id  ?? helper::getDefaultStore();
+                        $generalStock['product_id']  = $value;
+                        $generalStock['type']  = "out";
+                        $generalStock['batch_no']  = helper::productBatch($request->batch_no[$key]);
+                        $generalStock['pack_size']  = $request->pack_size[$key];
+                        $generalStock['pack_no']  = $request->pack_no[$key];
+                        $generalStock['quantity']  = $request->approved_quantity[$key];
+                        $generalStock['unit_price']  = $purchasesExist->unit_price;
+                        $generalStock['total_price']  = $purchasesExist->unit_price*$request->approved_quantity[$key];
+                        array_push($allStock, $generalStock);
+                    endif;
+                // endif;
+            endforeach;
+            $saveInfo =  Stock::insert($allStock);
+         endif;
+        return $saveInfo;
+    }
+
+    public function stockSummarySave($request)
+    {
+        $salesDetails = SalesDetails::where('sales_id', $request->sales_id)->company()->get();
+            // dd(  $salesDetails );
+             foreach ($salesDetails as $key => $value) :
+            $stockSummaryExits =  StockSummary::where('company_id', helper::companyId())->where('product_id', $value->product_id)->where("store_id",$value->store_id)->where("branch_id",$value->branch_id)->company()->first();
+            if (empty($stockSummaryExits)) {
+                $stockSummary = new StockSummary();
+                $stockSummary->quantity = $value->approved_quantity;
+            } else {
+                $stockSummary = $stockSummaryExits;
+                $stockSummary->quantity = $stockSummary->quantity - $value->approved_quantity;
+            }
+            $stockSummary->company_id = helper::companyId();
+            $stockSummary->branch_id = $value->branch_id;
+            $stockSummary->store_id = $value->store_id;
+            $stockSummary->product_id = $value->product_id;
+            $stockSummary->category_id = helper::getRow('products','id',$value->product_id,'category_id');
+            $stockSummary->brand_id = helper::getRow('products','id',$value->product_id,'brand_id');
+            $stockSummary->batch_no = $value->batch_no;
+            $stockSummary->pack_size = $value->pack_size;
+            $stockSummary->pack_no = $value->pack_no;
+            $stockSummary->save();
+      
+        endforeach;
+        return true;
+
+    }
 
     public function masterDetails($masterId,$request){
 
@@ -235,6 +303,8 @@ class DeliveryChallanRepositories
             if($poMaster->id){
             $this->masterDetails($poMaster->id,$request);
             $this->salesQtyUpdate($request);
+            $this->stockSave($request,$poMaster->id);
+            $this->stockSummarySave($request);
 
 
 

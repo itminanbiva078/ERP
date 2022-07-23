@@ -1,10 +1,10 @@
 @if(!empty($datatableRoute))
 @php
-$columns = helper::getTableProperty($customDatatableRoute=null);
+$columns = helper::getQueryPropertyForDataTable($customDatatableRoute=null);
+
 @endphp
 
 <script type="text/javascript">
-
 
     let table = $('#systemDatatable').DataTable({
         "pageLength": "{{helper::getGeneralData('default_datatable_list_number')}}",

@@ -73,7 +73,7 @@ class ProductReviewRepositories
 
 
        
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($reviews) {
             foreach ($reviews as $key => $review) {

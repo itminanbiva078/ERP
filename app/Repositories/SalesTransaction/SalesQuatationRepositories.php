@@ -24,7 +24,7 @@ class SalesQuatationRepositories
     public function __construct(SalesQuatation $salesQuatation)
     {
         $this->salesQuatation = $salesQuatation;
-       
+
     }
 
     /**
@@ -83,7 +83,7 @@ class SalesQuatationRepositories
                $value->branch_id  = $value->branch->name ?? '';
         endforeach;
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
 
 
@@ -113,7 +113,7 @@ class SalesQuatationRepositories
                         $nestedData['quatation_status'] = helper::statusBar($salesQuatation->quatation_status);
                     elseif($value == 'voucher_no'):
                         $nestedData[$value] = '<a target="_blank" href="' . route('salesTransaction.salesQuatation.show', $salesQuatation->id) . '" show_id="' . $salesQuatation->id . '" title="Details" class="">'.$salesQuatation->voucher_no.'</a>';
-                    else:    
+                    else:
                         $nestedData[$value] = $salesQuatation->$value;
                     endif;
                 endforeach;
@@ -161,7 +161,7 @@ class SalesQuatationRepositories
 
     public function store($request)
     {
-     
+
         DB::beginTransaction();
         try {
             $poMaster =  new $this->salesQuatation();
@@ -170,7 +170,7 @@ class SalesQuatationRepositories
             if (!empty($request->sales_quatation_id))
             $poMaster->sales_quatation_id  =implode("," ,$request->sales_quatation_id ?? '');
             $poMaster->branch_id  = $request->branch_id;
-            $poMaster->voucher_no  = $request->voucher_no;
+            $poMaster->voucher_no  =helper::generateInvoiceId("sales_quatation_prefix","sales_quatations");
             $poMaster->subtotal  = $request->sub_total;
             $poMaster->discount  = $request->discount;
             $poMaster->grand_total  = array_sum($request->total_price);
@@ -195,7 +195,7 @@ class SalesQuatationRepositories
         }
     }
 
-  
+
 
     public function masterDetails($masterId,$request){
         SalesQuatationDetails::where('sales_quatation_id',$masterId)->delete();
@@ -218,13 +218,13 @@ class SalesQuatationRepositories
        return $saveInfo;
     }
 
-  
+
 
 
     public function update($request, $id)
     {
-        DB::beginTransaction(); 
-            
+        DB::beginTransaction();
+
         try {
         $poMaster = $this->salesQuatation::findOrFail($id);
         $poMaster->date = date('Y-m-d',strtotime($request->date));
@@ -243,17 +243,17 @@ class SalesQuatationRepositories
                 $poMaster->documents = helper::upload($request->documents,500,500,'salesQuatation',$poMaster->id);
                 $poMaster->save();
             $this->masterDetails($poMaster->id,$request);
-          
-          
+
+
             }
             DB::commit();
             // all good
             return $poMaster->id;
-        } 
+        }
         catch (\Exception $e) {
             DB::rollback();
             return $e->getMessage();
-        } 
+        }
      }
 
     public function statusUpdate($id, $status)
@@ -274,8 +274,8 @@ class SalesQuatationRepositories
     }
     public function destroy($id)
     {
-        DB::beginTransaction(); 
-            
+        DB::beginTransaction();
+
     try {
         $salesQuatation = $this->salesQuatation::find($id);
         if($salesQuatation->quatation_status == 'Pending'):
@@ -288,6 +288,6 @@ class SalesQuatationRepositories
         } catch (\Exception $e) {
             DB::rollback();
             return $e->getMessage();
-        } 
+        }
    }
 }

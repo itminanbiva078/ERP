@@ -38,6 +38,7 @@ class SubscribeController extends Controller
     public function index(Request $request)
     {
         $title = 'Subscribe List';
+        $companyInfo =   helper::companyInfo();
         $datatableRoute = 'theme.appearance.subscribe.dataProcessingSubscribe';
         return view('backend.pages.website.subscribe.index', get_defined_vars());
     }
@@ -55,7 +56,6 @@ class SubscribeController extends Controller
      */
     public function store(Request $request)
     {
-        //dd($request->all());
 
         try {
             $this->validate($request, helper::isErrorStore($request));

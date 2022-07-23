@@ -95,7 +95,7 @@ class PurchasesPaymnetRepositories
             if (!empty($value->date))
                 $value->date = helper::get_php_date($value->date) ?? '';
         endforeach;
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
     
         $data = array();
         if ($purchasessPayment) {
@@ -190,17 +190,20 @@ class PurchasesPaymnetRepositories
     public function dueVoucherList($purchasesId)
     {
         $duePaymentList = PurchasesPayment::groupBy("voucher_id")
-        ->selectRaw('sum(IFNULL(debit,0)-IFNULL(credit,0)) as dueAmount,sum(credit) as totalPayment,sum(debit) as purchasesAmount,id,voucher_id,voucher_no,branch_id,supplier_id,debit,credit')
+        ->selectRaw('sum(IFNULL(debit,0)-IFNULL(credit,0)) as dueAmount,sum(credit) as totalPayment,sum(debit) as purchasesAmount,id,voucher_id,voucher_no,branch_id,supplier_id,debit,credit,date')
         ->where('supplier_id',$purchasesId)
         ->havingRaw('sum(IFNULL(debit,0)-IFNULL(credit,0)) > 0')
         ->company()
         ->get();
+        //dd( $duePaymentList );
         return $duePaymentList;
+
     }
 
     
     public function store($request)
     {
+       // dd($request->all());
         DB::beginTransaction();
         try {
             $voucherList = $request->purchases_voucher_id;
@@ -208,8 +211,9 @@ class PurchasesPaymnetRepositories
                 if(!empty($request->credit[$key])): 
                     $request->paid_amount = $request->credit[$key];
                     if($request->payment_type == "Cash"): 
+                        $request->request->add(['account_id' => 7]);
                         $moneyReceitId =  $this->purchasesRepository->purchasesCreditPayment($eachVoucher,$request->paid_amount,$request->payment_type,$request->date);
-                        //purchases payment journal
+                       
                         Journal::purchasesPaymentJournal($eachVoucher,$request->credit[$key],$request->account_id,$request->date);
 
                        // $this->purchasesRepository->paidAmountUpdate($eachVoucher,$request->credit[$key]);
@@ -221,7 +225,8 @@ class PurchasesPaymnetRepositories
             DB::commit();
             // all good
             return  $moneyReceitId;
-        } catch (\Exception $e) {
+        }catch (\Exception $e) {
+            dd($e->getMessage());
             DB::rollback();
             return $e->getMessage();
         }

@@ -43,6 +43,7 @@ class JournalVoucherController extends Controller
     public function index(Request $request)
     {
        $title = 'Journal Voucher List';
+       $companyInfo =   helper::companyInfo();
        $datatableRoute = 'accountTransaction.journalVoucher.dataProcessingJournalVoucher';
        return view('backend.pages.accountTransaction.journalVoucher.index', get_defined_vars());
     }
@@ -63,6 +64,7 @@ class JournalVoucherController extends Controller
     {
         $title = 'Add New Journal Voucher';
         $accountLedger = helper::getLedgerHead();
+        $companyInfo =   helper::companyInfo();
         $formInput =  helper::getFormInputByRoute();
         $formInputDetails =  helper::getFormInputByRoute('accountTransaction.journalVoucher.details.create');
         return view('backend.pages.accountTransaction.journalVoucher.create', get_defined_vars());
@@ -105,6 +107,7 @@ class JournalVoucherController extends Controller
             return redirect()->back();
         }
         $title = 'Journal Voucher Edit';
+        $companyInfo =   helper::companyInfo();
         $invoiceDetails = $editInfo->journalVoucherLedger;
         $activeColumn = Helper::getQueryProperty('accountTransaction.journalVoucher.details.create');
         $formInput =  helper::getFormInputByRoute();

@@ -2,7 +2,7 @@
 
 
      <p class="txt-color-white text-center">© 2021 by
-         <b>HOTEL MOHONA</b> | All  rights reserved. Design and Developed By <a target="_blank" href="https://nextpagetl.com">Next Page Technology
+         <b>MASTER ACCOUNTING</b> | All  rights reserved. Design and Developed By <a target="_blank" href="https://nextpagetl.com">Next Page Technology
              Ltd.</a>
      </p>
 

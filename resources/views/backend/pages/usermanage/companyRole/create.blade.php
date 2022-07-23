@@ -8,14 +8,14 @@ Settings - {{$title}}
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1 class="m-0"> User Role </h1>
+                <h1 class="m-0"> Settings </h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('company.resource.index') }}">User Role List</a>
+                    <li class="breadcrumb-item"><a href="{{ route('company.resource.index') }}">Company Resource List</a>
                     </li>
-                    <li class="breadcrumb-item active"><span>Add New User ROle</span></li>
+                    <li class="breadcrumb-item active"><span>Add New Company Resource</span></li>
                 </ol>
             </div><!-- /.col -->
         </div><!-- /.row -->
@@ -33,7 +33,7 @@ Settings - {{$title}}
                 <h3 class="card-title">{{$title}}</h3>
                 <div class="card-tools">
                     <a class="btn btn-default" href="{{ route('company.resource.index') }}"><i class="fa fa-list"></i>
-                        Role List</a>
+                        Resourse List</a>
                     <span id="buttons"></span>
 
                     <a class="btn btn-tool btn-default" data-card-widget="collapse">
@@ -59,7 +59,7 @@ Settings - {{$title}}
                                 </div>
                             </label>
                             <select class="form-control select2" name="company_category">
-                                <option value="">(:- Select Company Category-:)</option>
+                                <option value="" disabled>(:- Select Company Category-:)</option>
                                 @foreach($companyCategory as $key => $value)
                                 <option @if(!empty(old('company_category')) && old('company_category') == $value->id) selected @endif value="{{$value->id}}">{{$value->name}}</option>
                                 @endforeach
@@ -145,7 +145,7 @@ Settings - {{$title}}
                             </tbody>
                         </table>
                     </div>
-                   
+
                 </form>
             </div>
             <!-- /.card-body -->

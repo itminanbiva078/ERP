@@ -41,6 +41,7 @@ class UpazilaController extends Controller
         $createRoute = "settings.upazila.create";
         $datatableRoute = 'settings.upazila.dataProcessingUpazila';
         $columns = helper::getTableProperty();
+        $companyInfo =   helper::companyInfo();
         return view('backend.layouts.common.datatable.datatable', get_defined_vars());
 
     }
@@ -65,6 +66,7 @@ class UpazilaController extends Controller
         $implodeModal ="";
         $storeRoute = "settings.upazila.store";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
     /**
@@ -104,6 +106,7 @@ class UpazilaController extends Controller
         $implodeModal ="";
         $storeRoute = "settings.upazila.update";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
 

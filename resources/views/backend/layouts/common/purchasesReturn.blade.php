@@ -1,5 +1,12 @@
+<?php
+$accessRoute = array(
 
-    
+    'inventoryTransaction.purchasesReturn.create',
+    'inventoryTransaction.purchasesReturn.edit',
+   
+
+);
+ ?>   
     @if(!empty($purchasesList))
     
     <div class="form-row">
@@ -107,6 +114,9 @@
                @if(in_array('total_price',$activeColumn))
                <td> <input type="number" required=""  name="total_price[]" readonly="" class="form-control total_price decimal" id="" placeholder="Total Price" value=""></td>
                @endif
+               <td class="text-center"><button del_id="1" class="delete_item btn btn-danger"
+                  type="button" href="javascript:;" title="Are you Remove?"><i class="fa fa-minus"></i></button>
+          </td>
             </tr>
             @endforeach
          </tbody>
@@ -146,10 +156,17 @@
                <td class="grand_total text-right" colspan="@php helper::getColspan($activeColumn,4);@endphp">Grand Total:</td>
                <td><input  type="text" id="grand_total" readonly="" class="form-control grandTotal" value="" name="grand_total" placeholder="0.00"></td>
             </tr>
-            <tr>
-               <td class="grand_total text-right" colspan="@php helper::getColspan($activeColumn,4);@endphp">Payment:</td>
-               <td><input  type="text" id="paid_amount" class="form-control payment" value="" name="paid_amount" placeholder="0.00"></td>
+
+            <tr class="div_payment" style="display: none!important">
+               <td class="grand_total text-right" colspan="@php helper::getColspan($activeColumn,4);@endphp">Available Balance:</td>
+               <td><input  type="text" id="accountBalance" class="form-control accountBalance" value="" readonly name="accountBalance" placeholder="0.00"></td>
             </tr>
+
+            <tr class="div_payment" required style="display: none!important">
+               <td class="grand_total text-right" required colspan="@php helper::getColspan($activeColumn,4);@endphp">Payment:</td>
+               <td><input  type="text" id="paid_amount" class="form-control payment" required value="" name="paid_amount" placeholder="0.00"></td>
+            </tr>
+        
             <tr>
                <td class="note" colspan="@php helper::getColspan($activeColumn,4);@endphp"><textarea  name="note" rows="4" placeholder="Type Note Here..."></textarea></td>
             </tr>
@@ -222,14 +239,56 @@
          $('#deduction_amount').val(total_deduction_percentage_amount.toFixed(2));
          $('#sub_total').val(total_price_amount.toFixed(2));
          $('#grand_total').val((total_price_amount-total_deduction_percentage_amount).toFixed(2));
-         $('#paid_amount').val((total_price_amount-total_deduction_percentage_amount).toFixed(2));
+         // $('#paid_amount').val((total_price_amount-total_deduction_percentage_amount).toFixed(2));
    }
 
    
+   $(document).on('click', '.delete_item', function() {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let totalRow = $('.batch_no').length
+                if (totalRow == 1) {
+                    Swal.fire('Warning!', "There only one row you can't delete", 'warning');
+                } else {
+                    let id = $(this).attr("del_id");
+                    $('.new_item' + id).remove();
+                    calculation();
+                    Swal.fire('Successs!', 'You are remove one item!.', 'success');
+                }
+
+            }
+        })
+    });
+
+   $(document).on('change', '.payment_type', function() {
+    let payment_type = $(this).val();
+
+    if(payment_type == 'Cash'){
+      
+        $('.div_payment').show();
+     
+    }else if(payment_type == 'Credit'){
+      
+        $('.div_payment').hide();
+    }else{
+      
+        $('.div_payment').show();
+    }
+
+}); 
+
 $(document).on('change', '.payment_type', function() {
    let payment_type = $(this).val();
    if(payment_type == 'Cash'){
-       $('.div_account_id').removeClass("hide");
+      //  $('.div_account_id').removeClass("hide");
        $('.div_bank_id').addClass('hide');
    }else if(payment_type == 'Credit'){
        $('.div_account_id').addClass("hide");
@@ -240,6 +299,52 @@ $(document).on('change', '.payment_type', function() {
    }  
 
 });
+
+
+$(document).ready(function() {
+
+$('.account_balance').on('change', function() {
+    let payment_type = $(this).find(":selected").attr('value');
+    if(payment_type =='Cash'){
+        $.ajax({
+            "url": "{{ route('accountSetup.chartOfAccount.getAccountBalance') }}",//new route
+            "dataType": "json",
+            "type": "GET",
+            "data": {
+                "_token": "<?= csrf_token() ?>",
+                "account_id": 7,
+            }
+        }).done(function(data) {
+
+        $('.accountBalance').val(data);
+
+        })
+ 
+}else{
+    $('.accountBalance').val(0);
+}
+});
+
+$('.bank_val_id').on('change', function() {
+    let bank_id = $(this).find(":selected").attr('value');
+    $.ajax({
+        "url": "{{ route('accountSetup.chartOfAccount.getAccountBankBalance') }}",//new route
+        "dataType": "json",
+        "type": "GET",
+        "data": {
+            "_token": "<?= csrf_token() ?>",
+            "bank_id": bank_id,
+        }
+    }).done(function(data) {
+
+       $('.accountBalance').val(data);
+
+    })
+});
+
+
+});
+
 </script>
 @else 
 

@@ -11,13 +11,13 @@
                             <div class="product-name">
                                 <h1> Master Accounting Software </h1>
                             </div>
-                            <div class="product-discription">
+                            {{-- <div class="product-discription">
                                 <p> Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolores vero necessitatibus ex ipsam tempore dolorem, 
                                     neque nemo architecto suscipit omnis officia fuga, libero incidunt unde. Ad eius accusantium eaque excepturi! </p>
-                            </div>
-                            <div class="registration-btn">
+                            </div> --}}
+                            {{-- <div class="registration-btn">
                                 <a href="{{ route('register') }}" type="button" class="btn"> Registration Now <span> <i class="fas fa-sign-in"></i> </span> </a>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <div class="col-md-5">

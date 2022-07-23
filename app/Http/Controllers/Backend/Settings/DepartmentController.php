@@ -43,6 +43,7 @@ class DepartmentController extends Controller
         $createRoute = "settings.department.create";
         $datatableRoute = 'settings.department.dataProcessingDepartment';
         $columns = helper::getTableProperty();
+        $companyInfo =   helper::companyInfo();
         return view('backend.layouts.common.datatable.datatable', get_defined_vars());
         
      
@@ -66,6 +67,7 @@ class DepartmentController extends Controller
         $implodeModal ="'inventory-setup-load-import-form','settings.department.import','Import Department List','/backend/assets/excelFormat/settings/department/department.csv','2'";
         $storeRoute = "settings.department.store";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
     /**
@@ -100,6 +102,7 @@ class DepartmentController extends Controller
             session()->flash('error', 'Edit info is invalid!!');
             return redirect()->back();
         }
+        $companyInfo =   helper::companyInfo();
         $title = "Settings | Edit - Department";
         $listRoute = "settings.department.index";
         $explodeRoute = "";

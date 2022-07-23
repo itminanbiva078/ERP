@@ -51,6 +51,7 @@ class PurchasesReturnController extends Controller
     {
 
        $title = 'Purchases Return List';
+       $companyInfo =   helper::companyInfo();
        $datatableRoute = 'inventoryTransaction.purchasesReturn.dataProcessingPurchasesReturn';
        return view('backend.pages.inventoryTransaction.purchasesReturn.index', get_defined_vars());
     }
@@ -68,6 +69,7 @@ class PurchasesReturnController extends Controller
     public function create()
     {
         $title = 'Add New purchases Return';
+        $companyInfo =   helper::companyInfo();
         return view('backend.pages.inventoryTransaction.purchasesReturn.create', get_defined_vars());
     }
 

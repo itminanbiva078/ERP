@@ -8,12 +8,9 @@ use App\Models\Product;
 use App\Services\Booking\BookingService;
 use App\Services\Dashboard\DashboardService;
 use DB;
+
 class HomeController extends Controller
 {
-
-
-
-
 
     /**
      * @var BookingService

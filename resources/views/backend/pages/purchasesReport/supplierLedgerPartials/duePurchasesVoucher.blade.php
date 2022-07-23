@@ -73,6 +73,7 @@
             <td class="text-right">{{ helper::pricePrint($opening->opening) }}</td>
         </tr>
         @endif
+
         @php 
             $topening=0;
             $tpurchasesAmount=0;
@@ -113,3 +114,4 @@
 </table>
 
 @endif
+

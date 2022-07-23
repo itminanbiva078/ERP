@@ -45,7 +45,7 @@ class VehicleRepositories
         $dir = $request->input('order.0.dir');
 
         if (empty($request->input('search.value'))) {
-            $vehicles = $this->vehicle::select($columns)->offset($start)
+            $vehicles = $this->vehicle::select($columns)->company()->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir)
                 //->orderBy('status', 'desc')
@@ -53,7 +53,7 @@ class VehicleRepositories
             $totalFiltered = $this->vehicle::count();
         } else {
             $search = $request->input('search.value');
-            $vehicles = $this->vehicle::select($columns)->where(function ($q) use ($columns,$search) {
+            $vehicles = $this->vehicle::select($columns)->company()->where(function ($q) use ($columns,$search) {
                 $q->where('id', 'like', "%{$search}%");
                 foreach ($columns as $column) {
                 $q->orWhere($column, 'like', "%{$search}%");
@@ -64,7 +64,7 @@ class VehicleRepositories
                 ->orderBy($order, $dir)
                 // ->orderBy('status', 'desc')
                 ->get();
-            $totalFiltered = $this->vehicle::select($columns)->where(function ($q) use ($columns,$search) {
+            $totalFiltered = $this->vehicle::select($columns)->company()->where(function ($q) use ($columns,$search) {
                 $q->where('id', 'like', "%{$search}%");
                 foreach ($columns as $column) {
                 $q->orWhere($column, 'like', "%{$search}%");
@@ -73,7 +73,7 @@ class VehicleRepositories
         }
 
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($vehicles) {
             foreach ($vehicles as $key => $vehicle) {
@@ -136,7 +136,7 @@ class VehicleRepositories
         $vehicle->chassis_no = $request->chassis_no;
         $vehicle->status = 'Approved';
         $vehicle->created_by = Auth::user()->id;
-        $vehicle->company_id = Auth::user()->company_id;
+        $vehicle->company_id = helper::companyId();
         $vehicle->save();
         return $vehicle;
     }
@@ -151,7 +151,7 @@ class VehicleRepositories
         $vehicle->chassis_no = $request->chassis_no;
         $vehicle->status = 'Approved';
         $vehicle->updated_by = Auth::user()->id;
-        $vehicle->company_id = Auth::user()->company_id;
+        $vehicle->company_id = helper::companyId();
         $vehicle->save();
         return $vehicle;
     }

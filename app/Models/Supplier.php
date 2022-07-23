@@ -36,11 +36,11 @@ class Supplier extends Model
         return $query->where('company_id', Helper::companyId());
     }
 
-
     public function ppayment()
     {
         return $this->hasMany(PurchasesPayment::class, 'supplier_id', 'id');
     }
+    
     public function pcpayment()
     {
         return $this->hasMany(PurchasesPendingCheque::class, 'supplier_id', 'id');

@@ -38,6 +38,7 @@ class FloorController extends Controller
         $createRoute = "inventorySetup.floor.create";
         $columns = helper::getTableProperty();
         $datatableRoute = 'inventorySetup.floor.dataProcessingFloor';
+        $companyInfo =   helper::companyInfo();
         return view('backend.layouts.common.datatable.datatable', get_defined_vars());
     }
     public function dataProcessingFloor(Request $request)
@@ -51,6 +52,7 @@ class FloorController extends Controller
     public function create()
     {
         $title = "Floor | Add New - Floor";
+        $companyInfo =   helper::companyInfo();
         $listRoute = "inventorySetup.floor.index";
         $explodeRoute = "inventorySetup.floor.explode";
         $implodeModal ="'inventory-setup-load-import-form','inventorySetup.floor.import','Import Floor List','/backend/assets/excelFormat/inventorySetup/floor/floor.csv','2'";
@@ -89,6 +91,7 @@ class FloorController extends Controller
             session()->flash('error', 'Edit info is invalid!!');
             return redirect()->back();
         }
+        $companyInfo =   helper::companyInfo();
         $title = "Floor | Edit - floor";
         $listRoute = "inventorySetup.floor.index";
         $explodeRoute = "";

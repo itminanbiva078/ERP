@@ -49,6 +49,7 @@ class PurchasesRequsitionController extends Controller
     public function index(Request $request)
     {
         $title = 'Purchases Requisition List';
+        $companyInfo =   helper::companyInfo();
         $datatableRoute = 'inventoryTransaction.purchasesRequisition.dataProcessingpurchasesRequisition';
         return view('backend.pages.inventoryTransaction.purchasesRequisition.index', get_defined_vars());
     }
@@ -71,6 +72,7 @@ class PurchasesRequsitionController extends Controller
              $query->select('id','name')->where('status','Approved')->get();
           }])->get();
 
+        $companyInfo =   helper::companyInfo();
         $productListCategoryWise = Category::with('products')->get();
         $title = 'Add New Purchases Requisition';
         $formInput =  helper::getFormInputByRoute();
@@ -115,7 +117,7 @@ class PurchasesRequsitionController extends Controller
             session()->flash('error', 'Edit info is invalid!!');
             return redirect()->back();
         }
-
+        $companyInfo =   helper::companyInfo();
         $title = 'Purchases Requisition Edit';
         $invoiceDetails = $editInfo->requisitionDetails;
         $products = $this->productService->getActiveProduct();

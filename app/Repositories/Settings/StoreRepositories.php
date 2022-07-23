@@ -83,7 +83,7 @@ class StoreRepositories
         }
 
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
 
         foreach($stores as $key => $value):
             if(!empty($value->branch_id))

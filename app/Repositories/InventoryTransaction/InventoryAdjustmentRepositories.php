@@ -78,7 +78,7 @@ class InventoryAdjustmentRepositories
                 $value->store_id  = $value->store->name ?? '';
         endforeach;
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($inventoryAdjustments) {
             foreach ($inventoryAdjustments as $key => $inventoryAdjustment) {

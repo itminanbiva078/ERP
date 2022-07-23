@@ -76,7 +76,7 @@ class UnionRepositories
             if(!empty($value->upazila_id))
             $value->upazila_id = $value->upazila->name ?? '';
         endforeach;
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
          $data = array();
         if ($unions) {
             foreach ($unions as $key => $union) {

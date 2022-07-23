@@ -44,6 +44,7 @@ class DeliveryChallanController extends Controller
     {
        $title = 'Delivery Challan List';
        $datatableRoute = 'salesTransaction.deliveryChallan.dataProcessingDeliveryChallan';
+       $companyInfo =   helper::companyInfo();
        return view('backend.pages.salesTransaction.deliveryChallan.index', get_defined_vars());
     }
 
@@ -63,6 +64,7 @@ class DeliveryChallanController extends Controller
         $formInput =  helper::getFormInputByRoute();
         $activeColumn = Helper::getQueryProperty('salesTransaction.deliveryChallan.details.create');
         $formInputDetails =  helper::getFormInputByRoute('salesTransaction.deliveryChallan.details.create');
+        $companyInfo =   helper::companyInfo();
         return view('backend.pages.salesTransaction.deliveryChallan.create', get_defined_vars());
     }
 
@@ -109,6 +111,7 @@ class DeliveryChallanController extends Controller
             return redirect()->back();
         }
         $title = 'Delivery Challan Edit';
+        $companyInfo =   helper::companyInfo();
         $invoiceDetails = $editInfo->deliveryChallanDetails;
         $products = $this->productService->getActiveProduct();
         $activeColumn = Helper::getQueryProperty('salesTransaction.deliveryChallan.details.create');

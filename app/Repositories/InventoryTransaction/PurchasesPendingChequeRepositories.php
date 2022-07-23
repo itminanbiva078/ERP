@@ -97,7 +97,7 @@ class PurchasesPendingChequeRepositories
             if (!empty($value->date))
                 $value->date = helper::get_php_date($value->date) ?? '';
         endforeach;
-        $columns = Helper::getTableProperty("inventoryTransaction.purchases.pendingCheque.index");
+        $columns = Helper::getQueryProperty("inventoryTransaction.purchases.pendingCheque.index");
     
         $data = array();
         if ($purchasessPendingCheque) {
@@ -142,6 +142,7 @@ class PurchasesPendingChequeRepositories
      * @param $request
      * @return mixed
      */
+    
     public function details($id)
     {
         $result = $this->pendingCheque::with(["purchases" => function($q){

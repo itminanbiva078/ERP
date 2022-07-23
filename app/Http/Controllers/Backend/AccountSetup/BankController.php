@@ -43,6 +43,7 @@ class BankController extends Controller
         $createRoute = "accountSetup.bank.create";
         $datatableRoute = 'accountSetup.bank.dataProcessingBank';
         $columns = helper::getTableProperty();
+        $companyInfo =   helper::companyInfo();
         return view('backend.layouts.common.datatable.datatable', get_defined_vars());
     }
 
@@ -66,6 +67,7 @@ class BankController extends Controller
         $implodeModal ="'inventory-setup-load-import-form','accountSetup.bank.import','Import Bank List','/backend/assets/excelFormat/accountSetup/bank/bank.csv','2'";
         $storeRoute = "accountSetup.bank.store";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
     /**
@@ -102,7 +104,7 @@ class BankController extends Controller
             return redirect()->back();
         }
 
-
+        $companyInfo =   helper::companyInfo();
         $title = "Account Setup | Edit - Bank";
         $listRoute = "accountSetup.bank.index";
         $explodeRoute = "";

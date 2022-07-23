@@ -83,7 +83,7 @@ class ServiceQuatationRepositories
                $value->branch_id  = $value->branch->name ?? '';
         endforeach;
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
 
 

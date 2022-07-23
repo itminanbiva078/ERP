@@ -38,6 +38,7 @@ class SalesPendingChequeController extends Controller
     public function index(Request $request)
     {
         $title = 'Sale Pending Cheque List';
+        $companyInfo =   helper::companyInfo();
         $datatableRoute = 'salesTransaction.sales.pendingCheque.dataProcessingSalePendingCheque';
         return view('backend.pages.salesTransaction.salesPendingCheque.index', get_defined_vars());
     }
@@ -57,6 +58,7 @@ class SalesPendingChequeController extends Controller
         $accountLedger = helper::getLedgerHead();
         $title = 'Add New Payment';
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
         return view('backend.pages.salesTransaction.salesPendingCheque.create', get_defined_vars());
     }
   

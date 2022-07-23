@@ -79,7 +79,7 @@ class TaskStatusRepositories
       
 
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($taskStatuss) {
             foreach ($taskStatuss as $key => $taskStatus) {

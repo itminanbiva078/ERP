@@ -49,7 +49,7 @@ class UserRoleController extends Controller
     public function index(Request $request)
     {
 
-        $title = 'User Role List';
+        $title = 'Admin Role List';
         return view('backend.pages.usermanage.userRole.index', get_defined_vars());
     }
 
@@ -64,7 +64,7 @@ class UserRoleController extends Controller
      */
     public function create()
     {
-        $title = 'Add New User Role';
+        $title = 'Add New Admin Role';
         $branch = $this->branchService->getAllBranch();
         $userRole = $this->systemService->getNavigation();
         return view('backend.pages.usermanage.userRole.create', get_defined_vars());
@@ -75,8 +75,6 @@ class UserRoleController extends Controller
      */
     public function store(Request $request)
     {
-
-        // dd($request->all());
         try {
             $this->validate($request, $this->systemService->storeValidation($request));
         } catch (ValidationException $e) {
@@ -102,7 +100,7 @@ class UserRoleController extends Controller
             session()->flash('error', 'Edit info is invalid!!');
             return redirect()->back();
         }
-        $title = 'Edit User Role';
+        $title = 'Edit Admin Role';
         $parent_info = explode(",", $editInfo->parent_id);
         $navigation_info = explode(",", $editInfo->navigation_id);
         $branch_info = explode(",", $editInfo->branch_id);

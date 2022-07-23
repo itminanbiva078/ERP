@@ -53,6 +53,7 @@ class PosController extends Controller
     public function index(Request $request)
     {
         $title = 'Pos';
+        $companyInfo =   helper::companyInfo();
         $datatableRoute = 'pos.pos.dataProcessingPos';
         return view('backend.pages.pos.pos.index', get_defined_vars());
     }
@@ -72,9 +73,7 @@ class PosController extends Controller
         $formInput =  helper::getFormInputByRoute();
         $products = $this->productService->getActiveProduct();
         $categorys = $products->pluck('category')->unique();
-       
-
-
+        $companyInfo =   helper::companyInfo();
         $invoiceId = helper::generateInvoiceId('POS','pos',8);
         return view('backend.pages.pos.pos.create', get_defined_vars());
     }

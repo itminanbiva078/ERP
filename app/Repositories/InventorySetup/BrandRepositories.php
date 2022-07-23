@@ -79,7 +79,7 @@ class BrandRepositories
                 })->count();
         }
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($brands) {
             foreach ($brands as $key => $brand) {

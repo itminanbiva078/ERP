@@ -10,7 +10,6 @@ Settings - {{$title}}
 }
 </style>
 @endsection
-
 @section('navbar-content')
 
 <div class="content-header">
@@ -26,7 +25,7 @@ Settings - {{$title}}
                     @if(helper::roleAccess('usermanage.userRole.index'))
                     <li class="breadcrumb-item"><a href="{{route('usermanage.userRole.index') }}">Admin Role</a></li>
                     @endif
-                    <li class="breadcrumb-item active"><span>User List</span></li>
+                    <li class="breadcrumb-item active"><span>Admin List</span></li>
                 </ol>
             </div><!-- /.col -->
         </div><!-- /.row -->

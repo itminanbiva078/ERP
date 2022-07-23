@@ -38,6 +38,7 @@ class ProductDetailsController extends Controller
     public function index(Request $request)
     {
         $title = 'Product Manage | Product - List';
+        $companyInfo =   helper::companyInfo();
         $explodeRoute = "inventorySetup.product.explode";
         $createRoute = "inventorySetup.product.create";
         $datatableRoute = 'inventorySetup.product.dataProcessingProduct';
@@ -62,6 +63,7 @@ class ProductDetailsController extends Controller
         $implodeModal ="'inventory-setup-load-import-form','inventorySetup.product.import','Import Product List','/backend/assets/excelFormat/inventorySetup/product/product.csv','2'";
         $storeRoute = "inventorySetup.product.store";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
 
     }
@@ -102,6 +104,7 @@ class ProductDetailsController extends Controller
         $implodeModal ="'inventory-setup-load-import-form','inventorySetup.product.import','Import Product List','/backend/assets/excelFormat/inventorySetup/product/product.csv','2')";
         $storeRoute = "inventorySetup.product.update";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
 
@@ -175,9 +178,6 @@ class ProductDetailsController extends Controller
      */
     public function productNameSuggestions(Request $request)
     {
-
-        //dd($request);
-
 
         if (!is_numeric($id)) {
             return response()->json($this->systemTransformer->invalidId($id), 200);

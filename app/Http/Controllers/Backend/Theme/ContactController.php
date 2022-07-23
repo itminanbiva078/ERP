@@ -39,6 +39,7 @@ class ContactController extends Controller
     {
         $title = 'Contact List';
         $datatableRoute = 'theme.appearance.website.dataProcessingContact';
+        $companyInfo =   helper::companyInfo();
         return view('backend.pages.website.contact.index', get_defined_vars());
     }
 

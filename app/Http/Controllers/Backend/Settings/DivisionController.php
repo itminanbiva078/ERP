@@ -41,6 +41,7 @@ class DivisionController extends Controller
         $createRoute = "settings.division.create";
         $datatableRoute = 'settings.division.dataProcessingDivision';
         $columns = helper::getTableProperty();
+        $companyInfo =   helper::companyInfo();
         return view('backend.layouts.common.datatable.datatable', get_defined_vars());
 
        
@@ -66,6 +67,7 @@ class DivisionController extends Controller
         $implodeModal ="";
         $storeRoute = "settings.division.store";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
     /**
@@ -105,6 +107,7 @@ class DivisionController extends Controller
         $implodeModal ="";
         $storeRoute = "settings.division.update";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
 

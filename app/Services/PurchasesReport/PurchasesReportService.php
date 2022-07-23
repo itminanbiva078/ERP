@@ -47,10 +47,12 @@ class PurchasesReportService
     {
         return $this->systemRepositories->getSupplierChequePayment($supplier_id,$from_date,$to_date);
     }
+
     public function getSupplierPendingChequePayment($supplier_id,$from_date,$to_date)
     {
         return $this->systemRepositories->getSupplierPendingChequePayment($supplier_id,$from_date,$to_date);
     }
+    
     public function getSupplierPurchasesVoucher($supplier_id,$from_date,$to_date)
     {
         return $this->systemRepositories->getSupplierPurchasesVoucher($supplier_id,$from_date,$to_date);

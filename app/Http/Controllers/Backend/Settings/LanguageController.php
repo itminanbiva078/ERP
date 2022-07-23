@@ -42,6 +42,7 @@ class LanguageController extends Controller
         $createRoute = "settings.language.create";
         $datatableRoute = 'settings.language.dataProcessingLanguage';
         $columns = helper::getTableProperty();
+        $companyInfo =   helper::companyInfo();
         return view('backend.layouts.common.datatable.datatable', get_defined_vars());
 
     }
@@ -66,6 +67,7 @@ class LanguageController extends Controller
         $implodeModal ="";
         $storeRoute = "settings.language.store";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
     /**
@@ -105,6 +107,7 @@ class LanguageController extends Controller
         $implodeModal ="";
         $storeRoute = "settings.language.update";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
 

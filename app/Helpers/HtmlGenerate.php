@@ -6,6 +6,7 @@ use App\Models\GeneralSetup;
 use DB;
 use App\Helpers\Helper;
 use App\Models\Navigation;
+use App\Models\ProductUnit;
 use SM;
 use Collective\Html\FormFacade as Form;
 class HtmlGenerate
@@ -35,6 +36,9 @@ class HtmlGenerate
                     break;
                 case "optionGroup":
                     self::optionGroup($property, $errors, $selected);
+                    break;
+                case "acoptionGroup":
+                    self::acoptionGroup($property, $errors, $selected);
                     break;
                 case "toptionGroup":
                     self::toptionGroup($property, $errors, $selected);
@@ -123,6 +127,9 @@ class HtmlGenerate
                 case "optionGroup":
                     self::optionGroup($property, $errors, $selected);
                     break;
+                case "acoptionGroup":
+                    self::acoptionGroup($property, $errors, $selected);
+                    break;
                 case "toptionGroup":
                     self::toptionGroup($property, $errors, $selected);
                     break;
@@ -195,11 +202,6 @@ class HtmlGenerate
     public static function formfiledHorizental($property, $errors = null, $selected = null)
     {
 
-
-      
-
-
-
         if (isset($property->type)) {
             $type = $property->type;
             switch ($type) {
@@ -211,6 +213,9 @@ class HtmlGenerate
                     break;
                 case "toptionGroup":
                     self::toptionGroup($property, $errors, $selected);
+                    break;
+                case "acoptionGroup":
+                    self::acoptionGroup($property, $errors, $selected);
                     break;
                 case "tpoptionGroup":
                     self::tpoptionGroup($property, $errors, $selected);
@@ -307,7 +312,7 @@ class HtmlGenerate
     ?> 
 
     <div class="form-group row col-md-12 mb-12 ">
-        <label for="validationCustom01"  class="col-sm-1 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '*';  endif; ?>:</label>
+        <label for="validationCustom01"  class="col-sm-1 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>';  endif; ?>:</label>
         <div class="col-sm-11">
            <div id="actions" class="row product-upload-images">
                 <div class="col-md-12">
@@ -420,7 +425,7 @@ class HtmlGenerate
 
 
         <div class="form-group row col-md-6 mb-3 <?php echo $hideDiv; ?>  div_<?php echo $name; ?>">
-                <label for="inputEmail3" class="col-sm-3 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '*';  endif; ?>:</label>
+                <label for="inputEmail3" class="col-sm-3 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>';  endif; ?>:</label>
                 <div class="col-sm-6">
                     <input type="<?php echo $type; ?>" name="<?php echo $name; ?>" <?php echo $readonly ?> class="<?php echo $class; ?>" id="<?php echo $id; ?>" placeholder="<?php echo $placeholder; ?>" value="<?php echo $value; ?>">
                     <?php if ($errors->has($name)) : ?>
@@ -465,7 +470,7 @@ class HtmlGenerate
 
     ?>
         <div class="form-group row col-md-6 mb-3 ">
-            <label for="validationCustom01"  class="col-sm-3 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '*';  endif; ?>:</label>
+            <label for="validationCustom01"  class="col-sm-3 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>';  endif; ?>:</label>
             <div class="col-sm-6"> 
                 <input type="<?php echo $type; ?>" name="<?php echo $name; ?>" <?php echo $readonly ?> class="<?php echo $class; ?>" id="<?php echo $id; ?>" value="<?php echo $value; ?>">
                 <?php if ($errors->has($name)) : ?>
@@ -502,7 +507,7 @@ class HtmlGenerate
 
     ?>
         <div class="form-group row col-md-6 mb-3 ">
-            <label for="validationCustom01"  class="col-sm-3 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '*';  endif; ?>:</label>
+            <label for="validationCustom01"  class="col-sm-3 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>';  endif; ?>:</label>
             <div class="col-sm-6"> 
                 <input type="<?php echo $type; ?>" name="<?php echo $name; ?>" <?php echo $readonly ?> class="<?php echo $class; ?>" id="<?php echo $id; ?>" value="<?php echo $value; ?>">
                 <?php if ($errors->has($name)) : ?>
@@ -549,7 +554,7 @@ class HtmlGenerate
         endif;
       ?>
         <div class="form-group row col-md-6 mb-3 <?php echo $hideDiv; ?>  div_<?php echo $name; ?>">
-            <label for="validationCustom01"  class="col-sm-3 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '*'; endif; ?> :</label>
+            <label for="validationCustom01"  class="col-sm-3 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>'; endif; ?> :</label>
             <div class="col-sm-6"> 
             <select data-placeholder="<?php echo $placeholder; ?>" multiple="multiple" width="100%"  name="<?php echo $name; ?>[]" class="<?php echo $class; ?>" id="<?php echo $id; ?>"  placeholder="<?php echo $placeholder; ?>">
                 <?php if (!empty($datas)) :
@@ -623,7 +628,7 @@ class HtmlGenerate
  ?>
 
 <div class="form-group row col-md-6 mb-3 <?php echo $hideDiv; ?>  div_<?php echo $name; ?>">
-    <label for="validationCustom01"  class="col-sm-3 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '*'; endif; ?>:</label>
+    <label for="validationCustom01"  class="col-sm-3 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>'; endif; ?>:</label>
     <div class="col-sm-6">
     <select width="100%" name="<?php echo $name; ?>" class="<?php echo $class; ?>" id="<?php echo $name;?>"  placeholder="<?php echo $placeholder; ?>">
         <option value="" selected disabled>(:-Select <?php echo ucfirst($name); ?>-:)</option>
@@ -681,7 +686,7 @@ endif;
       ?>
 
         <div class="form-group row col-md-6 mb-3 <?php echo $hideDiv; ?> div_<?php echo $name; ?>">
-            <label for="validationCustom01" class="col-sm-3 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '*'; endif; ?>:</label>
+            <label for="validationCustom01" class="col-sm-3 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>'; endif; ?>:</label>
             <div class="col-sm-6">  
             <select name="<?php echo $name; ?>[]" class="<?php echo $class; ?>" id="<?php echo $id; ?>"  placeholder="<?php echo $placeholder; ?>">
                 <?php foreach ($datas as $key => $parent) :  ?>
@@ -730,7 +735,7 @@ endif;
 
     ?>
         <div class="form-group row col-md-6 mb-3 <?php echo $hideDiv; ?>  div_<?php echo $name; ?>">
-            <label for="validationCustom01" class="col-sm-3 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '*';  endif; ?>:</label>
+            <label for="validationCustom01" class="col-sm-3 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>';  endif; ?>:</label>
             
             <div class="col-sm-6">  
                 <div class="input-group"data-target-input="nearest">
@@ -774,7 +779,7 @@ endif;
       ?>
         <div class="col-md-3 col-sm-6 col-xs-12 <?php echo $hideDiv; ?>  div_<?php echo $name; ?>">
            <div class="form-group">
-                <label for="validationCustom01"><?php echo ucfirst($label); ?><?php if ($required) : echo '*'; endif; ?>:</label>
+                <label for="validationCustom01"><?php echo ucfirst($label); ?><?php if ($required) : echo '<span>*</span>'; endif; ?>:</label>
                 <select name="<?php echo $name; ?>" class="<?php echo $class; ?>" id="<?php echo $id; ?>"  placeholder="<?php echo $placeholder; ?>">
                     <?php foreach ($datas as $key => $parent) :  ?>
                     <optgroup label="<?php echo $parent['parent']->name ?? '' ?>">
@@ -842,10 +847,10 @@ endif;
          ?>
             <div class="col-md-3 col-sm-6 col-xs-12 <?php echo $hideDiv; ?>  div_<?php echo $name; ?>">
                 <div class="form-group">    
-                <label for="validationCustom01"><?php echo ucfirst($label); ?> <?php if ($required) : echo '*'; endif; ?>:</label>
+                <label for="validationCustom01"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>'; endif; ?>:</label>
                     <select width="100%" name="<?php echo $name; ?>"   class="<?php echo $class; ?>" id="<?php echo $id; ?><?php echo $name;?>"
                         placeholder="<?php echo $placeholder; ?>">
-                       
+                        <option value="" selected disabled>(:-Select <?php echo ucfirst($label); ?>-:)</option>
                         <?php if($allOption):?>
                         <option <?php if (!empty($selected) && $selected == "All") : ?> selected <?php endif; ?> value="All" > All</option>
                         <?php endif;?>
@@ -911,7 +916,7 @@ endif;
 
         <div class="col-md-3 col-sm-6 col-xs-12 <?php echo $hideDiv; ?>  div_<?php echo $name; ?>">
         <div class="form-group">
-                <label for="inputEmail3"><?php echo ucfirst($label); ?> <?php if ($required) : echo '*';  endif; ?>:</label>
+                <label for="inputEmail3"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>';  endif; ?>:</label>
                     <input type="text" name="<?php echo $name; ?>" <?php echo $readonly ?> class="<?php echo $class; ?>" id="<?php echo $id; ?>" placeholder="<?php echo $placeholder; ?>" value="<?php echo $value; ?>">
                     <?php if ($errors->has($name)) : ?>
                             <span class=" error text-red text-bold"><?php echo $errors->first($name) ?></span>
@@ -959,7 +964,7 @@ endif;
 
         <div class="col-md-3 col-sm-6 col-xs-12 <?php echo $hideDiv; ?>  div_<?php echo $name; ?>">
         <div class="form-group">
-                <label for="inputEmail3"><?php echo ucfirst($label); ?> <?php if ($required) : echo '*';  endif; ?>:</label>
+                <label for="inputEmail3"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>';  endif; ?>:</label>
                 
                     <input type="file" name="<?php echo $name; ?>" <?php echo $readonly ?> class="<?php echo $class; ?>" id="<?php echo $id; ?>" placeholder="<?php echo $placeholder; ?>" value="<?php echo $value; ?>">
                     <?php if ($errors->has($name)) : ?>
@@ -1125,7 +1130,7 @@ endif;
 
     ?>
         <div class="form-group row col-md-6 mb-3 ">
-        <label for="validationCustom01"  class="col-sm-3 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '*'; endif; ?>:</label>
+        <label for="validationCustom01"  class="col-sm-3 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>'; endif; ?>:</label>
         <div class="col-sm-6">    
         <textarea name="<?php echo $name; ?>" class="<?php echo $class; ?>  summernote" id="<?php echo $id; ?>"  placeholder="<?php echo ucfirst($placeholder); ?>"   cols="<?php echo $cols; ?>"><?php echo $value; ?></textarea>
             <?php if ($errors->has($name)) : ?>
@@ -1162,7 +1167,7 @@ endif;
     ?>
 
 <div class="form-group row col-md-6 mb-3  <?php echo $hideDiv; ?> div_<?php echo $name; ?>">
-    <label for="validationCustom01"  class="col-sm-3 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '*'; endif; ?>:</label>
+    <label for="validationCustom01"  class="col-sm-3 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>'; endif; ?>:</label>
     <div class="col-sm-6">    
     <div class="form-group clearfix">
         <div class="icheck-primary d-inline">
@@ -1186,7 +1191,6 @@ endif;
     public static function select($fieldInfo, $errors = null, $select = null)
     {
         $label = $fieldInfo->label ?? 'Label';
-
         $name = trim($fieldInfo->name ?? '');
         $placeholder = $fieldInfo->placeholder ?? '';
         $class = $fieldInfo->class ?? '';
@@ -1200,8 +1204,6 @@ endif;
         $jqueryMethod = $fieldInfo->jqueryMethod ?? '';
         $jqueryRoute = $fieldInfo->jqueryRoute ?? '';
 
-
-
        $checkNullExits =  Navigation::where('table',$foreignTable)->whereNull('active')->first();
       
         if(empty($checkNullExits)):
@@ -1212,8 +1214,6 @@ endif;
                         $value1->id = $value1->name;
                     endforeach;
                 endif;
-
-
             else :
                 $functionInfo = explode("(",str_replace(")","",$customMethod));
                 $fname = $functionInfo[0];
@@ -1232,45 +1232,43 @@ endif;
                 }
             endif;
 
-
-
     ?>
 
-<div class="col-md-6 mb-3 <?php echo $hideDiv; ?>  div_<?php echo $name; ?>">
-    <div class="add-new-category">
-        <label for="validationCustom01"><?php echo ucfirst($label); ?> <?php if ($required) : echo '*';  endif; ?>:</label>
-        <?php if(!empty($jqueryMethod)):?>
-            
-                <button class="btn btn-sm btn-success" onclick="<?php  echo $jqueryMethod;?>('<?php echo route($jqueryRoute)?>','<?php echo $name;?>','Add New <?php echo ucfirst($label); ?>')" data-toggle="modal" data-target="#modal-default" ><i class="fa fa-plus"></i>
-                </button>
-            
-        <?php endif;?>
-    </div>
-    <select width="100%" name="<?php echo $name; ?>"  onchange="<?php  echo $jqueryMethod;?>(<?php echo $jqueryRoute?>)"  class="<?php echo $class; ?>" id="<?php echo $id; ?><?php echo $name;?>"
-        placeholder="<?php echo $placeholder; ?>">
-        <option value="" selected disabled>(:-Select <?php echo ucfirst($name); ?>-:)</option>
-        <?php
-                if (!empty($datas)) :
-                    foreach ($datas as $key => $data) : ?>
-        <option  <?php if (!empty($data->is_posted) && $data->is_posted == 1) : ?> disabled <?php endif;?> <?php if (!empty($selected) && $selected == $data->id) : ?> selected <?php endif; ?>
-            value="<?php echo $data->id ?? ''; ?>"><?php echo $data->name ?? ''; ?></option>
-        <?php endforeach;
-                endif;
-                ?>
-    </select>
+    <div class="col-md-6 mb-3 <?php echo $hideDiv; ?>  div_<?php echo $name; ?>">
+        <div class="add-new-category">
+            <label for="validationCustom01"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>';  endif; ?>:</label>
+            <?php if(!empty($jqueryMethod)):?>
+                
+                    <button class="btn btn-sm btn-success" onclick="<?php  echo $jqueryMethod;?>('<?php echo route($jqueryRoute)?>','<?php echo $name;?>','Add New <?php echo ucfirst($label); ?>')" data-toggle="modal" data-target="#modal-default" ><i class="fa fa-plus"></i>
+                    </button>
+                
+            <?php endif;?>
+        </div>
+        <select width="100%" name="<?php echo $name; ?>"  onchange="<?php  echo $jqueryMethod;?>(<?php echo $jqueryRoute?>)"  class="<?php echo $class; ?>" id="<?php echo $id; ?><?php echo $name;?>"
+            placeholder="<?php echo $placeholder; ?>">
+            <option value="" selected disabled>(:-Select <?php echo ucfirst($name); ?>-:)</option>
+            <?php
+                    if (!empty($datas)) :
+                        foreach ($datas as $key => $data) : ?>
+            <option  <?php if (!empty($data->is_posted) && $data->is_posted == 1) : ?> disabled <?php endif;?> <?php if (!empty($selected) && $selected == $data->id) : ?> selected <?php endif; ?>
+                value="<?php echo $data->id ?? ''; ?>"><?php echo $data->name ?? ''; ?></option>
+            <?php endforeach;
+                    endif;
+                    ?>
+        </select>
 
-    <?php if (is_object($errors) && $errors->has($name)) : ?>
-    <span class=" error text-red text-bold"><?php echo $errors->first($name) ?></span>
-    <?php else: ?>
-    <?php if(is_array($errors)): ?>
-        <span class=" error text-red text-bold"><?php echo $errors[$name][0] ?? ''; ?></span>
+        <?php if (is_object($errors) && $errors->has($name)) : ?>
+        <span class=" error text-red text-bold"><?php echo $errors->first($name) ?></span>
+        <?php else: ?>
+        <?php if(is_array($errors)): ?>
+            <span class=" error text-red text-bold"><?php echo $errors[$name][0] ?? ''; ?></span>
+            <?php endif;?>
         <?php endif;?>
-    <?php endif;?>
-    
-</div>
-<?php
-endif;
-    }
+        
+    </div>
+    <?php
+    endif;
+        }
 
     public static function text($fieldInfo, $errors = null, $selected = null)
     {
@@ -1303,7 +1301,7 @@ endif;
 
 ?>
 <div class="col-md-6 mb-3 <?php echo $hideDiv; ?>  div_<?php echo $name; ?>">
-    <label for="validationCustom01"><?php echo ucfirst($label); ?> <?php if ($required) : echo '*';   endif; ?>:</label>
+    <label for="validationCustom01"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>';   endif; ?>:</label>
     <input type="<?php echo $type; ?>" name="<?php echo $name; ?>" <?php echo $readonly ?> class="<?php echo $class; ?>"  id="<?php echo $id; ?>" placeholder="<?php echo $placeholder; ?>" value="<?php echo $value; ?>">
     <?php if (is_object($errors) && $errors->has($name)) : ?>
     <span class=" error text-red text-bold"><?php echo $errors->first($name) ?></span>
@@ -1346,8 +1344,10 @@ endif;
         endif;
 
     ?>
+
+    
 <div class="col-md-6 mb-3">
-    <label for="validationCustom01"><?php echo ucfirst($label); ?> <?php if ($required) : echo '*';
+    <label for="validationCustom01"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>';
                                                                             endif; ?>:</label>
     <input type="<?php echo $type; ?>" name="<?php echo $name; ?>" <?php echo $readonly ?> class="<?php echo $class; ?>"
         id="<?php echo $id; ?>" value="<?php echo $value; ?>">
@@ -1516,7 +1516,7 @@ endif;
 
     ?>
 <div class="col-md-6 mb-3">
-    <label for="validationCustom01"><?php echo ucfirst($label); ?> <?php if ($required) : echo '*';  endif; ?>:</label>
+    <label for="validationCustom01"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>';  endif; ?>:</label>
     <div class="input-group date" id="reservationdate" data-target-input="nearest">
     <input class="form-control basicDate" type="text" id="" value="<?php echo helper::get_php_date(); ?>" name="<?php echo $name; ?>" data-input>
         <!-- <input type="text" value="<?php echo date('Y-m-d', strtotime($value)) ?>"  name="<?php echo $name; ?>" id="<?php echo $id; ?>" class="<?php echo $class; ?> datetimepicker-input"  data-target="#reservationdate" /> -->
@@ -1557,7 +1557,7 @@ endif;
     ?>
 
 <div class="col-md-6 mb-3">
-    <label for="validationCustom01"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span class="bg-danger">*</span>'; endif; ?> :</label>
+    <label for="validationCustom01"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>'; endif; ?> :</label>
     <div class="form-group clearfix">
         <div class="icheck-primary d-inline">
             <input type="checkbox" id="checkboxPrimary<?php echo $name;?>" name="<?php echo $name;?>" <?php if($value == 1):?> checked <?php endif;?>>
@@ -1598,7 +1598,7 @@ endif;
 
     ?>
 <div class="col-md-6 mb-3">
-    <label for="validationCustom01"><?php echo ucfirst($label); ?> <?php if ($required) : echo '*';
+    <label for="validationCustom01"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>';
                                                                             endif; ?>:</label>
     <input type="<?php echo $type; ?>" name="<?php echo $name; ?>" class="<?php echo $class; ?>" id="<?php echo $id; ?>"
         placeholder="<?php echo ucfirst($placeholder); ?>" value="<?php echo $value; ?>">
@@ -1639,7 +1639,7 @@ endif;
 
     ?>
 <div class="col-md-6 mb-3">
-    <label for="validationCustom01"><?php echo ucfirst($label); ?> <?php if ($required) : echo '*'; endif; ?>:</label>
+    <label for="validationCustom01"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>'; endif; ?>:</label>
     <input type="<?php echo $type; ?>" name="<?php echo $name; ?>" class="<?php echo $class; ?>" id="<?php echo $id; ?>" placeholder="<?php echo ucfirst($placeholder); ?>" value="<?php echo $value; ?>">
         <?php if (is_object($errors) && $errors->has($name)) : ?>
     <span class=" error text-red text-bold"><?php echo $errors->first($name) ?></span>
@@ -1679,7 +1679,7 @@ endif;
 
     ?>
 <div class="col-md-6 mb-3">
-    <label for="validationCustom01"><?php echo ucfirst($label); ?> <?php if ($required) : echo '*';
+    <label for="validationCustom01"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>';
                                                                             endif; ?>:</label>
     <textarea name="<?php echo $name; ?>" class="<?php echo $class; ?> summernote" id="<?php echo $id; ?>"
         placeholder="<?php echo ucfirst($placeholder); ?>" cols="<?php echo $cols; ?>"
@@ -1733,7 +1733,7 @@ endif;
     ?>
 
 <div class="col-md-6 mb-3 <?php echo $hideDiv; ?>  div_<?php echo $name; ?>">
-    <label for="validationCustom01"><?php echo ucfirst($label); ?> <?php if ($required) : echo '*';  endif; ?> :</label>
+    <label for="validationCustom01"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>';  endif; ?> :</label>
     <select data-placeholder="<?php echo $placeholder; ?>" multiple="multiple" width="100%"  name="<?php echo $name; ?>[]" class="<?php echo $class; ?>" id="<?php echo $id; ?>"  placeholder="<?php echo $placeholder; ?>">
         <!-- <option value="" selected disabled>(:-Select <?php //echo ucfirst($name);    ?>-:)</option> -->
         <?php
@@ -1756,8 +1756,6 @@ endif;
 
 public static function tselect($fieldInfo, $errors = null, $select = null)
     {
-
-       
         $label = $fieldInfo->label ?? 'Label';
         $name = trim($fieldInfo->name ?? '');
         $placeholder = $fieldInfo->placeholder ?? '';
@@ -1802,8 +1800,6 @@ public static function tselect($fieldInfo, $errors = null, $select = null)
             }
         endif;
 
-
-
         echo '<select name="' . $name . '[]" class="' . $class . '" id="' . $id . '" placeholder="' . $placeholder . '">';
         if($name == "batch_no"): 
         echo '<option value="" selected >(:-Select ' . ucfirst($label) . '-:)</option>';
@@ -1819,12 +1815,66 @@ public static function tselect($fieldInfo, $errors = null, $select = null)
     }
 
 
+    public static function acoptionGroup($fieldInfo, $errors = null, $select = null)
+    {
+        $label = $fieldInfo->label ?? 'Label';
+        $name = trim($fieldInfo->name ?? '');
+        $placeholder = $fieldInfo->placeholder ?? '';
+        $class = $fieldInfo->class ?? '';
+        $id = $fieldInfo->id ?? '';
+        $type = $fieldInfo->type ?? '';
+        $value = $fieldInfo->value ?? '';
+        $hideDiv = $fieldInfo->hideDiv ?? '';
+        $required = $fieldInfo->required ?? '';
+        $foreignTable = $fieldInfo->foreignTable ?? '';
+        $parameter = array(8);
+
+        if (!empty($foreignTable) && empty($customMethod)) :
+            $datas = DB::table($foreignTable)->where('company_id',helper::companyId())->where('status', 'Approved')->get();
+        else :
+
+        $datas = helper::getPaymentLedgerHead();
+    endif;
+        if (!empty($value)) :
+            $selected =  $value;
+        else :
+            if (!empty($select) && is_array($select)) {
+                $selected =  $select[$name] ?? '';
+            }
+            if (!empty($select) && is_object($select)) {
+                $selected =  $select->$name ?? '';
+            }
+        endif;
+
+    ?>
+
+<div class="form-group row col-md-6 mb-3 <?php echo $hideDiv; ?> div_<?php echo $name; ?>">
+    <label for="validationCustom01"  class="col-sm-3 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>';  endif; ?>:</label>
+    <div class="col-sm-6">  
+    <select name="<?php echo $name; ?>[]" class="<?php echo $class; ?>" id="<?php echo $id; ?>"  placeholder="<?php echo $placeholder; ?>">
+    <option value="" selected disabled>(:-Select <?php echo ucfirst($label); ?>-:)</option>
+        <?php foreach ($datas as $key => $parent) :  ?>
+        <optgroup label="<?php echo $parent['parent']->name ?? '' ?>">
+            <?php foreach ($parent['parentChild'] as $child => $accountHeads) : ?>
+            <option <?php if (!empty($selected) && $selected == $accountHeads->id) : ?> selected <?php endif; ?>
+                value="<?php echo $accountHeads->id ?? ''; ?>"><?php echo $accountHeads->name ?? ''; ?></option>
+            <?php endforeach; ?>
+        </optgroup>
+        <?php endforeach; ?>
+    </select>
+    <?php if ($errors->has($name)) : ?>
+    <span class=" error text-red text-bold"><?php echo $errors->first($name) ?></span>
+    <?php endif; ?>
+    </div>
+</div>
+
+<?php
+
+    }
+
+
     public static function optionGroup($fieldInfo, $errors = null, $select = null)
     {
-
-
-
-
         $label = $fieldInfo->label ?? 'Label';
         $name = trim($fieldInfo->name ?? '');
         $placeholder = $fieldInfo->placeholder ?? '';
@@ -1848,15 +1898,12 @@ public static function tselect($fieldInfo, $errors = null, $select = null)
             }
         endif;
 
-
       //  dd($datas);
-
-
 
     ?>
 
 <div class="form-group row col-md-6 mb-3 <?php echo $hideDiv; ?> div_<?php echo $name; ?>">
-    <label for="validationCustom01"  class="col-sm-3 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '*';  endif; ?>:</label>
+    <label for="validationCustom01"  class="col-sm-3 col-form-label"><?php echo ucfirst($label); ?> <?php if ($required) : echo '<span>*</span>';  endif; ?>:</label>
     <div class="col-sm-6">  
     <select name="<?php echo $name; ?>[]" class="<?php echo $class; ?>" id="<?php echo $id; ?>"  placeholder="<?php echo $placeholder; ?>">
         <?php foreach ($datas as $key => $parent) :  ?>
@@ -1927,7 +1974,11 @@ public static function tselect($fieldInfo, $errors = null, $select = null)
                 echo '<optgroup label="'.$pname .'">';
                $childNames =  $parent->products;
                     foreach ($childNames as $child => $eachProduct) : 
-                        echo '<option  value="'. $eachProduct->id . '">'. $eachProduct->name .'</option>';
+
+                    $units = ProductUnit::where('id',$eachProduct->unit_id)->first();
+                    $uname =  $units->name ?? '';
+                    echo '<option  value="'. $eachProduct->id . '">'. $eachProduct->name .' - '.$uname .'</option>';
+                     //  echo '<option  value="'. $eachProduct->id . '">'. $eachProduct->name .'</option>';
                     endforeach; 
                 echo '</optgroup>';
                 endif;
@@ -1943,9 +1994,11 @@ public static function tselect($fieldInfo, $errors = null, $select = null)
             $selected = 0;
             echo '<option selected value="0">(:-Select Product-:)</option>';
              foreach ($datas as $key => $eachData) : 
+             
                 $pid = $eachData->product_id ?? $eachData->id;
                 $pname = $eachData->product->name ?? $eachData->name;
-                echo '<option  value="'. $pid. '">'. $pname .'</option>';
+                $unitname = $eachData->product->productUnit->name ?? '';
+                echo '<option  value="'. $pid. '">'. $pname. ' - ' .$unitname. '</option>';
              endforeach; 
         echo '</select>';
 

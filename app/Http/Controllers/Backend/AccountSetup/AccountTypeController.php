@@ -39,6 +39,7 @@ class AccountTypeController extends Controller
     {
 
         $title = 'Account Type List';
+        $companyInfo =   helper::companyInfo();
         $datatableRoute = 'accountSetup.accountType.dataProcessingAccountType';
         return view('backend.pages.accountsSetup.accountType.index', get_defined_vars());
     }
@@ -58,6 +59,7 @@ class AccountTypeController extends Controller
     public function create()
     {
         $title = 'Add New Account Type';
+        $companyInfo =   helper::companyInfo();
         $formInput =  helper::getFormInputByRoute();
         return view('backend.pages.accountsSetup.accountType.create', get_defined_vars());
     }
@@ -93,6 +95,7 @@ class AccountTypeController extends Controller
             return redirect()->back();
         }
         $title = 'Add New Account Type';
+        $companyInfo =   helper::companyInfo();
         $formInput =  helper::getFormInputByRoute();
         return view('backend.pages.accountsSetup.accountType.edit', get_defined_vars());
     }

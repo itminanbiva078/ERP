@@ -73,7 +73,7 @@ class CompanyRepositories
             })->count();
         }
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
          $data = array();
         if ($companies) {
             foreach ($companies as $key => $company) {

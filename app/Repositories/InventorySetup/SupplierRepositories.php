@@ -92,7 +92,7 @@ class SupplierRepositories
                $value->supplier_type = $value->supplierType->name ?? '';
         endforeach;
         
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($suppliers) {
             foreach ($suppliers as $key => $supplier) {

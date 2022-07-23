@@ -45,6 +45,7 @@ class PurchasesMrrController extends Controller
     public function index(Request $request)
     {
         $title = 'Purchases MRR List';
+        $companyInfo =   helper::companyInfo();
         $datatableRoute = 'inventoryTransaction.purchasesMRR.dataProcessingpurchasesMRR';
         return view('backend.pages.inventoryTransaction.purchasesMRR.index', get_defined_vars());
     }
@@ -65,6 +66,7 @@ class PurchasesMrrController extends Controller
     {
         $title = 'Add New Purchases MRR';
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
         $formInputDetails =  helper::getFormInputByRoute('inventoryTransaction.purchasesMRR.details.create');
         return view('backend.pages.inventoryTransaction.purchasesMRR.create', get_defined_vars());
     }
@@ -74,11 +76,6 @@ class PurchasesMrrController extends Controller
      */
     public function store(Request $request)
     {
-
-
-       
-
-
         try {
             $this->validate($request, helper::isErrorStore($request));
         } catch (ValidationException $e) {
@@ -112,6 +109,7 @@ class PurchasesMrrController extends Controller
         }
 
         $title = 'Purchases MRR Edit';
+        $companyInfo =   helper::companyInfo();
         $invoiceDetails = $editInfo->orderDetails;
         $products = $this->productService->getActiveProduct();
         $activeColumn = Helper::getQueryProperty('inventoryTransaction.purchasesMRR.details.create');
@@ -137,6 +135,7 @@ class PurchasesMrrController extends Controller
         }
 
         $title = 'Purchases MRR Details';
+        $companyInfo =   helper::companyInfo();
         $companyInfo =   helper::companyInfo();
         $activeColumn = Helper::getQueryProperty('inventoryTransaction.purchasesMRR.details.create');
         $formInput =  helper::getFormInputByRoute();

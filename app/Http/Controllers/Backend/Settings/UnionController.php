@@ -41,6 +41,7 @@ class UnionController extends Controller
         $createRoute = "settings.union.create";
         $datatableRoute = 'settings.union.dataProcessingUnion';
         $columns = helper::getTableProperty();
+        $companyInfo =   helper::companyInfo();
         return view('backend.layouts.common.datatable.datatable', get_defined_vars());
         
     }
@@ -65,6 +66,7 @@ class UnionController extends Controller
         $implodeModal ="";
         $storeRoute = "settings.union.store";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
     /**
@@ -104,6 +106,7 @@ class UnionController extends Controller
         $implodeModal ="";
         $storeRoute = "settings.union.update";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
 
@@ -164,10 +167,6 @@ class UnionController extends Controller
             return response()->json($this->systemTransformer->getList($statusInfo), 200);
         }
     }
-
-
-
-
 
     /**
      * @param $slug

@@ -96,7 +96,7 @@ class PurchasesMrrRepositories
 
         endforeach;
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($purchasesMrrs) {
             foreach ($purchasesMrrs as $key => $purchasesMrr) {
@@ -282,8 +282,6 @@ class PurchasesMrrRepositories
        $product_id =  $request->product_id;
         foreach ($product_id as $key => $value) :
             if(!empty($request->approved_quantity[$key])):
-            
-
                 if(!empty($request->pack_size[$key])):
 
                     $batchId =  helper::productBatch($request->batch_no[$key]);

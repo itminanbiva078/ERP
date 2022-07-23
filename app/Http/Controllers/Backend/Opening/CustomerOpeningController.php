@@ -49,7 +49,7 @@ class CustomerOpeningController extends Controller
     {
         $title = 'Customer Opening List';
         $datatableRoute = 'openingSetup.customerOpening.dataProcessingCustomerOpening';
-
+        $companyInfo =   helper::companyInfo();
         return view('backend.pages.opening.customerOpening.index', get_defined_vars());
     }
 
@@ -67,6 +67,7 @@ class CustomerOpeningController extends Controller
     {
         $title = 'Add New Customer Opening';
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
         $formInputDetails =  helper::getFormInputByRoute('openingSetup.customerOpening.details.create');
         return view('backend.pages.opening.customerOpening.create', get_defined_vars());
     }
@@ -110,7 +111,7 @@ class CustomerOpeningController extends Controller
             session()->flash('error', 'Edit info is invalid!!');
             return redirect()->back();
         }
-
+        $companyInfo =   helper::companyInfo();
         $title = 'Customer Opening Edit';
         $invoiceDetails = $editInfo->customerOpeningDetails;
         $customers = $this->customerService->getActiveCustomer();

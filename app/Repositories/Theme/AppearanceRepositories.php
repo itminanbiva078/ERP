@@ -78,7 +78,7 @@ class AppearanceRepositories
       
 
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($taskCreates) {
             foreach ($taskCreates as $key => $taskCreate) {

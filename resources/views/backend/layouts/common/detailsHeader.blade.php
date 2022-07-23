@@ -69,8 +69,13 @@
         @if(!empty($details->service_status))
         <b> Service Status: </b> @php echo helper::statusBar($details->service_status) @endphp <br>
         @endif
+
         @if(!empty($details->quatation_status))
         <b> Quatation Status: </b> @php echo helper::statusBar($details->quatation_status) @endphp <br>
+        @endif
+
+        @if(!empty($details->status))
+        <b> Status: </b> @php echo helper::statusBar($details->status) @endphp <br>
         @endif
        
         @if(!empty($details->purchases->voucher_no))

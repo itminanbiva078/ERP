@@ -46,6 +46,7 @@ class OpeningBalanceController extends Controller
         $supplierBalance = $this->systemService->supplierBalance();
         $formInput = helper::getColumnProperty('report_models',array('date'));
         $opening = helper::getLedgerHead();
+        $companyInfo =   helper::companyInfo();
         return view('backend.pages.accountsSetup.openingBalance.edit', get_defined_vars());
     }
 

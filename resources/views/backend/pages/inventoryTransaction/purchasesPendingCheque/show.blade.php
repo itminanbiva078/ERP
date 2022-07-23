@@ -84,8 +84,8 @@ InventoryTransaction - {{$title}}
               <table style="width:100%;">
                 <tr> 
                   <td style="width:25%;"> <span> By   </span> Cheque  </td>
-                  <td style="width:25%;"> <span> Bank :</span>  {{$details->cheque_number}}  </td>
-                  <td style="width:25%;"> <span> Cheque Number:</span>  {{$details->cheque_number}}  </td>
+                  <td style="width:25%;"> <span> Bank :</span>  {{$details->bank->bank_name}}  </td>
+                  <td style="width:25%;"> <span> Cheque Number:</span>  {{$details->cheque_number ?? ''}}  </td>
                   <td style="width:25%;"> <span> Cheque Date </span> : {{helper::get_php_date($details->cheque_date)}} </td>
                 </tr>
               </table>

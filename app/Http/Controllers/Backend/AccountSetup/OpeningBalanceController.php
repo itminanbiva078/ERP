@@ -48,6 +48,7 @@ class OpeningBalanceController extends Controller
         $opening = helper::getLedgerHead();
         $activeColumn = Helper::getQueryProperty('accountTransaction.journalVoucher.details.create');
         $formInputDetails =  helper::getFormInputByRoute('accountTransaction.journalVoucher.details.create');
+        $companyInfo =   helper::companyInfo();
 
         return view('backend.pages.accountsSetup.openingBalance.edit', get_defined_vars());
     }

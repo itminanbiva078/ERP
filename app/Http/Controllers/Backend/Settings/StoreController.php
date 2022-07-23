@@ -41,6 +41,7 @@ class StoreController extends Controller
         $createRoute = "settings.store.create";
         $datatableRoute = 'settings.store.dataProcessingStore';
         $columns = helper::getTableProperty();
+        $companyInfo =   helper::companyInfo();
         return view('backend.layouts.common.datatable.datatable', get_defined_vars());
 
       
@@ -71,6 +72,7 @@ class StoreController extends Controller
         $explodeRoute = "";
         $implodeModal ="";
         $storeRoute = "settings.store.store";
+        $companyInfo =   helper::companyInfo();
         $formInput =  helper::getFormInputByRoute();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }
@@ -105,6 +107,7 @@ class StoreController extends Controller
             session()->flash('error', 'Edit info is invalid!!');
             return redirect()->back();
         }
+        $companyInfo =   helper::companyInfo();
         $title = "Settings | Edit - Store";
         $listRoute = "settings.store.index";
         $explodeRoute = "";

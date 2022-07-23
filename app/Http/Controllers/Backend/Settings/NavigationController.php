@@ -19,6 +19,7 @@ class NavigationController extends Controller
         // dd($navigation);
 
         return view('backend.setup.index', get_defined_vars());
+        
     }
 
     /**

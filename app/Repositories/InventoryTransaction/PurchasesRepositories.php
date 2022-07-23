@@ -20,6 +20,7 @@ use App\Models\Stock;
 use App\Models\StockSummary;
 use DB;
 
+
 class PurchasesRepositories
 {
     /**
@@ -105,7 +106,7 @@ class PurchasesRepositories
                 $value->date = helper::get_php_date($value->date) ?? '';
         endforeach;
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
 
         $data = array();
         if ($purchasess) {
@@ -612,6 +613,7 @@ class PurchasesRepositories
         endif;
         $purchasesCreditPayment =  new PurchasesPayment();
         $purchasesCreditPayment->date = helper::mysql_date($date);
+
         $purchasesCreditPayment->company_id = $purchasesInfo->company_id; //purchases info
         $purchasesCreditPayment->supplier_id  = $purchasesInfo->supplier_id;
         $purchasesCreditPayment->branch_id  = $purchasesInfo->branch_id ?? helper::getDefaultBranch();
@@ -642,7 +644,6 @@ class PurchasesRepositories
         return $purchasesCreditPayment->id;
     }
 
-
     public function purchasesDebitPayment($purchases_id,$payment,$date)
     {
         $purchasesInfo = $this->purchases::find($purchases_id);
@@ -651,6 +652,7 @@ class PurchasesRepositories
         $purchasesDebitPayment->company_id = $purchasesInfo->company_id; //purchases info
         $purchasesDebitPayment->supplier_id  = $purchasesInfo->supplier_id;
         $purchasesDebitPayment->branch_id  = $purchasesInfo->branch_id ?? helper::getDefaultBranch();
+        $purchasesDebitPayment->form_id  = 4;
         $purchasesDebitPayment->voucher_id  = $purchasesInfo->id;
         $purchasesDebitPayment->voucher_no  = helper::generateInvoiceId("purchases_payment_prefix","purchases_payments");
         $purchasesDebitPayment->debit  = $payment;

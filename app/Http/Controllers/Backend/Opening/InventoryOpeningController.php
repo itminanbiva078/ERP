@@ -41,6 +41,7 @@ class InventoryOpeningController extends Controller
         $title = 'Opening Balance | Opening Inventory - List';
         $createRoute = "openingSetup.inventory.create";
         $columns = helper::getTableProperty();
+        $companyInfo =   helper::companyInfo();
         $datatableRoute = 'openingSetup.Inventory.dataProcessingInventory';
         return view('backend.layouts.common.datatable.datatable', get_defined_vars());
     }
@@ -48,9 +49,6 @@ class InventoryOpeningController extends Controller
 
     public function dataProcessingInventoryOpening(Request $request)
     {
-        
-
-     
         
         $json_data = $this->systemService->getList($request);
         return json_encode($this->systemTransformer->dataTable($json_data));
@@ -66,6 +64,7 @@ class InventoryOpeningController extends Controller
         $title = "Add Opening Inventory";
         $formInput =  helper::getFormInputByRoute();
         $formInputDetails =  helper::getFormInputByRoute('openingSetup.Inventory.details.create');
+        $companyInfo =   helper::companyInfo();
        return view('backend.pages.opening.inventory.create', get_defined_vars());   
     }
     /**
@@ -100,7 +99,7 @@ class InventoryOpeningController extends Controller
             return redirect()->back();
         }
 
-
+        $companyInfo =   helper::companyInfo();
         $title = "Opening Inventory Edit";
         $invoiceDetails = $editInfo->inventoryDetails;
         $products = $this->systemService->getActiveProduct();

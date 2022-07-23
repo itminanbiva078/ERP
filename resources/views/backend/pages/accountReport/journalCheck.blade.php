@@ -1,6 +1,6 @@
 @extends('backend.layouts.master')
 @section('title')
-General Ledger Report
+Journal Check
 @endsection
 
 @section('styles')
@@ -21,7 +21,7 @@ table#show_item tr td {
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-                    <li class="breadcrumb-item active"><span>General Ledger Report</span></li>
+                    <li class="breadcrumb-item active"><span>Journal Check</span></li>
                 </ol>
             </div><!-- /.col -->
         </div><!-- /.row -->
@@ -112,16 +112,18 @@ table#show_item tr td {
                                 $totalLiability=0;
                                 @endphp 
                                 @foreach($journalCheck as $key => $eachLedger)
+                              <?php  //dd($eachLedger); ?>
                                     @php 
-                                        $totalAsset+=$eachLedger->debit ?? $eachLedger->credit ?? 0;
-                                        
+                                        $totalAsset+=$eachLedger->debit ?? $eachLedger->credit ?? 0; 
                                     @endphp 
+
                                     <tr class="item-row" style="background-color: #CEE5F">
                                         <td width="18.5%" onclick="divShowHide()" data-toggle="collapse" data-target="#demo{{$key+100}}" style="padding-left: 10px;" class="collapsed" aria-expanded="false">
                                             <span class="show_hide" id="plus{{$key+100}}" style="display: inline-block;"><i class="fa fa-plus"></i>   <a href="javascript:void(0)">{{$eachLedger->date}} </a></span>
                                         </td>
                                         <td width="10%" data-toggle="collapse" class="text-right">
                                             <?php echo helper::getVoucher($eachLedger);?>
+                                        
                                         </td>
                                         <td width="10%" data-toggle="collapse"  class="text-right">{{$eachLedger->formType->name ?? ''}}</td>
                                         <td width="10%" data-toggle="collapse"  class="text-right">N/A</td>
@@ -154,10 +156,10 @@ table#show_item tr td {
                                                                     <tr  style="background-color: #9cbdb9!important;">
                                                                         <td width="18.5%"><i class="fa fa-minus"></i> {{$eachLedger->date}}</td>
                                                                         <td width="10%">  <?php echo helper::getVoucher($eachLedger);?></td>
-                                                                        <td width="10%">{{$eachLedger->formType->name}}</td>
-                                                                        <td width="10%"> {{$subLedger->account->name}}</td>
-                                                                        <td width="10%" class="text-right"> {{helper::pricePrint($subLedger->debit)}}  </td>
-                                                                        <td width="10%" class="text-right"> {{helper::pricePrint($subLedger->credit)}}  </td>
+                                                                        <td width="10%">{{$eachLedger->formType->name ?? ''}}</td>
+                                                                        <td width="10%"> {{$subLedger->account->name ?? ''}}</td>
+                                                                        <td width="10%" class="text-right"> {{helper::pricePrint($subLedger->debit ?? 0)}}  </td>
+                                                                        <td width="10%" class="text-right"> {{helper::pricePrint($subLedger->credit ?? 0)}}  </td>
                                                                         <td width="10%" class="text-right">0.00</td>
                                                                        
                                                                     </tr>

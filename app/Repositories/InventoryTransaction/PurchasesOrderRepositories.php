@@ -87,7 +87,7 @@ class PurchasesOrderRepositories
                 $value->branch_id  = $value->branch->name ?? '';
         endforeach;
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($purchasesOrders) {
             foreach ($purchasesOrders as $key => $purchasesOrder) {

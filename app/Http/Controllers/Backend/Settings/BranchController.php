@@ -43,6 +43,7 @@ class BranchController extends Controller
         $createRoute = "settings.branch.create";
         $datatableRoute = 'settings.branch.dataProcessingBranch';
         $columns = helper::getTableProperty();
+        $companyInfo =   helper::companyInfo();
         return view('backend.layouts.common.datatable.datatable', get_defined_vars());
 
        
@@ -66,9 +67,9 @@ class BranchController extends Controller
         $implodeModal ="";
         $storeRoute = "settings.branch.store";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
-
-        
+   
     }
     /**
      * @param Request $request
@@ -102,6 +103,7 @@ class BranchController extends Controller
             session()->flash('error', 'Edit info is invalid!!');
             return redirect()->back();
         }
+        $companyInfo =   helper::companyInfo();
         $title = "Settings | Edit - Branch";
         $listRoute = "settings.branch.index";
         $explodeRoute = "";

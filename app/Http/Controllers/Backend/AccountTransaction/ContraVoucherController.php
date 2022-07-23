@@ -44,6 +44,7 @@ class ContraVoucherController extends Controller
     {
        $title = 'Contra Voucher List';
        $datatableRoute = 'accountTransaction.contralVoucher.dataProcessingContralVoucher';
+       $companyInfo =   helper::companyInfo();
        return view('backend.pages.accountTransaction.contralVoucher.index', get_defined_vars());
     }
 
@@ -64,6 +65,7 @@ class ContraVoucherController extends Controller
         $title = 'Add New Contra Voucher';
         $accountLedger = helper::getLedgerHead();
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
         $formInputDetails =  helper::getFormInputByRoute('accountTransaction.contralVoucher.details.create');
         return view('backend.pages.accountTransaction.contralVoucher.create', get_defined_vars());
     }
@@ -105,6 +107,7 @@ class ContraVoucherController extends Controller
             return redirect()->back();
         }
         $title = 'Contra Voucher Edit';
+        $companyInfo =   helper::companyInfo();
         $invoiceDetails = $editInfo->contraVoucherLedger;
         $activeColumn = Helper::getQueryProperty('accountTransaction.contralVoucher.details.create');
         $formInput =  helper::getFormInputByRoute();

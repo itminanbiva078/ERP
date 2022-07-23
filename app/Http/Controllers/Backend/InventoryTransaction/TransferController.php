@@ -49,7 +49,7 @@ class TransferController extends Controller
     {
         $title = 'Transfer List';
         $datatableRoute = 'inventoryTransaction.transfer.dataProcessingTransfer';
-
+        $companyInfo =   helper::companyInfo();
         return view('backend.pages.inventoryTransaction.transfer.index', get_defined_vars());
     }
 
@@ -66,6 +66,7 @@ class TransferController extends Controller
     public function create()
     {
         $title = 'Add New Transfer';
+        $companyInfo =   helper::companyInfo();
         $formInput =  helper::getFormInputByRoute();
         $formInputDetails =  helper::getFormInputByRoute('inventoryTransaction.transfer.details.create');
         return view('backend.pages.inventoryTransaction.transfer.create', get_defined_vars());
@@ -111,6 +112,7 @@ class TransferController extends Controller
         }
 
         $title = 'Transfer Edit';
+        $companyInfo =   helper::companyInfo();
         $invoiceDetails = $editInfo->transferDetails;
         $products = $this->productService->getActiveProduct();
         $activeColumn = Helper::getQueryProperty('inventoryTransaction.transfer.details.create');

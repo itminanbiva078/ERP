@@ -76,7 +76,7 @@ class TaskCategoryRepositories
                 })->count();
         }
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($taskCategorys) {
             foreach ($taskCategorys as $key => $taskCategory) {

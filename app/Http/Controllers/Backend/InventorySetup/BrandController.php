@@ -40,6 +40,7 @@ class BrandController extends Controller
         $createRoute = "inventorySetup.brand.create";
         $columns = helper::getTableProperty();
         $datatableRoute = 'inventorySetup.brand.dataProcessingBrand';
+        $companyInfo =   helper::companyInfo();
         return view('backend.layouts.common.datatable.datatable', get_defined_vars());
     }
 
@@ -63,6 +64,7 @@ class BrandController extends Controller
         $implodeModal ="'inventory-setup-load-import-form','inventorySetup.brand.import','Import Brand List','/backend/assets/excelFormat/inventorySetup/brand/brand.csv','2'";
         $storeRoute = "inventorySetup.brand.store";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());   
     }
     /**
@@ -97,6 +99,7 @@ class BrandController extends Controller
             return redirect()->back();
         }
         $title = "Product Manage | Edit - Brand";
+        $companyInfo =   helper::companyInfo();
         $listRoute = "inventorySetup.brand.index";
         $explodeRoute = "";
         $implodeModal ="";

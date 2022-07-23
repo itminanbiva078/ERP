@@ -51,71 +51,21 @@ AccountTransaction - {{$title}}
                 </div>
                 <div class="col-md-8">
                   <button type="button"  onclick="window.print();" class="btn btn-success float-right"><i class="fas fa-print"></i> Print </button>
+                   
+                  @if($details->status == "Pending" && helper::roleAccess('accountTransaction.receiveVoucher.accountApproved'))
+                  <button type="button" approved_url="{{route("accountTransaction.receiveVoucher.accountApproved",['id' => $details->id,'status' =>"Approved"])}}" class="btn btn-info float-right journal transaction_approved" style="margin-right: 5px;">
+                    <i class="fas fa-check"></i> &nbsp;Approved ?
+                  </button> 
+                  @endif
+
                 </div>
               </div>            
             </div>
             <!-- Main content -->
             <div class="invoice p-3 mb-3">
-            
-              <div class="row invoice-info">
-                <div class="col-sm-4 invoice-col">
-                  Company Info
-                  <address>
-                    <strong>{{$companyInfo->name ?? ''}}</strong><br>
-                    {{$companyInfo->address}}
-                    <br>
-                    Phone: {{$companyInfo->phone ?? ''}}<br>
-                    Email: {{$companyInfo->email ?? ''}}
-                  </address>
-                </div>
-                <!-- /.col -->
-
-                @if(!empty($showInfo->supplier ?? ''))
-
-                <div class="col-sm-4 invoice-col">
-                  Supplier Info
-                  <address>
-                    <strong>{{$showInfo->supplier->name ?? ''}}</strong><br>
-                    {{$showInfo->supplier->address ?? ''}}<br>
-                    Phone: {{$showInfo->supplier->phone ?? ''}}<br>
-                    Email: {{$showInfo->supplier->email ?? ''}}
-                  </address>
-                </div>
-
-                @elseif(!empty($showInfo->customer))
-                <div class="col-sm-4 invoice-col">
-                  Customer Info
-                  <address>
-                    <strong>{{$showInfo->customer->name ?? ''}}</strong><br>
-                    {{$showInfo->customer->address ?? ''}}<br>
-                    Phone: {{$showInfo->customer->phone ?? ''}}<br>
-                    Email: {{$showInfo->customer->email ?? ''}}
-                  </address>
-                </div>
-
-                @else
-
-              
-                <div class="col-sm-4 invoice-col">
-                  Miscellaneous Info
-                  <address>
-                    {{$showInfo->miscellaneous ?? ''}}
-                  </address>
-                </div>
-               
-                @endif
-
-                <!-- /.col -->
-                <div class="col-sm-4 invoice-col">
-                  <b>Invoice {{$showInfo->voucher_no}}</b><br>
-                  <br>
-                  <b>Date:</b> {{date('Y-M-d',strtotime($showInfo->date ?? ''))}}<br>
-                  <b>Status:</b> {{$showInfo->status ?? ''}}
-                </div>
-                <!-- /.col -->
-              </div>
+              @include('backend.layouts.common.detailsHeader',['details' => $details])
               <!-- /.row -->
-
+              <?php// dd($details);?>
               <!-- Table row -->
               <div class="row">
                 <div class="col-12 table-responsive">
@@ -135,7 +85,8 @@ AccountTransaction - {{$title}}
                       $totalDebit = 0;
                       $totalCredit = 0;
                       @endphp
-                        @foreach($showInfo->receiveVoucherLedger as $key => $eachLedger)
+                        @foreach($details->receiveVoucherLedger as $key => $eachLedger)
+                       
                           @php 
                           $totalDebit+=$eachLedger->debit;
                           $totalCredit+=$eachLedger->credit;
@@ -171,7 +122,7 @@ AccountTransaction - {{$title}}
                 <div class="col-9">
                   <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
                     <p class="" style="text-transform: capitalize;"><b> In Word : </b> {{ helper::get_bd_amount_in_text($totalDebit) }} </p>
-                  {{$showInfo->note ?? ''}}
+                  {{$details->note ?? ''}}
                   </p>
                 </div>
                 <!-- /.col -->
@@ -194,17 +145,8 @@ AccountTransaction - {{$title}}
                 <!-- /.col -->
               </div>
               <!-- /.row -->
-              <div class="row">
-                <div class="col-md-4">
-                    <p class="text-center">____________________<br>Prepared By</p>                        
-                </div>
-                <div class="col-md-4">
-                    <p class="text-center">____________________<br>Checked By</p>           
-                </div>
-                <div class="col-md-4">
-                    <p class="text-center">____________________<br>Approved By </p>             
-                </div>
-             </div>
+              @include('backend.layouts.common.detailsFooter',['details' => $details])
+
             </div>
             <!-- /.invoice -->
           </div><!-- /.col -->

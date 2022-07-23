@@ -39,6 +39,7 @@ class PurchasesPendingChequeController extends Controller
     {
         $title = 'Purchases Pending Cheque List';
         $columns = helper::getTableProperty();
+        $companyInfo =   helper::companyInfo();
         $datatableRoute = 'inventoryTransaction.purchases.pendingCheque.dataProcessingPurchasesPendingCheque';
         return view('backend.pages.inventoryTransaction.purchasesPendingCheque.index', get_defined_vars());
     }
@@ -57,6 +58,7 @@ class PurchasesPendingChequeController extends Controller
     {
         $accountLedger = helper::getLedgerHead();
         $title = 'Add New Payment';
+        $companyInfo =   helper::companyInfo();
         $formInput =  helper::getFormInputByRoute();
         return view('backend.pages.inventoryTransaction.purchasesPendingCheque.create', get_defined_vars());
     }

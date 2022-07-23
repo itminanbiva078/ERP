@@ -91,6 +91,7 @@ class StockReport extends Controller
 
         }
         $title = 'Stock  Ledger';
+        $companyInfo =   helper::companyInfo();
         $formInput = helper::getColumnProperty('report_models',array('brand_id','store_id','category_id','product_id','batch_id','date_range','stock_report_type'));
         return view('backend.pages.purchasesReport.stockLedger', get_defined_vars());
     }

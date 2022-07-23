@@ -131,7 +131,7 @@ class StockReportRepositories
             $wsql+=1;
         }
 
-/*stock condition start*/
+        /*stock condition start*/
 
         $bchsql='';
         if(!empty($branch_id) && $branch_id != "All"){
@@ -162,9 +162,9 @@ class StockReportRepositories
                 $scondSql.=$btchsql;
             }
           
-      // echo $scondSql;die;
+        // echo $scondSql;die;
 
-/*stock condition end*/
+        /*stock condition end*/
 
 
 
@@ -186,9 +186,6 @@ class StockReportRepositories
             $wcondSql = str_replace("WHERE and","where ",$wcondSql);
         }
 
-
-
-
         $fsql="SELECT 
         p.id,
         p.name as pname,
@@ -198,7 +195,6 @@ class StockReportRepositories
         sop.totalPrice as sopPrice,
         sop.unitPrice as sopUnitPrice,
         /* opening  end*/
-
 
         /* stock in start*/
         sin.totalQty as sinQty,
@@ -211,21 +207,18 @@ class StockReportRepositories
         sout.totalPrice as soutPrice,
         sout.unitPrice as soutUnitPrice,
         /* stock out end*/
-
-        
+  
          /* transfer in start*/
          tin.totalQty as tinQty,
          tin.totalPrice as tinPrice,
          tin.unitPrice as tinUnitPrice,
         /* transfer in end*/
 
-
          /* transfer out start*/
          tout.totalQty as toutQty,
          tout.totalPrice as toutPrice,
          tout.unitPrice as toutUnitPrice,
         /* transfer out end*/
-
 
          /* return in start*/
          rin.totalQty as rinQty,
@@ -240,14 +233,26 @@ class StockReportRepositories
          rout.unitPrice as routUnitPrice,
         /* return out end*/
 
+         /* sales loan out start*/
+         lout.totalQty as loutQty,
+         lout.totalPrice as loutPrice,
+         lout.unitPrice as loutUnitPrice,
+        /* sales loan out end*/
+
+         /* sales loan in start*/
+         lin.totalQty as linQty,
+         lin.totalPrice as linPrice,
+         lin.unitPrice as linUnitPrice,
+        /* sales loan in end*/
+
 
         savg.unitPrice as avgPrice,
         c.name as categoryName,
         b.name as brandName,
-        (ifnull(sin.totalQty,0)+ifnull(sop.totalQty,0)+ifnull(tin.totalQty,0)+ifnull(rin.totalQty,0))-(ifnull(sout.totalQty,0)+ifnull(tout.totalQty,0)+ifnull(rout.totalQty,0)) as currentStock,
-        (ifnull(sin.totalQty,0)+ifnull(sop.totalQty,0)+ifnull(tin.totalQty,0)+ifnull(rin.totalQty,0))+(ifnull(sout.totalQty,0)+ifnull(tout.totalQty,0)+ifnull(rout.totalQty,0)) as transactionStock,
-        (ifnull(sin.totalQty,0)+ifnull(tin.totalQty,0)+ifnull(rin.totalQty,0)) as stockIn,
-        (ifnull(sout.totalQty,0)+ifnull(tout.totalQty,0)+ifnull(rout.totalQty,0)) as stockOut
+        (ifnull(sin.totalQty,0)+ifnull(sop.totalQty,0)+ifnull(tin.totalQty,0)+ifnull(rin.totalQty,0)+ifnull(lin.totalQty,0))-(ifnull(sout.totalQty,0)+ifnull(tout.totalQty,0)+ifnull(rout.totalQty,0)+ifnull(lout.totalQty,0)) as currentStock,
+        (ifnull(sin.totalQty,0)+ifnull(sop.totalQty,0)+ifnull(tin.totalQty,0)+ifnull(rin.totalQty,0)+ifnull(lin.totalQty,0))+(ifnull(sout.totalQty,0)+ifnull(tout.totalQty,0)+ifnull(rout.totalQty,0)+ifnull(lout.totalQty,0)) as transactionStock,
+        (ifnull(sin.totalQty,0)+ifnull(tin.totalQty,0)+ifnull(rin.totalQty,0)+ifnull(lin.totalQty,0)) as stockIn,
+        (ifnull(sout.totalQty,0)+ifnull(tout.totalQty,0)+ifnull(rout.totalQty,0)+ifnull(lout.totalQty,0)) as stockOut
 
         FROM products as p
          /*get opening stock start*/
@@ -262,11 +267,23 @@ class StockReportRepositories
         GROUP BY s.product_id) as sin ON sin.product_id=p.id
          /*get stock in end*/
 
+         /*get sale loan in start*/
+        left JOIN(SELECT sum(s.quantity) as totalQty,sum(s.total_price) as totalPrice,(sum(s.total_price)/sum(s.quantity)) as unitPrice,s.product_id,s.branch_id FROM stocks as s 
+        where s.type='lin'  and s.date >= '$from_date' and s.date <='$to_date' $scondSql
+        GROUP BY s.product_id) as lin ON lin.product_id=p.id
+         /*get sale loan end*/
+
           /*get stock out start*/
         left JOIN(SELECT sum(s.quantity) as totalQty,sum(s.total_price) as totalPrice,(sum(s.total_price)/sum(s.quantity)) as unitPrice,s.product_id,s.branch_id FROM stocks as s
         where s.type='out' and s.date >= '$from_date' and s.date <='$to_date' $scondSql
         GROUP BY s.product_id) as sout ON sout.product_id=p.id
        /*get stock out end*/
+
+          /*get sales loan  start*/
+        left JOIN(SELECT sum(s.quantity) as totalQty,sum(s.total_price) as totalPrice,(sum(s.total_price)/sum(s.quantity)) as unitPrice,s.product_id,s.branch_id FROM stocks as s
+        where s.type='lout' and s.date >= '$from_date' and s.date <='$to_date' $scondSql
+        GROUP BY s.product_id) as lout ON lout.product_id=p.id
+       /*get sales loan  end*/
 
          /*get transfer in start*/
         left JOIN(SELECT sum(s.quantity) as totalQty,sum(s.total_price) as totalPrice,(sum(s.total_price)/sum(s.quantity)) as unitPrice,s.product_id,s.branch_id FROM stocks as s 
@@ -279,8 +296,6 @@ class StockReportRepositories
         where s.type='tout' and s.date >= '$from_date' and s.date <='$to_date' $scondSql
         GROUP BY s.product_id) as tout ON tout.product_id=p.id
        /*get transfer out end*/
-
-
 
          /*get transfer in start*/
         left JOIN(SELECT sum(s.quantity) as totalQty,sum(s.total_price) as totalPrice,(sum(s.total_price)/sum(s.quantity)) as unitPrice,s.product_id,s.branch_id FROM stocks as s 
@@ -325,47 +340,40 @@ class StockReportRepositories
     public function getProductLedger($branch_id,$store_id,$category_id,$product_id,$batch_no,$brand_id,$from_date,$to_date)
     {
 
-        $wsql=0;
+    
          /*stock condition start*/
 
         $bndchsql='';
         if(!empty($brand_id) && $brand_id != "All"){
             $bndchsql='and p.brand_id='.$brand_id.' ';
-            $wsql+=1;
+           
         }
-
-
 
         $pcchsql='';
         if(!empty($category_id) && $category_id != "All"){
             $pcchsql='and p.category_id='.$category_id.' ';
-            $wsql+=1;
+          
         }
-
-
 
         $pchsql='';
         if(!empty($product_id) && $product_id != "All"){
-            $pchsql='and s.product_id='.$product_id.' ';
-            $wsql+=1;
+            $pchsql='and s.product_id='.$product_id.' ';    
         }
 
         $bchsql='';
         if(!empty($branch_id) && $branch_id != "All"){
             $bchsql='and s.branch_id='.$branch_id.' ';
-            $wsql+=1;
+          
         }
 
         $btchsql='';
         if(!empty($batch_no) && $batch_no != "All"){
             $btchsql='and s.batch_no='.$batch_no.' ';
-            $wsql+=1;
         }
 
         $shsql='';
         if(!empty($store_id) && $store_id != "All"){
             $shsql='and s.store_id='.$store_id.' ';
-            $wsql+=1;
         }
 
            $scondSql='';
@@ -393,7 +401,7 @@ class StockReportRepositories
         $fsql="SELECT s.date,s.general_id,s.branch_id,s.store_id,s.pack_size,s.pack_no,
         s.quantity,s.batch_no,bn.name as batchName,pu.supplier_id,ss.customer_id,sup.name as supplierName,
         c.name as customerName,s.company_id,p.name as productName,bch.name as branchName,st.name as storeName,
-        pu.voucher_no as pvoucher,pu.id,ss.voucher_no as svoucher,ss.id,s.type,s.unit_price,s.total_price FROM stocks as s
+        pu.voucher_no as pvoucher,pu.id,ss.voucher_no as svoucher,ss.id,s.type,s.unit_price,s.total_price,s.product_id FROM stocks as s
         left JOIN products as p ON p.id=s.product_id
         left JOIN branches as bch on bch.id=s.branch_id
         left JOIN batch_numbers as bn on bn.id=s.batch_no
@@ -411,8 +419,6 @@ class StockReportRepositories
        
     }
 
-
-
     /**
      * @param $request
      * @return mixed
@@ -429,15 +435,11 @@ class StockReportRepositories
             $wsql+=1;
         }
 
-
-
         $pcchsql='';
         if(!empty($category_id) && $category_id != "All"){
             $pcchsql='and p.category_id='.$category_id.' ';
             $wsql+=1;
         }
-
-
 
         $pchsql='';
         if(!empty($product_id) && $product_id != "All"){
@@ -531,8 +533,6 @@ class StockReportRepositories
             $pcchsql='and p.category_id='.$category_id.' ';
             $wsql+=1;
         }
-
-
 
         $pchsql='';
         if(!empty($product_id) && $product_id != "All"){
@@ -808,15 +808,11 @@ class StockReportRepositories
             $wsql+=1;
         }
 
-
-
         $pcchsql='';
         if(!empty($category_id) && $category_id != "All"){
             $pcchsql='and p.category_id='.$category_id.' ';
             $wsql+=1;
         }
-
-
 
         $pchsql='';
         if(!empty($product_id) && $product_id != "All"){

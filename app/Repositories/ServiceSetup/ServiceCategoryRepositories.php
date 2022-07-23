@@ -77,7 +77,7 @@ class ServiceCategoryRepositories
                 })->count();
         }
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($serviceCategorys) {
             foreach ($serviceCategorys as $key => $serviceCategory) {

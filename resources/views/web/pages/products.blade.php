@@ -66,8 +66,8 @@ use App\SM\SM;
           </div>
         @endforeach
       @endif
-      
     </div>
+    
     <ul class="pagination custom-pagination" style="display: none;">
       <li><a href="#">Start</a></li>
       <li><a href="#">1</a></li>

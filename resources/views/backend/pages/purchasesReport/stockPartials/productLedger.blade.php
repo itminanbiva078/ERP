@@ -23,7 +23,11 @@
         $tbalance=0;
         @endphp
         @foreach($reports as $key => $report)
-           
+
+        <?php 
+           $avgPrice = helper::productAvg($report->product_id);
+        ?>
+
             <tr>
                 <td>{{$key+1}}</td>
                 <td>{{$report->date ?? ''}}</td>
@@ -38,14 +42,11 @@
                 <td >{{$report->batchName ?? ''}}</td>
                 <td >{{$report->storeName ?? ''}}</td>
                 <td >{{helper::getLedgerType($report->type) }}</td>
-                <td  class="text-right">{{helper::pricePrint($report->unit_price ?? '')}}</td>
+                <td  class="text-right">{{helper::pricePrint($avgPrice)}}</td>
                 <td  class="text-right">{{helper::pricePrint($report->total_price ?? '')}}</td>
-
-
-                
                     <td class="color3 text-right">
                         
-                        @if($report->type == 'in' || $report->type == 'tin' || $report->type == 'rin')
+                        @if($report->type == 'in' || $report->type == 'tin' || $report->type == 'rin' || $report->type == 'lin')
                         
                                 {{$report->quantity ?? ''}}
                                 
@@ -58,7 +59,7 @@
                    
               
                  <td class="color2 text-right">
-                    @if($report->type == 'out' || $report->type == 'tout' || $report->type == 'rout')
+                    @if($report->type == 'out' || $report->type == 'tout' || $report->type == 'rout' || $report->type == 'lout')
                     
                         {{$report->quantity ?? ''}}
                         @php 
@@ -66,9 +67,7 @@
                         @endphp
                     @endif
                  </td>
-                       
-                
-              
+                  
               <td class="text-right color1">{{helper::pricePrint($sin - $sout)}}</td>
             </tr>
         @endforeach

@@ -88,7 +88,7 @@ class InventoryOpeningRepositories
                 })->count();
         }
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($opInventory) {
             foreach ($opInventory as $key => $opInventory) {

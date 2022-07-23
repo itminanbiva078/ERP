@@ -170,7 +170,7 @@ class JournalVoucherRepositories
         $poMaster->documents  = $request->documents;
         $poMaster->supplier_id  = $request->supplier_id;
         $poMaster->customer_id  = $request->customer_id;
-        $poMaster->status  = 'Pending';
+        $poMaster->status  = 'Approved';
         $poMaster->note  = $request->note;
         $poMaster->updated_by = helper::userId();
         $poMaster->company_id = helper::companyId();

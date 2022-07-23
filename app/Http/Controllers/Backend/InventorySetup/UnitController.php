@@ -41,6 +41,7 @@ class UnitController extends Controller
         $createRoute = "inventorySetup.unit.create";
         $datatableRoute = 'inventorySetup.unit.dataProcessingUnit';
         $columns = helper::getTableProperty();
+        $companyInfo =   helper::companyInfo();
         return view('backend.layouts.common.datatable.datatable', get_defined_vars());
       
     }
@@ -65,6 +66,7 @@ class UnitController extends Controller
         $implodeModal ="'inventory-setup-load-import-form','inventorySetup.unit.import','Import Unit List','/backend/assets/excelFormat/inventorySetup/unit/unit.csv','2'";
         $storeRoute = "inventorySetup.unit.store";
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
        
     }
@@ -106,6 +108,7 @@ class UnitController extends Controller
         $explodeRoute = "";
         $implodeModal ="";
         $storeRoute = "inventorySetup.unit.update";
+        $companyInfo =   helper::companyInfo();
         $formInput =  helper::getFormInputByRoute();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
     }

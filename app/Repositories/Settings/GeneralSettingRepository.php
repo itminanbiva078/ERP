@@ -25,7 +25,7 @@ class GeneralSettingRepository
     public function __construct(GeneralSetup $generalSetup)
     {
         $this->generalSetup = $generalSetup;
-       
+
     }
  /**
      * @param $request
@@ -47,7 +47,7 @@ class GeneralSettingRepository
         $dir = $request->input('order.0.dir');
 
         if (empty($request->input('search.value'))) {
-            $generalSetups = $this->generalSetup::select($columns)->with('language','currencie','company')->offset($start)
+            $generalSetups = $this->generalSetup::select($columns)->company()->with('language','currencie','company')->offset($start)
                 ->limit($limit)
                 ->orderBy($order, $dir)
                 //->orderBy('status', 'desc')
@@ -55,7 +55,7 @@ class GeneralSettingRepository
             $totalFiltered = $this->generalSetup::count();
         } else {
             $search = $request->input('search.value');
-            $generalSetups = $this->generalSetup::select($columns)->with('language','currencie','company')->where(function ($q) use ($columns,$search) {
+            $generalSetups = $this->generalSetup::select($columns)->company()->with('language','currencie','company')->where(function ($q) use ($columns,$search) {
                 $q->where('id', 'like', "%{$search}%");
                 foreach ($columns as $column) {
                 $q->orWhere($column, 'like', "%{$search}%");
@@ -66,7 +66,7 @@ class GeneralSettingRepository
                 ->orderBy($order, $dir)
                 // ->orderBy('status', 'desc')
                 ->get();
-                $totalFiltered = $this->generalSetup::select($columns)->where(function ($q) use ($columns,$search) {
+                $totalFiltered = $this->generalSetup::select($columns)->company()->where(function ($q) use ($columns,$search) {
                     $q->where('id', 'like', "%{$search}%");
                     foreach ($columns as $column) {
                     $q->orWhere($column, 'like', "%{$search}%");
@@ -75,7 +75,7 @@ class GeneralSettingRepository
         }
 
         foreach($generalSetups as $key => $value):
-            
+
             if(!empty($value->language_id))
                $value->language_id = $value->language->name ?? '';
 
@@ -86,8 +86,8 @@ class GeneralSettingRepository
                $value->company_id  = $value->company->name ?? '';
         endforeach;
 
-        $columns = Helper::getTableProperty();
-      
+        $columns = Helper::getQueryProperty();
+
         $data = array();
         if ($generalSetups) {
             foreach ($generalSetups as $key => $generalSetup) {
@@ -97,7 +97,7 @@ class GeneralSettingRepository
                     $edit_data = '<a href="' . route('settings.generalSetup.edit', $generalSetup->id) . '" class="btn btn-xs btn-default"><i class="fa fa-edit" aria-hidden="true"></i></a>';
                     else
                         $edit_data = '';
-                   
+
                     $nestedData['action'] = $edit_data ;
                 else :
                     $nestedData['action'] = '';
@@ -114,7 +114,7 @@ class GeneralSettingRepository
                         $nestedData[$value] = $generalSetup->$value;
                     endif;
                 endforeach;
-                
+
                 $data[] = $nestedData;
             }
         }
@@ -181,17 +181,17 @@ class GeneralSettingRepository
 
     public function update($request, $id)
 
-    { 
+    {
 
-        if($request->form_name == "general"): 
+        if($request->form_name == "general"):
 
             $generalSetup = $this->generalSetup::findOrFail($id);
             $generalSetup->company_id = helper::companyId();
-             //branch 
+             //branch
              if(!empty($request->is_branch) && $request->is_branch != 'No'):
                 $generalSetup->is_branch =$request->is_branch;
                 $this->updateNavigationTable('branches',1);
-            else: 
+            else:
                 $generalSetup->is_branch =0;
                 $this->updateNavigationTable('branches',null);
                 $this->updateNavigationTable('stores',null);
@@ -201,7 +201,7 @@ class GeneralSettingRepository
                 $generalSetup->is_store =1;// $request->is_store;
                 $this->updateNavigationTable('stores',1);
                 $this->updateNavigationTable('branches',1);
-            else: 
+            else:
                 $generalSetup->is_store =0;
                 $this->updateNavigationTable('stores',null);
             endif;
@@ -210,49 +210,49 @@ class GeneralSettingRepository
             if(!empty($request->general_table_id)):
                 $generalSetup->general_table_id = $request->general_table_id;
             endif;
-    
-    
+
+
             if(!empty($request->input_display_type)):
                 $generalSetup->input_display_type = $request->input_display_type;
             endif;
-    
+
             if(!empty($request->stock_account_method)):
                 $generalSetup->stock_account_method = $request->stock_account_method;
             endif;
-    
+
             if(!empty($request->currencie_id)):
                 $generalSetup->currencie_id = $request->currencie_id;
             endif;
-    
+
             if(!empty($request->language_id)):
                 $generalSetup->language_id = $request->language_id;
             endif;
-    
+
             if(!empty($request->currency_position)):
                 $generalSetup->currency_position = $request->currency_position;
             endif;
-    
+
             if(!empty($request->timezone)):
                 $generalSetup->timezone = $request->timezone;
             endif;
-    
+
             if(!empty($request->dateformat)):
                 $generalSetup->dateformat = $request->dateformat;
             endif;
-    
-    
+
+
             if(!empty($request->decimal_separate)):
                 $generalSetup->decimal_separate = $request->decimal_separate;
             endif;
-    
+
             if(!empty($request->price_calculate_type)):
                 $generalSetup->price_calculate_type = $request->price_calculate_type;
             endif;
-    
+
             if(!empty($request->thousand_separate)):
                 $generalSetup->thousand_separate = $request->thousand_separate;
             endif;
-    
+
             if(!empty($request->discount_type)):
                 $generalSetup->discount_type = $request->discount_type;
             endif;
@@ -286,7 +286,7 @@ class GeneralSettingRepository
                 $generalSetup->purchases_mrr =$request->purchases_mrr;
                 $generalSetup->mrr_approval =$request->mrr_approval;
                 $this->updateNavigationTable('purchases_mrrs',1);
-            else: 
+            else:
                 $generalSetup->purchases_mrr ='';
                 $generalSetup->mrr_approval ='';
                 $this->updateNavigationTable('purchases_mrrs',null);
@@ -302,23 +302,23 @@ class GeneralSettingRepository
             if(!empty($request->purchases_download)):
                 $generalSetup->purchases_download = $request->purchases_download;
             endif;
-           
+
             if(!empty($request->supplier_prefix)):
                 $generalSetup->supplier_prefix = $request->supplier_prefix;
             endif;
-            
+
             if(!empty($request->purchases_pending_cheque_prefix)):
                 $generalSetup->purchases_pending_cheque_prefix = $request->purchases_pending_cheque_prefix;
             endif;
             if(!empty($request->purchases_payment_prefix)):
                 $generalSetup->purchases_payment_prefix = $request->purchases_payment_prefix;
             endif;
-            
+
             if(!empty($request->purchases_order_prefix)):
                 $generalSetup->purchases_order_prefix = $request->purchases_order_prefix;
             endif;
 
-            
+
 
             if(!empty($request->purchases_requisition_prefix)):
                 $generalSetup->purchases_requisition_prefix = $request->purchases_requisition_prefix;
@@ -326,7 +326,7 @@ class GeneralSettingRepository
             if(!empty($request->purchases_prefix)):
                 $generalSetup->purchases_prefix = $request->purchases_prefix;
             endif;
-            
+
             if(!empty($request->inventory_approval)):
                 $generalSetup->inventory_approval = $request->inventory_approval;
             endif;
@@ -346,7 +346,7 @@ class GeneralSettingRepository
 
             if(!empty($request->customer_prefix)):
                 $generalSetup->customer_prefix = $request->customer_prefix;
-            endif;   
+            endif;
             if(!empty($request->sales_approval)):
                 $generalSetup->sales_approval = $request->sales_approval;
             endif;
@@ -358,7 +358,7 @@ class GeneralSettingRepository
             if(!empty($request->delivery_challans_prefix)):
                 $generalSetup->delivery_challans_prefix = $request->delivery_challans_prefix;
             endif;
-        
+
             if(!empty($request->sales_quatation_prefix)):
                 $generalSetup->sales_quatation_prefix = $request->sales_quatation_prefix;
             endif;
@@ -372,21 +372,33 @@ class GeneralSettingRepository
             endif;
 
 
-              //delivery challan 
+              //delivery challan
              if(!empty($request->delivery_challan)):
                 $generalSetup->delivery_challan =$request->delivery_challan;
                 $generalSetup->challan_approval =$request->challan_approval;
                 $this->updateNavigationTable('delivery_challans',1);
-            else: 
+            else:
                 $generalSetup->delivery_challan ='';
                 $generalSetup->challan_approval ='';
                 $this->updateNavigationTable('delivery_challans',null);
                 //$this->updateNavigationTable('delivery_challans',null);
             endif;
 
+            if(!empty($request->sales_return_prefix)):
+                $generalSetup->sales_return_prefix = $request->sales_return_prefix;
+            endif;
+
+            if(!empty($request->sales_loan_prefix)):
+                $generalSetup->sales_loan_prefix = $request->sales_loan_prefix;
+            endif;
+            if(!empty($request->sales_loan_approval)):
+                $generalSetup->sales_loan_approval = $request->sales_loan_approval;
+            endif;
             if(!empty($request->sales_return_approval)):
                 $generalSetup->sales_return_approval = $request->sales_return_approval;
             endif;
+
+
             if(!empty($request->delivery_challan)):
                 $generalSetup->delivery_challan = $request->delivery_challan;
             endif;
@@ -408,7 +420,7 @@ class GeneralSettingRepository
 
 
         elseif($request->form_name == "inventory_Adjustment"):
-           
+
 
             $generalSetup = $this->generalSetup::findOrFail($id);
             if(!empty($request->inventory_adjust_approval)):
@@ -453,6 +465,15 @@ class GeneralSettingRepository
             if(!empty($request->contra_voucher_prefix)):
                 $generalSetup->contra_voucher_prefix = $request->contra_voucher_prefix;
             endif;
+            if(!empty($request->payment_voucher_approval)):
+                $generalSetup->payment_voucher_approval = $request->payment_voucher_approval;
+            endif;
+            if(!empty($request->receive_voucher_approval)):
+                $generalSetup->receive_voucher_approval = $request->receive_voucher_approval;
+            endif;
+            if(!empty($request->journal_voucher_approval)):
+                $generalSetup->journal_voucher_approval = $request->journal_voucher_approval;
+            endif;
 
             $generalSetup->status = 'Approved';
             $generalSetup->updated_by = Auth::user()->id;
@@ -493,8 +514,8 @@ class GeneralSettingRepository
 
             elseif($request->form_name == "opening"):
                 $generalSetup = $this->generalSetup::findOrFail($id);
-    
-    
+
+
                 if(!empty($request->customer_opening_prefix)):
                     $generalSetup->customer_opening_prefix = $request->customer_opening_prefix;
                 endif;
@@ -506,7 +527,7 @@ class GeneralSettingRepository
                 if(!empty($request->inventory_opening_prefix)):
                     $generalSetup->inventory_opening_prefix = $request->inventory_opening_prefix;
                 endif;
-              
+
                 $generalSetup->status = 'Approved';
                 $generalSetup->updated_by = Auth::user()->id;
                 $generalSetup->company_id = Auth::user()->company_id;
@@ -526,14 +547,14 @@ class GeneralSettingRepository
                 $generalSetup->company_id = Auth::user()->company_id;
                 $generalSetup->save();
 
-              
+
 
         endif;
         session()->flash('success', 'Data successfully updated!!');
         return redirect()->back();
 
     }
-  
+
 
     public function updateNavigationTable($table,$value){
         $affected = Navigation::where('table',$table)->first();

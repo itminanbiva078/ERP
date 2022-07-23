@@ -37,6 +37,7 @@ class PurchasesPaymentController extends Controller
     public function index(Request $request)
     {
         $title = 'Purchases Payment List';
+        $companyInfo =   helper::companyInfo();
         $datatableRoute = 'inventoryTransaction.purchasesPayment.dataProcessingPurchasesPayment';
         return view('backend.pages.inventoryTransaction.purchasesPayment.index', get_defined_vars());
     }
@@ -56,7 +57,8 @@ class PurchasesPaymentController extends Controller
         $accountLedger = helper::getLedgerHead();
         $title = 'Add New Payment';
         $formInput =  helper::getFormInputByRoute();
-      
+        //dd( $formInput);
+        $companyInfo =   helper::companyInfo();
         return view('backend.pages.inventoryTransaction.purchasesPayment.create', get_defined_vars());
     }
 
@@ -112,10 +114,9 @@ class PurchasesPaymentController extends Controller
             session()->flash('error', 'Details info is invalid!!');
             return redirect()->back();
         }
+        
         $title = 'Purchases Payment Money Receipt';
         $companyInfo =   helper::companyInfo();
-
-       
         return view('backend.pages.inventoryTransaction.purchasesPayment.show', get_defined_vars());
     }
 

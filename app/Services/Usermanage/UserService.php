@@ -20,7 +20,14 @@ class UserService
     {
         $this->systemRepositories = $systemRepositories;
     }
-
+/**
+     * @param $request
+     * @return mixed
+     */
+    public function getAllRole()
+    {
+        return $this->systemRepositories->getAllRole();
+    }
     /**
      * @param $request
      * @return mixed

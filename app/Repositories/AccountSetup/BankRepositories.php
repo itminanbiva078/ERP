@@ -76,7 +76,7 @@ class BankRepositories
                 }
             })->count();
         }
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($banks) {
             foreach ($banks as $key => $bank) {

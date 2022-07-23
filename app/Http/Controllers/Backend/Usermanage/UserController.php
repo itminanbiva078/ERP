@@ -37,6 +37,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $title = 'Users List';
+        $companyInfo =   helper::companyInfo();
         return view('backend.pages.usermanage.users.index', get_defined_vars());
     }
 
@@ -55,6 +56,7 @@ class UserController extends Controller
     public function create()
     {
         $title = 'Add New users';
+        $companyInfo =   helper::companyInfo();
         $formInput =  helper::getFormInputByRoute();
         return view('backend.pages.usermanage.users.create', get_defined_vars());
     }
@@ -64,10 +66,6 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-
-     
-
-
         try {
             $this->validate($request, helper::isErrorStore($request));
         } catch (ValidationException $e) {
@@ -93,6 +91,7 @@ class UserController extends Controller
             session()->flash('error', 'Edit info is invalid!!');
             return redirect()->back();
         }
+        $companyInfo =   helper::companyInfo();
         $title = 'Add New users';
         $formInput =  helper::getFormInputByRoute();
         return view('backend.pages.usermanage.users.edit', get_defined_vars());

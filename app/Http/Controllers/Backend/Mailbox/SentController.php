@@ -38,6 +38,7 @@ class SentController extends Controller
     public function index(Request $request)
     {
        $title = 'Inbox List';
+       $companyInfo =   helper::companyInfo();
        $result =  $this->systemService->getList($request);
        return view('backend.pages.mailbox.sent.index', get_defined_vars());
     }
@@ -51,6 +52,8 @@ class SentController extends Controller
     {
         $title = 'Sent Mail';
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
+
         return view('backend.pages.mailbox.sent.create', get_defined_vars());
     }
 
@@ -100,7 +103,7 @@ class SentController extends Controller
             session()->flash('error', 'Details info is invalid!!');
             return redirect()->back();
         }
-
+        $companyInfo =   helper::companyInfo();
         return view('backend.pages.mailbox.sent.show', get_defined_vars());
     }
    

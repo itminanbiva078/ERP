@@ -23,9 +23,14 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Backend'], function () {
         Route::get('/account-setup-chartOfAccount-edit/{id}', 'ChartOfAccountController@edit')->name('accountSetup.chartOfAccount.edit');
         Route::get('/account-setup-chartOfAccount-details', 'ChartOfAccountController@chartOfAccount')->name('accountSetup.chartOfAccount.details');
         Route::post('/account-setup-chartOfAccount-update/{id}', 'ChartOfAccountController@update')->name('accountSetup.chartOfAccount.update');
+        Route::get('/account-setup-chartOfAccount-byTypeWise', 'ChartOfAccountController@chartListByTypeWise')->name('accountSetup.chartOfAccount.typeWiseList');
         Route::get('/account-setup-chartOfAccount-delete/{id}', 'ChartOfAccountController@destroy')->name('accountSetup.chartOfAccount.destroy');
         Route::get('/account-setup-chartOfAccount-status/{id}/{status}', 'ChartOfAccountController@statusUpdate')->name('accountSetup.chartOfAccount.status');
-        //accounts Unit crud operation end
+        Route::get('/account-setup-chartOfAccount-balance', 'ChartOfAccountController@getAccountBalance')->name('accountSetup.chartOfAccount.getAccountBalance');
+        Route::get('/account-setup-chartOfAccount-bank-balance', 'ChartOfAccountController@getAccountBankBalance')->name('accountSetup.chartOfAccount.getAccountBankBalance');
+        Route::get('/account-setup-chartOfAccount-accountLedgerTypeWise', 'ChartOfAccountController@getAccountHeadTypeWise')->name('accountSetup.chartOfAccount.getAccountHeadTypeWise');
+
+        //accounts crud operation end
 
         //bank  crud operation start
         Route::get('/account-setup-bank-account-list', 'BankController@index')->name('accountSetup.bank.index');
@@ -74,6 +79,7 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Backend'], function () {
         Route::get('/account-transaction-paymentVoucher-delete/{id}', 'PaymentVoucherController@destroy')->name('accountTransaction.paymentVoucher.destroy');
         Route::get('/account-transaction-paymentVoucher-status/{id}/{status}', 'PaymentVoucherController@statusUpdate')->name('accountTransaction.paymentVoucher.status');
         Route::get('/account-transaction-paymentVoucher-details-create', 'PaymentVoucherController@create')->name('accountTransaction.paymentVoucher.details.create');
+        Route::get('/account-transaction-paymentVoucher-accountApproved/{id}/{status}', 'PaymentVoucherController@accountApproved')->name('accountTransaction.paymentVoucher.accountApproved');
         //payment-voucher Unit crud operation end
 
         //journal-voucher  crud operation start
@@ -87,6 +93,7 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Backend'], function () {
         Route::get('/account-transaction-journalVoucher-delete/{id}', 'JournalVoucherController@destroy')->name('accountTransaction.journalVoucher.destroy');
         Route::get('/account-transaction-journalVoucher-status/{id}/{status}', 'JournalVoucherController@statusUpdate')->name('accountTransaction.journalVoucher.status');
         Route::get('/account-transaction-journalVoucher-details-create', 'JournalVoucherController@create')->name('accountTransaction.journalVoucher.details.create');
+        Route::get('/account-transaction-journalVoucher-accountApproved/{id}/{status}', 'JournalVoucherController@accountApproved')->name('accountTransaction.journalVoucher.accountApproved');
 
         //journal-voucher crud operation end
 
@@ -115,6 +122,7 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Backend'], function () {
         Route::get('/account-transaction-receiveVoucher-delete/{id}', 'ReceiveVoucherController@destroy')->name('accountTransaction.receiveVoucher.destroy');
         Route::get('/account-transaction-receiveVoucher-status/{id}/{status}', 'ReceiveVoucherController@statusUpdate')->name('accountTransaction.receiveVoucher.status');
         Route::get('/account-transaction-receiveVoucher-details-create', 'ReceiveVoucherController@create')->name('accountTransaction.receiveVoucher.details.create');
+        Route::get('/account-transaction-receiveVoucher-accountApproved/{id}/{status}', 'ReceiveVoucherController@accountApproved')->name('accountTransaction.receiveVoucher.accountApproved');
 
         //receiveVoucher crud operation end
 

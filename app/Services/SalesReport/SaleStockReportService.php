@@ -24,9 +24,26 @@ class SaleStockReportService
      * @param $request
      * @return mixed
      */
-    public function getSalesedger($branch_id,$store_id,$category_id,$product_id,$batch_no,$brand_id,$from_date,$to_date)
+    public function getSalesedger($branch_id,$store_id,$category_id,$product_id,$customer_id,$sr_id,$batch_no,$brand_id,$from_date,$to_date)
     {
-        return $this->systemRepositories->getSalesedger($branch_id,$store_id,$category_id,$product_id,$batch_no,$brand_id,$from_date,$to_date);
+        return $this->systemRepositories->getSalesedger($branch_id,$store_id,$category_id,$product_id,$customer_id,$sr_id,$batch_no,$brand_id,$from_date,$to_date);
+    }
+
+    /**
+     * @param $request
+     * @return mixed
+     */
+    public function getSalesedgerWithReturn($branch_id,$store_id,$category_id,$product_id,$customer_id,$sr_id,$batch_no,$brand_id,$from_date,$to_date)
+    {
+        return $this->systemRepositories->getSalesedgerWithReturn($branch_id,$store_id,$category_id,$product_id,$customer_id,$sr_id,$batch_no,$brand_id,$from_date,$to_date);
+    }
+    /**
+     * @param $request
+     * @return mixed
+     */
+    public function getSaleLoansedger($branch_id,$store_id,$category_id,$product_id,$customer_id,$sr_id,$batch_no,$brand_id,$from_date,$to_date)
+    {
+        return $this->systemRepositories->getSaleLoansedger($branch_id,$store_id,$category_id,$product_id,$customer_id,$sr_id,$batch_no,$brand_id,$from_date,$to_date);
     }
     
     /**

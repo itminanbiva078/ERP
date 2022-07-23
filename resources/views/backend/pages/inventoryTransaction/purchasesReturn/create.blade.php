@@ -71,6 +71,9 @@ table#show_item tr td {
             <div class="card-body">
 
                 <form class="needs-validation" method="POST"  action="" novalidate>
+
+
+
                     <div class="row">
                         <div class="col-md-8 offset-md-2">
                             <form action="simple-results.html">
@@ -92,8 +95,7 @@ table#show_item tr td {
             </div>
             <!-- /.card-body -->
             <div class="card-footer">
-                <form class="needs-validation" method="POST"  action="{{ route('inventoryTransaction.purchasesReturn.store') }}" novalidate>
-
+                <form enctype="multipart/form-data" class="needs-validation"  onsubmit="return ValidationEvent()"  method="POST"  action="{{ route('inventoryTransaction.purchasesReturn.store') }}" novalidate>
                     @csrf
                 <div class="row">
                     <br>

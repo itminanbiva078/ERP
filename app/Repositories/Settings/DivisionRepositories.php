@@ -73,7 +73,7 @@ class DivisionRepositories
             })->count();
         }
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
          $data = array();
         if ($divisions) {
             foreach ($divisions as $key => $division) {

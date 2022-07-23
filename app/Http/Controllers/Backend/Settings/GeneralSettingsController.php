@@ -40,6 +40,7 @@ class GeneralSettingsController extends Controller
     {
         $title = 'Add New General Setup';
         $datatableRoute = 'settings.generalSetup.dataProcessingSetup';
+        $companyInfo =   helper::companyInfo();
         return view('backend.pages.settings.general_setup.index', get_defined_vars());
     }
 
@@ -63,6 +64,7 @@ class GeneralSettingsController extends Controller
         
         $title = 'Add New General Setup';
         $formInput =  helper::getFormInputByRoute();
+        $companyInfo =   helper::companyInfo();
 
         $allCategory = array();
         $allCategory = array();
@@ -107,8 +109,7 @@ class GeneralSettingsController extends Controller
         }
         $title = 'Setup Edit';
         $formInput =  helper::getFormInputByRoute();
-
-
+        $companyInfo =   helper::companyInfo();
         //dd($formInput);
 
         $allCategory = array();

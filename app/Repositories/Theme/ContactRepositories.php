@@ -62,7 +62,7 @@ class ContactRepositories
                 })->count();
         }
       
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
         $data = array();
         if ($contacts) {
             foreach ($contacts as $key => $contact) {

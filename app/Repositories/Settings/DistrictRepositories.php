@@ -75,7 +75,7 @@ class DistrictRepositories
             $value->division_id = $value->division->name ?? '';
         endforeach;
 
-        $columns = Helper::getTableProperty();
+        $columns = Helper::getQueryProperty();
          $data = array();
         if ($districts) {
             foreach ($districts as $key => $district) {

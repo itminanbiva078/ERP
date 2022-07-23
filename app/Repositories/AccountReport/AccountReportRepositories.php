@@ -24,50 +24,51 @@ class AccountReportRepositories
     public function __construct(AccountType $accountType)
     {
         $this->accountType = $accountType;
-      
+
     }
 
+    
     /**
      * @param $request
      * @return mixed
      */
     public function getAccountLedger($account_id,$from_date,$to_date)
     {
-      
       $result =  GeneralLedger::with([
         'general' => function ($q) {
             $q->select('id', 'date', 'voucher_id',  'branch_id', 'form_id', 'debit', 'credit', 'note');
         }, 'general.purchase' => function ($q) {
-            $q->select('id', 'date', 'voucher_no', 'supplier_id');
+            $q->select('id', 'date', 'voucher_no', 'supplier_id')->where('form_id',4);
         },'general.purchase.supplier' => function ($q) {
             $q->select('id', 'code', 'name', 'email','phone');
         }, 'general.sale' => function ($q) {
-            $q->select('id', 'date', 'voucher_no', 'customer_id');
+            $q->select('id', 'date', 'voucher_no', 'customer_id')->where('form_id',5);
         },'general.sale.customer' => function ($q) {
             $q->select('id', 'code', 'name', 'email','phone');
         }, 'general.paymentVoucher' => function ($q) {
-            $q->select('id', 'voucher_no', 'date', 'customer_id', 'supplier_id','miscellaneous', 'debit', 'credit');
+            $q->select('id', 'voucher_no', 'date', 'customer_id', 'supplier_id','miscellaneous', 'debit', 'credit')->where('form_id',2);
         },'general.paymentVoucher.customer' => function ($q) {
             $q->select('id', 'code', 'name', 'email','phone');
         },'general.paymentVoucher.supplier' => function ($q) {
             $q->select('id', 'code', 'name', 'email','phone');
         },'general.receiveVoucher' => function ($q) {
-            $q->select('id', 'voucher_no', 'date', 'customer_id', 'supplier_id','miscellaneous', 'debit', 'credit');
+            $q->select('id', 'voucher_no', 'date', 'customer_id', 'supplier_id','miscellaneous', 'debit', 'credit')->where('form_id',3);
         },'general.receiveVoucher.customer' => function ($q) {
             $q->select('id', 'code', 'name', 'email','phone');
         },'general.receiveVoucher.supplier' => function ($q) {
             $q->select('id', 'code', 'name', 'email','phone');
         },'general.journalVoucher' => function ($q) {
-            $q->select('id', 'voucher_no', 'date', 'customer_id', 'supplier_id','miscellaneous', 'debit', 'credit');
+            $q->select('id', 'voucher_no', 'date', 'customer_id', 'supplier_id','miscellaneous', 'debit', 'credit')->where('form_id',1);
         }, 'general.journals.account' => function ($q) {
             $q->select('id', 'company_id', 'branch_id', 'parent_id', 'account_code', 'name', 'is_posted');
         },'general.formType' => function ($q) {
             $q->select('id', 'name');
         }
     ])->whereBetween('date', [$from_date, $to_date])->where('account_id',$account_id)->company()->get();
+
       return $result;
     }
 
-    
+
 
 }

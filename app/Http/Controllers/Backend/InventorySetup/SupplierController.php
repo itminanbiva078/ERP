@@ -38,6 +38,7 @@ class SupplierController extends Controller
     {
 
         $title = 'Supplier Manage | Supplier - List';
+        $companyInfo =   helper::companyInfo();
         $explodeRoute = "inventorySetup.supplier.explode";
         $createRoute = "inventorySetup.supplier.create";
         $datatableRoute = 'inventorySetup.supplier.dataProcessingSupplier';
@@ -69,6 +70,7 @@ class SupplierController extends Controller
     public function create()
     {
         $title = "Supplier Manage | Add New - Supplier";
+        $companyInfo =   helper::companyInfo();
         $listRoute = "inventorySetup.supplier.index";
         $explodeRoute = "inventorySetup.supplier.explode";
         $implodeModal ="'inventory-setup-load-import-form','inventorySetup.supplier.import','Import Supplier List','/backend/assets/excelFormat/inventorySetup/supplier/supplier.csv','2'";
@@ -137,6 +139,7 @@ class SupplierController extends Controller
         $listRoute = "inventorySetup.supplier.index";
         $explodeRoute = "";
         $implodeModal ="";
+        $companyInfo =   helper::companyInfo();
         $storeRoute = "inventorySetup.supplier.update";
         $formInput =  helper::getFormInputByRoute();
        return view('backend.layouts.common.addEdit.addEditPage', get_defined_vars());
